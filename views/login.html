@@ -1,0 +1,26 @@
+{{##def.page_title = 'Login' #}}
+
+{{##def.content:
+<div class="login">
+    <form action="/login" method="post">
+        <div class="row">
+            <div class="large-12 columns">
+                <label>Username
+                    <input type="text" name="user[name]" required/>
+                </label>
+            </div>
+            <div class="large-12 columns">
+                <label>Password
+                    <input type="password" name="user[password]" required />
+                </label>
+            </div>
+            <div class="large-12 columns">
+                <a class="small" href="/forgot-password">Forgot your password?</a>
+                <input class="border-button right blue" type="submit" value="Login"/>
+            </div>
+        </div>
+    </form>
+</div>
+
+#}}
+{{#def.include('./template/main')}}

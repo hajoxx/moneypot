@@ -1,0 +1,44 @@
+{{##def.page_title = 'Leader Board' #}}
+
+{{##def.content:
+<div class="content row panel radius">
+
+    <h5 id="top">Top 10 players</h5>
+    <hr>
+    <table class="leaders">
+        <thead>
+            <tr>
+                <td>
+                    Rank
+                </td>
+                <td>
+                    Player
+                </td>
+                <td>
+                    Gross Profit <strong><a href="/faq#gross-profit">?</a></strong>
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+
+            {{~it.leaders :leader:index}}
+                <tr>
+                    <td>
+                        {{=leader.rank}}
+                    </td>
+                    <td>
+                        <a href="/user/{{=leader.username}}">{{=leader.username}}</a>
+                    </td>
+                    <td>
+                        {{#def.format: { n: leader.gross_profit, decimals: 2 } }}
+                    </td>
+                </tr>
+            {{~}}
+
+        </tbody>
+    </table>
+    {{?it.leaders.length > 20 }}<div class="border-button red right" onclick="#top"></div>{{?}}
+</div>
+#}}
+
+{{#def.include('./template/main')}}

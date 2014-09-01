@@ -1,0 +1,5 @@
+This software is provided under the AGPLv3:
+http://www.gnu.org/licenses/agpl-3.0.html
+
+All contributions must be completely copyright assigned to me,
+so I may relicense the software when ever I feel like.
