@@ -266,21 +266,13 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
                     );
 
 
-                var content = null;
-
-
-
-                //Bet placed or bet button clicked
-
-
-
-
-                content = content ? content : this.getDefault();
-
                 //finally... the render
                 return  D.div({ className: 'grid grid-pad ' },
                     D.div({ className: 'controls'},
-                        content
+                        D.h5({ className: 'information'},
+                            this.getStatusMessage()
+                        ),
+                        this.getContents()
                     ),
                     D.div({ className: 'game-hash'},
                         'Hash: ',
@@ -308,7 +300,7 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
 
         //Returns plural or singular, for a given amount of bits.
         function grammarBits(bits) {
-            return bits === 1 ? 'bit' : 'bits';
+            return bits <= 1 ? 'bit' : 'bits';
         }
     }
 

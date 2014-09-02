@@ -359,7 +359,7 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
         this.nextBetAmount = amount;
         this.nextAutoCashout = autoCashOut;
         callback(null, 'WILL_JOIN_NEXT');
-        self.trigger('bet_queued');
+        this.trigger('bet_queued');
     };
 
     // Actually bet. Throw the bet at the server.
