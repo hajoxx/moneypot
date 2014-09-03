@@ -367,11 +367,12 @@ Game.prototype.setForcePoint = function() {
    } else {
        var left = maxWin - totalCashedOut;
 
-       var ratio = (left + totalBet) / maxWin;
+       var ratio =  (left+totalBet) / totalBet;
 
        // in percent
        self.forcePoint = Math.max(Math.floor(ratio * 100), 101);
    }
+
 };
 
 Game.prototype.cashOut = function(user, callback) {
@@ -598,4 +599,3 @@ process.on('SIGTERM', function() {
     console.log('Got SIGTERM... triggering emergency shutdown');
     game.shutDown();
 });
-

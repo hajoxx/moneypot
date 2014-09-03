@@ -191,12 +191,12 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
             //Everytime the game starts checks if there is a queue bet and send it
             if (self.nextBetAmount) {
 
-                if (!self.autoPlay)
-                    self.nextBetAmount = null;
-
                 self.doBet(self.nextBetAmount, self.nextAutoCashout, function(err) {
                     console.log('Response from placing a bet: ', err);
                 });
+
+                if (!self.autoPlay)
+                    self.nextBetAmount = null;
             }
 
             self.trigger('game_starting', info);
@@ -355,7 +355,6 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
 
 
         // otherwise, lets queue the bet...
-        this.willBetNextGame = true;
         this.nextBetAmount = amount;
         this.nextAutoCashout = autoCashOut;
         callback(null, 'WILL_JOIN_NEXT');
@@ -364,6 +363,7 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
 
     // Actually bet. Throw the bet at the server.
     Engine.prototype.doBet =  function(amount, autoCashOut, callback) {
+        var self = this;
         self.placingBet = true;
         this.ws.emit('place_bet', amount, autoCashOut, function(error) {
             self.placingBet = false;
@@ -372,7 +372,6 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
                 console.warn('place_bet error: ', error);
 
                 if (error !== 'GAME_IN_PROGRESS' && error !== 'ALREADY_PLACED_BET') {
-
                     alert('There was an error, please reload the window: ' + error);
                     self.autoPlay = false;
                 }
@@ -390,10 +389,11 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
       * Cancels a bet, if the game state is able to do it so
       */
     Engine.prototype.cancelBet = function() {
-        if (!this.willBetNextGame)
+        if (!this.nextBetAmount)
             return console.error('Can not cancel next bet, wasnt going to make it...');
 
-        this.willBetNextGame = false;
+        this.nextBetAmount = null;
+
         this.trigger('cancel_bet');
     };
 
@@ -436,14 +436,14 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
     Engine.prototype.getGamePayout = function() {
         console.assert(this.gameState === 'IN_PROGRESS');
 
-            if((Date.now() - this.lastGameTick) < STOP_PREDICTING_LAPSE) {
-                var elapsed = Date.now() - this.startTime;
-            } else {
-                var elapsed = this.lastGameTick - this.startTime + STOP_PREDICTING_LAPSE;
-            }
-            var gamePayout = growthFunc(elapsed);
-            console.assert(isFinite(gamePayout));
-            return gamePayout;
+        if((Date.now() - this.lastGameTick) < STOP_PREDICTING_LAPSE) {
+            var elapsed = Date.now() - this.startTime;
+        } else {
+            var elapsed = this.lastGameTick - this.startTime + STOP_PREDICTING_LAPSE;
+        }
+        var gamePayout = growthFunc(elapsed);
+        console.assert(isFinite(gamePayout));
+        return gamePayout;
     };
 
     /**

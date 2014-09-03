@@ -108,7 +108,7 @@ module.exports = function(server) {
         socket.on('place_bet', function(amount, autoCashOut, ack) {
 
             if (!lib.isInt(amount)) {
-                return sendError(socket, '[place_bet] No place bet amount');
+                return sendError(socket, '[place_bet] No place bet amount: ' + amount);
 
             }
             if (amount <= 0 || !lib.isInt(amount / 100)) {

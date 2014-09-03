@@ -31,7 +31,7 @@ define(['lib/react'], function(React) {
         },
 
         render: function() {
-            return D.span(null, 'The game is starting in ', D.b(null, this.state.countdown));
+            return D.span(null, 'The game is starting in ', D.b(null, this.state.countdown), '...');
         }
     });
 });

@@ -39,13 +39,6 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
 
             },
 
-            componentWillMount: function() {
-            },
-
-            componentWillUnmount: function() {
-            },
-
-
             placeBet: function() {
                 var bet = parseFloat(this.state.bet_size);
                 console.assert(Number.isFinite(bet));
@@ -69,7 +62,9 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
 
             cashOut: function() {
                 this.props.engine.cashOut(function(err) {
-                    console.assert(err);
+                    if (err) {
+                        console.warn('Got cash out error: ', err);
+                    }
                 });
             },
 
@@ -86,8 +81,10 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
             },
 
             getStatusMessage: function() {
-                if (this.props.engine.gameState === 'STARTING')
-                    return D.span('Game starting in... ', Countdown( {engine: this.props.engine} ));
+                if (this.props.engine.gameState === 'STARTING') {
+                    console.log('showing starting...');
+                    return Countdown({ engine: this.props.engine });
+                }
 
                 if (this.props.engine.gameState === 'IN_PROGRESS') {
                     //user is playing
@@ -213,7 +210,6 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
 
             getBetting: function() {
                 return D.div({ className: 'cash-out' },
-                    D.h5({ className: 'information'}, Countdown( {engine: this.props.engine} )),
                     D.a({className: 'big-button-disable unclick' },
                             'Betting ' + this.props.engine.nextBetAmount + ' ' + grammarBits(this.props.engine.nextBetAmount), this.getAutoCashOutMessage()),
                     D.div({className: 'cancel'}, 'Sending bet...')
@@ -240,15 +236,14 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
             },
 
             getContents: function() {
-                if (this.props.engine.userState === 'PLAYING') {
+                if (this.props.engine.gameState === 'IN_PROGRESS' && this.props.engine.userState === 'PLAYING') {
                     return this.getCashOut();
                 } else if (this.props.engine.nextBetAmount) { // a bet is queued
-                    return D.h1(null, 'will bet next round....');
+                    return this.getBetting();
                 } else { // user can place a bet
                     return this.getBetter();
                 }
             },
-
 
             render: function() {
                 console.log(this.props.engine.gameState, ' -> ', this.props.engine.userState);
@@ -264,7 +259,6 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
                             )
                         )
                     );
-
 
                 //finally... the render
                 return  D.div({ className: 'grid grid-pad ' },
@@ -290,12 +284,9 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
                             'auto bet'
                         )
                     )
-                )
-
+                );
             }
-
         });
-
 
 
         //Returns plural or singular, for a given amount of bits.
