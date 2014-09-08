@@ -77,6 +77,8 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
 
         // Terrible prefix name, last means the 'current' game
 
+
+
         /** Player's Last bet in satoshis **/
         self.lastBet = null;
 
@@ -95,6 +97,11 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
             self.gameState = 'IN_PROGRESS';
             self.startTime = Date.now(); // TODO: This date will be sent by the server in the near future
             self.lastGameTick = self.startTime;
+
+            if (!self.autoPlay) {
+                self.nextBetAmount = null;
+                self.nextAutoCashout = null;
+            }
 
             self.trigger('game_started');
         });
@@ -195,8 +202,6 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
                     console.log('Response from placing a bet: ', err);
                 });
 
-                if (!self.autoPlay)
-                    self.nextBetAmount = null;
             }
 
             self.trigger('game_starting', info);
@@ -212,7 +217,6 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
         self.ws.on('player_bet', function(data) {
 
             if (self.username === data.username) {
-                self.placingBet = false;
                 self.userState = 'PLAYING';
                 self.balanceSatoshis -= data.bet;
                 self.lastBet = data.bet;
@@ -343,20 +347,21 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
     /**
      * Places a bet with a giving amount.
      * @param {number} amount - Bet amount in bits
-     * @param {number} autoCashOut - Percentage of self cash out
+     * @param {number} autoCashOut - Percentage of self cash outf
      * @param {function} callback(err, result)
      */
     Engine.prototype.bet = function(amount, autoCashOut, callback) {
         console.assert(typeof amount == 'number');
         console.assert(!autoCashOut || (typeof autoCashOut === 'number' && autoCashOut >= 101));
 
+        this.nextBetAmount = amount;
+        this.nextAutoCashout = autoCashOut;
+
         if (this.gameState === 'STARTING')
             return this.doBet(amount, autoCashOut, callback);
 
 
         // otherwise, lets queue the bet...
-        this.nextBetAmount = amount;
-        this.nextAutoCashout = autoCashOut;
         callback(null, 'WILL_JOIN_NEXT');
         this.trigger('bet_queued');
     };
@@ -364,9 +369,7 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
     // Actually bet. Throw the bet at the server.
     Engine.prototype.doBet =  function(amount, autoCashOut, callback) {
         var self = this;
-        self.placingBet = true;
         this.ws.emit('place_bet', amount, autoCashOut, function(error) {
-            self.placingBet = false;
 
             if (error) {
                 console.warn('place_bet error: ', error);
@@ -379,7 +382,6 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
                 return callback(error);
             }
 
-
             self.trigger('bet_placed');
             return callback(null);
         });
@@ -389,20 +391,14 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
       * Cancels a bet, if the game state is able to do it so
       */
     Engine.prototype.cancelBet = function() {
+        this.autoPlay = null;
+
         if (!this.nextBetAmount)
             return console.error('Can not cancel next bet, wasnt going to make it...');
 
         this.nextBetAmount = null;
 
         this.trigger('cancel_bet');
-    };
-
-    /**
-     * Cancels the auto play mode
-     */
-    Engine.prototype.setAutoPlay = function(autoPlay) {
-        this.autoPlay = autoPlay;
-        this.trigger('autoplay_changed', autoPlay);
     };
 
     /**

@@ -499,7 +499,7 @@ exports.handleWithdrawRequest = function(req, res, next) {
     try {
         bitcoinjs.Address.fromBase58Check(destination);
     } catch(ex) {
-        console.log('Invalid withdrawal address: ', destination, ' got exception: ', ex);
+        console.log('Invalid withdrawal address: ', destination);
         return res.render('withdraw_request', { user: user, warning: 'Not a valid destination address' });
     }
 

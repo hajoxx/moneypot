@@ -38,6 +38,15 @@ exports.giveAwayHandle = function(req, res, next) {
     var user = req.user;
     assert(user.admin);
 
+    if (process.env.NODE_ENV === 'production') {
+        var ref = req.headers['referer'];
+        if (!ref) return next(new Error('possible xsfr'));
+
+
+        if (ref.lastIndexOf('https://www.moneypot.com/admin-giveaway', 0) !== 0)
+            return next(new Error('Bad referrer got: ' + ref));
+    }
+
     var giveAwayUsers = req.body.users.split(/\s+/);
     var bits = parseFloat(req.body.bits);
 
@@ -47,9 +56,9 @@ exports.giveAwayHandle = function(req, res, next) {
     var satoshis = Math.round(bits * 100);
 
     database.addRawGiveaway(giveAwayUsers, satoshis , function(err, ret) {
-        if (err) return res.redirect('/aDm1n-giveaway?err=' + err);
+        if (err) return res.redirect('/admin-giveaway?err=' + err);
 
-        res.redirect('/aDm1n-giveaway?m=Done');
+        res.redirect('/admin-giveaway?m=Done');
 
     });
 };

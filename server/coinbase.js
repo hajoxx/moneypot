@@ -136,10 +136,10 @@ function Coinbase (options) {
 
 
     self.sendMoney = function(to, satoshis, callback) {
-//        if (process.env.NODE_ENV !== 'production') {
-//            console.log('[INTERNAL_ERROR] Will not make transfer in dev mode');
-//            return callback(null, '000IN_DEV_MODE000');
-//        }
+        if (process.env.NODE_ENV !== 'production') {
+            console.log('[INTERNAL_ERROR] Will not make transfer in dev mode');
+            return callback(null, '000IN_DEV_MODE000');
+        }
 
 
         var url = makeUrl('transactions/send_money');

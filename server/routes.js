@@ -149,8 +149,8 @@ module.exports = function(app) {
     // Admin stuff
     app.get('/admin', adminRestrict, admin.index);
     app.get('/clean-games', adminRestrict, admin.cleanGames);
-    app.get('/aDm1n-giveaway', adminRestrict, admin.giveAway);
-    app.post('/aDm1n-giveaway', adminRestrict, admin.giveAwayHandle);
+    app.get('/admin-giveaway', adminRestrict, admin.giveAway);
+    app.post('/admin-giveaway', adminRestrict, admin.giveAwayHandle);
 
     app.get('*', function(req, res) {
         res.status(404);

@@ -73,7 +73,8 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
             },
 
             toggleAutoPlay: function() {
-                throw new Error('todo toggle auto play!')
+                var to = !this.props.engine.autoPlay;
+                this.props.engine.setAutoPlay(to);
             },
 
             toggleAutoCashOut: function() {
@@ -91,9 +92,9 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
                     if (this.props.engine.userState === 'PLAYING') {
                         return D.span(null, 'Currently playing...');
                     } else if (this.props.engine.lastGameWonAmount) { // user has cashed out
-                        return D.span(null, 'Cashed out at  ',
-                                D.b(null, (this.props.engine.lastGameWonAmount / this.props.engine.lastBet) * 100, 'x'),
-                                '/ Won: ',
+                        return D.span(null, 'Cashed Out @  ',
+                                D.b({className: 'green'}, (this.props.engine.lastGameWonAmount / this.props.engine.lastBet), 'x'),
+                                ' / Won: ',
                                 D.b({className: 'green'}, Clib.formatSatoshis(this.props.engine.lastGameWonAmount)),
                                 ' ', grammarBits(this.props.engine.lastGameWonAmount)
                             );
@@ -107,28 +108,26 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
 
                         var bonus;
                         if (this.props.engine.lastBonus) {
-                            bonus = D.span(null, ' (+',
+                            bonus = D.span(null, D.br(), ' (+',
                                 Clib.formatSatoshis(this.props.engine.lastBonus), ' ',
-                                grammarBits(this.props.engine.lastGameWonAmount), ' bonus)'
+                                grammarBits(this.props.engine.lastBonus), ' bonus)'
                             );
                         }
 
-                        return D.span(null, 'Cashed out @ ',
-                            D.b({className: 'green'}, (this.props.engine.lastGameWonAmount / this.props.engine.lastBet) * 100, 'x'),
-                            '/ Won: ',
+                        return D.span(null, 'Cashed Out @ ',
+                            D.b({className: 'green'}, (this.props.engine.lastGameWonAmount / this.props.engine.lastBet), 'x'),
+                            ' / Won: ',
                             D.b({className: 'green'}, Clib.formatSatoshis(this.props.engine.lastGameWonAmount)),
                             ' ', grammarBits(this.props.engine.lastGameWonAmount),
-                            bonus,
-                            D.br(),
-                            'Game crashed @ ', D.b(null, this.props.engine.lastGameCrashedAt/100), 'x'
+                            bonus
                         );
                     } else if (this.props.engine.lastBet) { // bet and lost
 
                         var bonus;
                         if (this.props.engine.lastBonus) {
-                            bonus = D.span(null, ' But got a ',
+                            bonus = D.span(null, D.br(), '..but got a ',
                                 Clib.formatSatoshis(this.props.engine.lastBonus), ' ',
-                                grammarBits(this.props.engine.lastGameWonAmount), ' bonus)'
+                                grammarBits(this.props.engine.lastBonus), ' bonus'
                             );
                         }
 
@@ -209,9 +208,19 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
             },
 
             getBetting: function() {
+                var bet = this.props.engine.nextBetAmount;
+                var aco = this.props.engine.nextAutoCashout;
+
+                var msg;
+                if (aco)
+                    msg = ' with auto cash-out at ' + (aco / 100) + 'x'
+                else
+                    msg = ' with manual cash out';
+
+
                 return D.div({ className: 'cash-out' },
                     D.a({className: 'big-button-disable unclick' },
-                            'Betting ' + this.props.engine.nextBetAmount + ' ' + grammarBits(this.props.engine.nextBetAmount), this.getAutoCashOutMessage()),
+                            'Betting ' + Clib.formatSatoshis(bet) + ' ' + grammarBits(bet), msg),
                     D.div({className: 'cancel'}, 'Sending bet...')
                 );
             },
@@ -219,26 +228,28 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
             getAutoCashOutMessage: function() {
                 if (this.props.engine.autoCashOut)
                     return D.div({className: 'cancel'},
-                            'Auto cash out at ' + (this.props.engine.autoCashOut / 100) + 'x');
+                            ' / Auto cash out at ' + (this.props.engine.autoCashOut / 100) + 'x');
                 else
-                    return null;
+                    return ' with manual cash out';
             },
 
             getCashOut: function() {
 
                 return D.div({ className: 'cash-out' },
-                    D.a({className: 'big-button unclick', onClick: this.cashOut }, 'Cash out at ',
-                        D.span(null, Payout({engine: this.props.engine})),
-                        ' bits'
+                    D.a({className: 'big-button unclick', onClick: this.cashOut },
+                        'Cash out at ', Payout({engine: this.props.engine}), ' bits'
                     ),
-                    this.getAutoCashOutMessage()
+                    D.div({className: 'cancel'}, this.getAutoCashOutMessage())
                 );
             },
 
             getContents: function() {
+                console.log('next bet amount: ', this.props.engine.nextBetAmount);
                 if (this.props.engine.gameState === 'IN_PROGRESS' && this.props.engine.userState === 'PLAYING') {
                     return this.getCashOut();
-                } else if (this.props.engine.nextBetAmount) { // a bet is queued
+                } else if (this.props.engine.nextBetAmount || // a bet is queued
+                    (this.props.engine.gameState === 'STARTING' && this.props.engine.userState === 'PLAYING')
+                 ) {
                     return this.getBetting();
                 } else { // user can place a bet
                     return this.getBetter();
@@ -291,7 +302,7 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
 
         //Returns plural or singular, for a given amount of bits.
         function grammarBits(bits) {
-            return bits <= 1 ? 'bit' : 'bits';
+            return bits <= 100 ? 'bit' : 'bits';
         }
     }
 
