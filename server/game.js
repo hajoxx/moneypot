@@ -589,7 +589,7 @@ function genGameCrash() {
 
     var multiplier = perfect - houseEdge;
 
-    return Math.round(multiplier * 100);
+    return Math.floor(multiplier * 100);
 }
 
 var game = new Game();
