@@ -91,7 +91,7 @@
             <br>
             {{?typeof it.user.eligible !== 'number' }}
                 {{?it.user.balance_satoshis > 100}}
-                    <div class="success bits">You are eligible for a free 2 bits <a href="/request">CLICK HERE TO REQUEST IT!</a></div>
+                    <div class="success bits">You are eligible for a free 2 bits <a href="/request">CLICK HERE TO REQUEST THEM!</a></div>
                 {{?}}
             {{??}}
                 <div class="success bits">You'll be eligible for 2 free bits in {{=it.user.eligible}} minutes</div>
@@ -115,7 +115,7 @@
                 <span>{{=it.user.email}}<a class="small" href="/delete-email"> delete this email.</a></span>
             {{??}}
                 <h5>Add an Email Address</h5>
-                <p class="small">In case you've forgot your password we can send you a link to reset it, otherwise you don't have other way to recover your account.</p>
+                <p class="small">In case you've forgotten your password we can send you a link to reset it, otherwise you don't have other way to recover your account.</p>
 
                 <form action="/add-email" method="post">
                     <label for="email">Recovery Email</label>
