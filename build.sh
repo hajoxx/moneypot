@@ -1,7 +1,7 @@
 set -o verbose
 rm -rf build/
-r.js -o client/build.js
-r.js -o client/build-main.js 
+./node_modules/requirejs/bin/r.js -o client/build.js
+./node_modules/requirejs/bin/r.js -o client/build-main.js 
 node build.js
 
 # jenkins
