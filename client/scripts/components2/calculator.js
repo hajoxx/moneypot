@@ -49,11 +49,7 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
                         D.td(null, Clib.profit(this.state.amount, this.state.cashOut))
                     ),
                     D.tr({ key: 'houseExpected' },
-                        D.th(null, 'House Expected Return:',
-                            D.br(),
-                            D.small(null, '1% * (cashOut - amount) * (amount / cashOut)')
-
-                        ),
+                        D.th(null, 'House Expected Return:'),
                         D.td(null, Clib.houseExpectedReturn(this.state.amount, this.state.cashOut))
                     ),
                     D.tr({ key: 'houseMargin' },
