@@ -578,7 +578,7 @@ function genGameCrash() {
 
     // calculate game crash in %
     //   e.g. 150 = 1.50x crash
-    var ic = cryptoRand.randInt(0, 100);
+    var ic = cryptoRand.randInt(0, 99);
     if (ic === 0)
         return 0; // instant crash;
 
