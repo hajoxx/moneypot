@@ -60,15 +60,66 @@ define(['lib/seedrandom'], function(Seedrandom) {
         },
 
         winProb: function(amount, cashOut) {
-           return (amount - this.houseExpectedReturn(amount, cashOut)) / cashOut;
+
+            // The cashout factor that we need to get the cashOut with our wager.
+            var factor = Math.ceil(100 * cashOut / amount);
+
+            /* The probability that the second phase of the RNG chooses a lower
+               crashpoint. This is derived in the following way:
+
+               Let r be a random variable uniformly distributed on [0,1) and let
+               p be 1/(1-r). Then we need to calculate the probability of
+                     floor(100 * (p - (p - 1)*0.01)) < factor
+
+               Using the fact that factor is integral and solving for r yields
+                     r < 1 - 99 / (f-1)
+
+               Because r is uniformly distributed the probability is identical
+               to the right hand side.
+
+               Combining with the first phase of the RNG we get the probability
+               of losing
+                     0.01 + 0.99 * (1 - 99 / (factor-1))
+               and the win probability
+                  1 - 0.01 - 0.99 * (1 - 99 / (factor-1)).
+                = 0.99 - 0.99 * (1 - 99 / (factor-1))
+                = 0.99 * (1 - (1 - 99 / (factor-1))
+                = 0.99 * (99 / (factor-1))
+                = 0.99 * (99 / (factor-1))
+                = 9801 / (100*(factor-1))
+             */
+            return 9801 / (100*(factor-1));
         },
 
         profit: function(amount, cashOut) {
-            return cashOut - amount;
+
+             // The factor that we need to get the cash out with our wager.
+             var factor = Math.ceil(100 * cashOut / amount);
+
+             // We calculate the profit with the factor instead of using the
+             // difference between cash out and wager amount.
+             return amount * (factor-100) / 100;
         },
 
         houseExpectedReturn: function(amount, cashOut) {
-           return 0.01 * this.profit(amount, cashOut) * (amount / cashOut);
+
+             var p1,p2,p3;
+             var v1,v2,v3;
+
+             // Instant crash.
+             p1 = 0.01;
+             v1 = amount;
+
+             // Player win.
+             p2 = this.winProb(amount,cashOut);
+             v2 = - 0.01 * amount - this.profit(amount,cashOut);
+
+             // Player loss.
+             p3 = 1 - p1 - p2;
+             v3 = 0.99 * amount;
+
+             // Expected value.
+             return p1 * v1 + p2 * v2 + p3 * v3;
         }
 
     }
