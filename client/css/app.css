@@ -258,7 +258,7 @@ nav .top-bar-title {
     font-size: 2.2em;
     padding: 13px;
 }
-.
+
 .tables-second-row {
     margin-top: 10px;
 }
@@ -331,36 +331,8 @@ nav .top-bar-title {
     margin-left: -14px;
 }
 
-.star {
-    fill: #FFFF00;
-    float: left;
-    margin-right: -45px;
-    margin-top: -3px;
-    margin-left: 30px;
-    width: 16px;
-    height: 16px;
-    background-image: url(/img/medal.png);
-}
-
 .created small{
     color: #5A5A5A;
-}
-/* Admin Syles
-   ========================================================================== */
-#chat-window small {
-    font-size: 11px;
-}
-
-.admin-chat {
-    height: 582px;
-    overflow-y: scroll;
-    display: block;
-    border: 2px solid #F9F9F9;
-}
-
-.admin-chat ul{
-    font-size: 14px;
-    margin-left: 10px;
 }
 
 .stats td{

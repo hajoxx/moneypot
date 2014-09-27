@@ -117,10 +117,16 @@ function Coinbase (options) {
                     if (erred)
                         return callback(err);
                     erred = true;
+                    setTimeout(run, 1000);
+                    return;
                 }
 
-                if (!data.transaction.hsh) {
-                    delay = Math.min(delay * 2, 60000); // exponential increase, max at 1 minute
+                if (!data.transaction || !data.transaction.hsh) {
+                    delay = delay * 2; // exponential increase
+
+                    if (delay > 1000000)
+                        return callback(new Error('Could not find hash even after a long time'));
+
                     setTimeout(run, delay);
                     return;
                 }

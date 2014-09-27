@@ -25,22 +25,30 @@ function connect(callback) {
 }
 
 function query(query, params, callback) {
-    //thrid parameter is optional
+    //third parameter is optional
     if (typeof params == 'function') {
         callback = params;
         params = [];
     }
 
-    connect(function(err, client, done) {
-        if (err) return callback(err);
-        client.query(query, params, function(err, result) {
-            done();
-            if (err) {
-                return callback(err);
-            }
-            callback(null, result);
+    doIt();
+    function doIt() {
+        connect(function(err, client, done) {
+            if (err) return callback(err);
+            client.query(query, params, function(err, result) {
+                done();
+                if (err) {
+                    if (err.code === '40P01') {
+                        console.log('Warning: Retrying deadlocked transaction: ', query, params);
+                        return doIt();
+                    }
+                    return callback(err);
+                }
+
+                callback(null, result);
+            });
         });
-    });
+    }
 }
 
 
@@ -52,32 +60,44 @@ function query(query, params, callback) {
 // callback takes (err, data)
 
 function getClient(runner, callback) {
-    connect(function (err, client, done) {
-        if (err) return callback(err);
+    doIt();
 
-        function rollback(err) {
-            client.query('ROLLBACK', done);
-            callback(err);
-        }
+    function doIt() {
+        connect(function (err, client, done) {
+            if (err) return callback(err);
 
-        client.query('BEGIN', function (err) {
-            if (err)
-                return rollback(err);
+            function rollback(err) {
+                client.query('ROLLBACK', done);
 
-            runner(client, function(err, data) {
+                if (err.code === '40P01') {
+                    console.log('Warning: Retrying deadlocked transaction..');
+                    return doIt();
+                }
+
+                callback(err);
+            }
+
+            client.query('BEGIN', function (err) {
                 if (err)
                     return rollback(err);
 
-                client.query('COMMIT', function (err) {
+                runner(client, function (err, data) {
                     if (err)
                         return rollback(err);
 
-                    done();
-                    callback(null, data);
+                    client.query('COMMIT', function (err) {
+                        if (err)
+                            return rollback(err);
+
+                        done();
+                        callback(null, data);
+                    });
                 });
             });
         });
-    });
+    }
+
+
 }
 
 // returns a sessionId
@@ -764,17 +784,14 @@ exports.setFundingsWithdrawalTxid = function(fundingId, txid, callback) {
 
 
 exports.getGameHistory = function(callback) {
-    query(' WITH p AS ( ' +
-        'SELECT users.username, plays.bet, plays.cash_out, plays.bonus, plays.game_id ' +
-        'FROM plays, users ' +
-        'WHERE plays.user_id = users.id ' +
-    ') ' +
-    'SELECT games.id, games.game_crash, games.created, array_to_json(array_agg(p)) plays ' +
-    'FROM games ' +
-    'LEFT JOIN p ON p.game_id = games.id ' +
-    'WHERE games.ended = true ' +
-    'GROUP BY 1 ' +
-    'ORDER BY games.id DESC LIMIT 10;', function(err, data) {
+    query('SELECT games.id, games.game_crash, games.created, json_agg(pv) plays ' +
+        'FROM games ' +
+        'LEFT JOIN (SELECT users.username, plays.bet, plays.cash_out, plays.bonus, plays.game_id ' +
+        '  FROM plays, users ' +
+        '  WHERE plays.user_id = users.id) pv ON pv.game_id = games.id ' +
+        'WHERE games.ended = true ' +
+        'GROUP BY 1 ' +
+        'ORDER BY games.id DESC LIMIT 10;', function(err, data) {
             if (err) return err;
 
             data.rows.forEach(function(row) {

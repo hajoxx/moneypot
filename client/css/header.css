@@ -10,7 +10,7 @@
 
 .nav-top-bar {
     text-align: center;
-    border: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
     height: 45px;
     line-height: 45px;
 }
