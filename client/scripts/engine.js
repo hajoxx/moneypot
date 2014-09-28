@@ -128,6 +128,7 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
          * @param {number} data.elapsed - Total game elapsed time
          * @param {number} data.game_crash - Crash payout quantity in percent eg. 200 = 2x. Use this to calculate payout!
          * @param {object} data.bonuses - List of bonuses of each user, in satoshis
+         * @param {string} data.seed - Revealed seed of the game
          */
         self.ws.on('game_crash', function(data) {
 
@@ -146,7 +147,8 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
                 game_crash: data.game_crash,
                 id: self.gameId,
                 hash: self.hash,
-                player_info: self.playerInfo
+                player_info: self.playerInfo,
+                seed: data.seed
             };
 
             //Add the current game info to the game history and if the game history is larger than 40 remove one element

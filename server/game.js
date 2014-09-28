@@ -182,7 +182,8 @@ Game.prototype.endGame = function() {
     self.emit('game_crash', {
         elapsed: self.gameDuration,
         game_crash: self.crashPoint, // We send 0 to client in instant crash
-        bonuses: bonusJson
+        bonuses: bonusJson,
+        seed: self.seed
     });
 
 
