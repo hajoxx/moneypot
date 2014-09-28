@@ -10,6 +10,8 @@ var app = express();
 var routes = require('./server/routes');
 var socket = require('./server/socket');
 var database = require('./server/database');
+var Game = require('./server/game');
+var GameHistory = require('./server/gamehistory');
 var lib = require('./server/lib');
 var dotCaching = true;
 
@@ -119,4 +121,19 @@ function errorHandler(err, req, res, next) {
 routes(app);
 app.use(errorHandler);
 
-socket(server);
+database.getGameHistory(function(err,rows) {
+    if (err) {
+        console.error('[INTERNAL_ERROR] got error: ', err,
+                      'Unable to get table history');
+        throw err;
+    }
+
+    var gameHistory = new GameHistory(rows);
+    var game = new Game(gameHistory);
+    process.on('SIGTERM', function() {
+        console.log('Got SIGTERM... triggering emergency shutdown');
+        game.shutDown();
+    });
+
+    socket(server,game);
+});

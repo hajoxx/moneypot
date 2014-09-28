@@ -7,13 +7,12 @@ var cryptoRand = require('crypto-rand');
 var _ = require('lodash');
 var lib = require('./lib');
 
-
 var maxWin = 3e7; // .3 BTC in satoshis. This is the most I can lose in a game
 var tickRate = 150; // ping the client every X miliseconds
 var afterCrashTime = 3000; // how long from game_crash -> game_starting
 var restartTime = 4000; // How long from  game_starting -> game_started
 
-function Game() {
+function Game(gameHistory) {
     var self = this;
 
     self.gameShuttingDown = false;
@@ -29,6 +28,7 @@ function Game() {
     self.blocking = false; // the game is transitioning to inprogress, so blocking new join attempts
     self.players = {}; // An object of userName ->  { playId: ..., autoCashOut: .... }
     self.gameId = null;
+    self.gameHistory = gameHistory;
 
     events.EventEmitter.call(self);
 
@@ -172,9 +172,11 @@ Game.prototype.endGame = function() {
     var bonuses = (self.crashPoint === 0) ? [] : calcBonuses(self.players);
 
 
+    var playerInfo = self.getInfo().player_info;
     var bonusJson = {};
     bonuses.forEach(function(entry) {
         bonusJson[entry.user.username] = entry.amount;
+        playerInfo[entry.user.username].bonus = entry.amount;
     });
 
 
@@ -186,6 +188,12 @@ Game.prototype.endGame = function() {
         seed: self.seed
     });
 
+    self.gameHistory.addCompletedGame(
+      { id: gameId,
+        game_crash: self.crashPoint,
+        created: self.startTime,
+        player_info: playerInfo
+      });
 
     db.endGame(gameId, bonuses, function(err) {
         if (err)
@@ -593,10 +601,4 @@ function genGameCrash() {
     return Math.floor(multiplier * 100);
 }
 
-var game = new Game();
-module.exports = game;
-
-process.on('SIGTERM', function() {
-    console.log('Got SIGTERM... triggering emergency shutdown');
-    game.shutDown();
-});
+module.exports = Game;
