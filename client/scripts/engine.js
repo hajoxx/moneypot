@@ -51,6 +51,9 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
         */
         self.userState = null;
 
+        /** Creation time of the current game. */
+        self.created = null;
+
         /** The game id of the current game */
         self.gameId = null;
 
@@ -298,11 +301,22 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
                         self.isConnected = true;
                         self.gameState = resp.state;
                         self.playerInfo = resp.player_info;
-                        self.userState = 'WATCHING'; // TODO: they might actually be playing...
-                        self.gameId = resp.gameId;
+                        self.userState = self.playerInfo[self.username] ?
+                                            'PLAYING' : 'WATCHING';
+
+                        /** Set the current game properties. For consistency we
+                            only do so if the game has not yet ended. If the game
+                            has ended we leave them at their initial null value
+                            which matches the state after game_crash. */
+                        if (self.gameState != 'ENDED') {
+                            //Clear current game properties
+                            self.gameId = resp.game_id;
+                            self.hash = resp.hash;
+                            self.created = resp.created;
+                            self.startTime = Date.now() - resp.elapsed;
+                        }
 
                         self.tableHistory = resp.table_history;
-                        self.startTime = Date.now() - resp.elapsed;
 
                         if (self.gameState == 'IN_PROGRESS')
                             self.lastGameTick = Date.now(); 

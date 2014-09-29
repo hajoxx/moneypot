@@ -53,7 +53,7 @@ function Game(gameHistory) {
             self.seed = seed;
             self.crashPoint = crashPoint;
             self.gameId = gameId;
-            self.startTime = Date.now() + restartTime;
+            self.startTime = new Date(Date.now() + restartTime);
             self.players = {}; // An object of userName ->  { user: ..., playId: ..., autoCashOut: ...., status: ... }
             self.gameDuration = Math.ceil(inverseGrowth(self.crashPoint + 1)); // how long till the game will crash..
 
@@ -236,7 +236,8 @@ Game.prototype.getInfo = function() {
         // if the game is pending, elapsed is how long till it starts
         // if the game is running, elapsed is how long its running for
         /// if the game is ended, elapsed is how long since the game started
-        elapsed: Date.now() - this.startTime
+        elapsed: Date.now() - this.startTime,
+        created: this.startTime
     };
 
     return res;
