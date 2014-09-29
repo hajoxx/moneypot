@@ -2,10 +2,9 @@ var CBuffer = require('CBuffer');
 var socketio = require('socket.io');
 var database = require('./database');
 var lib = require('./lib');
-var game = require('./game');
 var withdraw = require('../server/withdraw.js');
 
-module.exports = function(server) {
+module.exports = function(server,game) {
     var io = socketio(server);
 
     (function() {
@@ -73,18 +72,14 @@ module.exports = function(server) {
             }
 
             function cont(loggedIn) {
-                database.getGameHistory(function(err, history) {
-                    if (err)
-                        return internalError(socket, err, 'Unable to get table history');
-                    var res = game.getInfo();
-                    res['chat'] = chatHistory.toArray();
-                    res['table_history'] = history;
-                    res['username'] = loggedIn ? loggedIn.username : null;
-                    res['balance_satoshis'] = loggedIn ? loggedIn.balance_satoshis : null;
-                    ack(null, res);
+                var res = game.getInfo();
+                res['chat'] = chatHistory.toArray();
+                res['table_history'] = game.gameHistory.getHistory();
+                res['username'] = loggedIn ? loggedIn.username : null;
+                res['balance_satoshis'] = loggedIn ? loggedIn.balance_satoshis : null;
+                ack(null, res);
 
-                    joined(socket, loggedIn, autoCashOut);
-                });
+                joined(socket, loggedIn, autoCashOut);
             }
         });
 
@@ -207,5 +202,3 @@ module.exports = function(server) {
         socket.emit('err', 'INTERNAL_ERROR');
     }
 };
-
-
