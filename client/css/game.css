@@ -128,9 +128,18 @@ i {
     margin-top: 29px;
 }
 .bet-span {
-    text-align: center;
+    padding-right: 20px;
     font-size: 25px;
     padding-top: 6px;
+
+
+    width: 64px;
+    float:left;
+    margin-top: 8px;
+    line-height: 12px;
+    text-align: center;
+    margin-left: 9px;
+    font-weight: bold;
 }
 .cash-out {
     margin-top: 13px;
@@ -162,11 +171,11 @@ i {
 }
 .auto-cash-out-span {
     font-size: 12px;
-    width: 32px;
+    width: 64px;
     float:left;
     margin-top: 8px;
     line-height: 12px;
-    text-align: right;
+    text-align: center;
     margin-left: 9px;
     font-weight: bold;
 }

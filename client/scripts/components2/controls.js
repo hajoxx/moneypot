@@ -13,8 +13,7 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
             getInitialState: function() {
                 return {
                     bet_size: '1', // in bits
-                    cash_out: '2', // in multiplier
-                    autoCashOutBox: false
+                    cash_out: '2.00' // in multiplier
                 }
             },
 
@@ -44,13 +43,10 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
                 console.assert(Number.isFinite(bet));
 
                 bet = Math.round(bet * 100);
-                var cashOut;
+                var cashOut = parseFloat(this.state.cash_out);
+                console.assert(Number.isFinite(cashOut));
+                cashOut = Math.round(cashOut * 100);
 
-                if (this.state.autoCashOutBox) {
-                    cashOut = parseFloat(this.state.cash_out);
-                    console.assert(Number.isFinite(cashOut));
-                    cashOut = Math.round(cashOut * 100);
-                }
 
                 this.props.engine.bet(bet, cashOut, function (err) {
                     if (err) {
@@ -75,10 +71,6 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
             toggleAutoPlay: function() {
                 var to = !this.props.engine.autoPlay;
                 this.props.engine.setAutoPlay(to);
-            },
-
-            toggleAutoCashOut: function() {
-                this.setState({ autoCashOutBox: !this.state.autoCashOutBox });
             },
 
             getStatusMessage: function() {
@@ -159,22 +151,20 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
                 else
                     button = D.a({className: 'big-button unselect', onClick: self.placeBet }, 'Place Bet!');
 
-                var cashOut;
-                if (self.state.autoCashOutBox) {
-                    cashOut = D.div(null,
-                        D.div({ className: 'auto-cash-out-span' }, 'Cash Out @ '),
-                        D.input({
-                            min: 1.1,
-                            value: self.state.cash_out,
-                            type: 'number',
-                            name: 'cash_out',
-                            onChange: function(e) {
-                                self.setState({ cash_out: e.target.value })
-                            }
-                        }),
-                        D.span({ className: 'sticky' }, 'x')
-                    );
-                }
+                var cashOut  = D.div(null,
+                    D.div({ className: 'auto-cash-out-span' }, 'Auto Cash Out @ '),
+                    D.input({
+                        min: 1.1,
+                        value: self.state.cash_out,
+                        type: 'number',
+                        name: 'cash_out',
+                        onChange: function(e) {
+                            self.setState({ cash_out: e.target.value })
+                        }
+                    }),
+                    D.span({ className: 'sticky' }, 'x')
+                );
+
 
                 return D.div(null,
                     D.div({ className: 'col-6-12' },
@@ -188,18 +178,7 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
                                     self.setState({ bet_size: e.target.value })
                                 }
                             }),
-                            D.span({ className: 'sticky' }, 'Bits'),
-                            D.div({ className: 'boxes unselect' },
-                                D.div({ className: 'cashout' },
-                                    D.label(null,
-                                        D.input({ type: 'checkbox',
-                                            name: 'autocash',
-                                            onChange: self.toggleAutoCashOut,
-                                            checked: self.state.autoCashOutBox}),
-                                        'auto cash-out'
-                                    )
-                                )
-                            )
+                            D.span({ className: 'sticky' }, 'Bits')
                         )
                     ),
                     D.div({ className: 'col-6-12 place-bet'},
@@ -214,12 +193,7 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
                 var bet = this.props.engine.nextBetAmount;
                 var aco = this.props.engine.nextAutoCashout;
 
-                var msg;
-                if (aco)
-                    msg = ' with auto cash-out at ' + (aco / 100) + 'x'
-                else
-                    msg = ' with manual cash out';
-
+                var msg = ' with auto cash-out at ' + (aco / 100) + 'x';
 
                 return D.div({ className: 'cash-out' },
                     D.a({className: 'big-button-disable unclick' },
@@ -229,11 +203,8 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
             },
 
             getAutoCashOutMessage: function() {
-                if (this.props.engine.autoCashOut)
-                    return D.div({className: 'cancel'},
-                            ' / Auto cash out at ' + (this.props.engine.autoCashOut / 100) + 'x');
-                else
-                    return ' with manual cash out';
+                console.assert(this.props.engine.autoCashOut);
+                return D.div({className: 'cancel'}, ' / Auto cash out at ' + (this.props.engine.autoCashOut / 100) + 'x');
             },
 
             getCashOut: function() {

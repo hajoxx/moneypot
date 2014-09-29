@@ -306,6 +306,12 @@ Game.prototype.doCashOut = function(play, at, callback) {
 
     var won = Math.round(self.players[username].bet * (at / 100));
 
+    self.emit('cashed_out', {
+        username: username,
+        amount: won, // TODO: deprecate
+        stopped_at: at
+    });
+
     db.cashOut(play.user.id, play.playId, won, function(err) {
         if (err) {
             console.log('[INTERNAL_ERROR] could not cash out: ', username, ' at ', at, ' in ', play, ' because: ', err);
@@ -315,12 +321,6 @@ Game.prototype.doCashOut = function(play, at, callback) {
 
             return;
         }
-
-        self.emit('cashed_out', {
-            username: username,
-            amount: won, // TODO: deprecate
-            stopped_at: at
-        });
 
         callback(null);
     });

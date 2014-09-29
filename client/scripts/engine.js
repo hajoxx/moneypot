@@ -177,7 +177,7 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
          * Event called before starting the game to let the client know when the game is going to start
          * @param {object} info - JSON payload
          * @param {number} info.game_id - The next game id
-         * @param {number} info.hash - Provably fair hash
+         * @param {number} info.hash - Provably predetermined hash
          * @param {number} info.time_till_start - Time lapse for the next game to begin
          */
         self.ws.on('game_starting', function(info) {
