@@ -145,7 +145,7 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
                 created: self.created,
                 ended: true,
                 game_crash: data.game_crash,
-                id: self.gameId,
+                game_id: self.gameId,
                 hash: self.hash,
                 player_info: self.playerInfo,
                 seed: data.seed
