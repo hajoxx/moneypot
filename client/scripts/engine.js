@@ -166,10 +166,6 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
             self.lastBonus = self.playerInfo[self.username] ? self.playerInfo[self.username].bonus : null;
             self.userState = 'WATCHING';
 
-            //If im am the winner add the bonus to my balance
-            if (data.winner === self.username)
-                self.balanceSatoshis += data.win_amount;
-
             self.trigger('game_crash');
         });
 
