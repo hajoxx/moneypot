@@ -33,7 +33,7 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
         },
 
         render: function() {
-            var decimals = this.props.engine.lastBet < 100 ? 2 : 0;
+            var decimals = this.props.engine.lastBet < 10000 ? 2 : 0;
 
             return D.span(null, Clib.formatSatoshis(this.state.payout, decimals));
         }
