@@ -23,13 +23,16 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
                 if (self.props.engine.balanceSatoshis < 100)
                     return 'Not enough bits to play';
 
-                var bet = parseInt(self.state.bet_size); // in bits..
+                var bet = parseFloat(self.state.bet_size); // in bits..
 
-                if (Number.isNaN(bet) || bet < 1)
+                if (Number.isNaN(bet) || bet < 1 || Math.floor(bet) !== bet)
                     return 'The bet should be an integer greater than or equal to one';
 
                 if (bet > 1e5)
                     return 'The bet must be less no more than 100,000 bits';
+
+                var ac =
+
 
                 if (self.props.engine.balanceSatoshis < bet * 100)
                     return 'Not enough bits';
