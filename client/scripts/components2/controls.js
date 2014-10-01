@@ -86,11 +86,6 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
                 throw new Error('todo cancel place bet!');
             },
 
-            toggleAutoPlay: function() {
-                var to = !this.props.engine.autoPlay;
-                this.props.engine.setAutoPlay(to);
-            },
-
             getStatusMessage: function() {
                 if (this.props.engine.gameState === 'STARTING') {
                     console.log('showing starting...');
@@ -274,7 +269,7 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
                             D.input({
                                 type: 'checkbox',
                                 name: 'autoplay',
-                                onChange: this.toggleAutoPlay,
+                                onChange: this.props.engine.toggleAutoPlay,
                                 checked: this.props.engine.autoPlay,
                                 disabled: this.invalidBet()
                             }),

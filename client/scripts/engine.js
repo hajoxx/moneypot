@@ -51,8 +51,7 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
         */
         self.userState = null;
 
-        /** Creation time of the current game. */
-        self.created = null;
+        self.created = null; // Creation time of current game. This is the server time, not clients..
 
         /** The game id of the current game */
         self.gameId = null;
@@ -66,8 +65,6 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
         /** True if you send place_bet to the server but the server has not yet responded */
         self.placingBet = false;
 
-
-        /** If true will play forever, -1 -> has never being used**/
         self.autoPlay = false;
 
         /** True if cashing out.. */
@@ -155,16 +152,12 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
             };
 
             //Add the current game info to the game history and if the game history is larger than 40 remove one element
-            if (self.tableHistory.length >= 40) self.tableHistory.pop();
+            if (self.tableHistory.length >= 40)
+                self.tableHistory.pop();
             self.tableHistory.unshift(gameInfo);
 
             //Clear current game properties
             self.gameState = 'ENDED';
-            self.gameId = null;
-            self.hash = null;
-            self.created = null;
-            self.startTime = null;
-            self.cashingOut = null;
             self.lastGameCrashedAt = data.game_crash;
             self.lastBonus = self.playerInfo[self.username] ? self.playerInfo[self.username].bonus : null;
             self.userState = 'WATCHING';
@@ -184,9 +177,7 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
             self.gameState = 'STARTING';
             self.gameId = info.game_id;
             self.hash = info.hash;
-            self.startTime = Date.now() + info.time_till_start;
-            /** Used to calculate the elapsed time to the next game to begin */
-            self.nextGameFrom = Date.now();
+            self.startTime = new Date(Date.now() + info.time_till_start);
 
             self.lastBet = null;
             self.lastGameWonAmount = null;
@@ -304,17 +295,11 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
                         self.userState = self.playerInfo[self.username] ?
                                             'PLAYING' : 'WATCHING';
 
-                        /** Set the current game properties. For consistency we
-                            only do so if the game has not yet ended. If the game
-                            has ended we leave them at their initial null value
-                            which matches the state after game_crash. */
-                        if (self.gameState != 'ENDED') {
-                            //Clear current game properties
-                            self.gameId = resp.game_id;
-                            self.hash = resp.hash;
-                            self.created = resp.created;
-                            self.startTime = Date.now() - resp.elapsed;
-                        }
+                        // set current game properties
+                        self.gameId = resp.game_id;
+                        self.hash = resp.hash;
+                        self.created = resp.created;
+                        self.startTime = new Date(Date.now() - resp.elapsed);
 
                         self.tableHistory = resp.table_history;
 
@@ -399,11 +384,16 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
         });
     };
 
+    Engine.prototype.toggleAutoPlay = function() {
+        this.autoPlay = !this.autoPlay;
+        console.log('Set autoplay to: ', this.autoPlay);
+    };
+
      /**
       * Cancels a bet, if the game state is able to do it so
       */
     Engine.prototype.cancelBet = function() {
-        this.autoPlay = null;
+        this.autoPlay = false;
 
         if (!this.nextBetAmount)
             return console.error('Can not cancel next bet, wasnt going to make it...');
