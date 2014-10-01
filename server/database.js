@@ -800,7 +800,14 @@ exports.getGameHistory = function(callback) {
                 row.plays.forEach(function(play) {
                     if (!play) return;
 
-                    row.player_info[play.username] = { bet: play.bet, stopped_at: play.cash_out, bonus: play.bonus };
+                    // The database does not store the stopped_at value,
+                    // so we recalculate it.
+                    var stopped_at = Math.round(100 * play.cash_out / play.bet);
+                    row.player_info[play.username] =
+                        { bet: play.bet,
+                          stopped_at: stopped_at,
+                          bonus: play.bonus
+                        };
                 });
 
                 delete row.plays;
