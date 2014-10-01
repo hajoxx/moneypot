@@ -132,7 +132,7 @@ database.getGameHistory(function(err,rows) {
     var game = new Game(gameHistory);
     process.on('SIGTERM', function() {
         console.log('Got SIGTERM... triggering emergency shutdown');
-        game.shutDown();
+        game.shutDownFast();
     });
 
     socket(server,game);

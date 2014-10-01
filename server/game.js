@@ -16,6 +16,7 @@ function Game(gameHistory) {
     var self = this;
 
     self.gameShuttingDown = false;
+    self.gameShuttingDownFast = false;
     self.pending = 0; // How many people are trying to join the game...
     self.seed = null;
     self.startTime; // time game started. If before game started, is an estimate...
@@ -33,7 +34,8 @@ function Game(gameHistory) {
     events.EventEmitter.call(self);
 
     function runGame() {
-        if (self.gameShuttingDown) {
+
+        if (self.gameShuttingDown || self.gameShuttingDownFast) {
             console.log('Not creating next game, server shutting down..');
             return;
         }
@@ -92,7 +94,7 @@ function Game(gameHistory) {
 
 
     function runTick() {
-        if (self.gameShuttingDown) {
+        if (self.gameShuttingDownFast) {
             console.log('..aborting tick');
             return;
         }
@@ -123,7 +125,11 @@ function Game(gameHistory) {
         // oh noes, we crashed!
         self.endGame();
 
-        setTimeout(runGame, afterCrashTime);
+        if (self.gameShuttingDown) {
+            self.emit('shutdown');
+        } else {
+            setTimeout(runGame, afterCrashTime);
+        }
     }
 
     function tick(elapsed, at) {
@@ -463,10 +469,24 @@ Game.prototype.cashOutAll = function(at, callback) {
 
 Game.prototype.shutDown = function() {
     var self = this;
+
+    self.gameShuttingDown = true;
+    self.emit('shuttingdown');
+
+    // If the game has already ended, we can shutdown immediately.
+    if (this.state === 'ENDED') {
+        self.emit('shutdown');
+    }
+};
+
+Game.prototype.shutDownFast = function() {
+    var self = this;
     var elapsed = new Date() - self.startTime;
     var at = growthFunc(elapsed);
 
     self.gameShuttingDown = true;
+    self.gameShuttingDownFast = true;
+    self.emit('shuttingdown');
 
     self.cashOutAll(at, function (err) {
 
@@ -475,7 +495,7 @@ Game.prototype.shutDown = function() {
         if (!err)
             self.endGame();
 
-        self.emit('shutdown');
+        self.emit('shutdownfast');
     });
 
 };
