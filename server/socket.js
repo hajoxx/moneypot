@@ -27,15 +27,15 @@ module.exports = function(server,game) {
 
     io.on('connection', onConnection);
 
-    var shutdown = false;
+    var shutdownfast = false;
     function onConnection(socket) {
-        if (shutdown) {
+        if (shutdownfast) {
             socket.emit('update');
             return;
         }
 
-        game.on('shutdown', function() {
-            shutdown = true;
+        game.on('shutdownfast', function() {
+            shutdownfast = true;
             socket.emit('update');
         });
 
@@ -78,6 +78,10 @@ module.exports = function(server,game) {
                 res['username'] = loggedIn ? loggedIn.username : null;
                 res['balance_satoshis'] = loggedIn ? loggedIn.balance_satoshis : null;
                 ack(null, res);
+
+                // Set admin flag. TODO: Move to db.
+                if (loggedIn)
+                    loggedIn.admin = loggedIn.username === 'Eric';
 
                 joined(socket, loggedIn, autoCashOut);
             }
@@ -165,6 +169,11 @@ module.exports = function(server,game) {
 
             if (message.length == 0 || message.length > 500)
                 return sendError(socket, '[say] invalid message side');
+
+            if (loggedIn.admin && message === '/shutdown') {
+                game.shutDown();
+                return;
+            }
 
             var msg = {
                 time: new Date(),
