@@ -784,7 +784,7 @@ exports.setFundingsWithdrawalTxid = function(fundingId, txid, callback) {
 
 
 exports.getGameHistory = function(callback) {
-    query('SELECT games.id, games.game_crash, games.created, json_agg(pv) plays ' +
+    query('SELECT games.id game_id, games.game_crash, games.created, json_agg(pv) plays ' +
         'FROM games ' +
         'LEFT JOIN (SELECT users.username, plays.bet, plays.cash_out, plays.bonus, plays.game_id ' +
         '  FROM plays, users ' +

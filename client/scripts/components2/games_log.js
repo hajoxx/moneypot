@@ -21,6 +21,7 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
         render: function() {
             var rows = [];
             var gamesList = this.props.engine.tableHistory;
+            console.log('Games list: ', gamesList);
             var cashed_at, bet, profit;
 
             for(var i = 0; i < this.maxGamesShowed; i++) {
@@ -49,7 +50,7 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
                     profit = '-';
                 }
 
-                rows.push(D.tr({ key: 'game_' + i, onClick: this.gameDetails(gamesList[i].id) },
+                rows.push(D.tr({ key: 'game_' + i, onClick: this.gameDetails(gamesList[i].game_id) },
                     D.td(null, Clib.formatSatoshis(gamesList[i].game_crash), D.i(null, 'x')),
                     D.td(null, cashed_at),
                     D.td(null, bet),
