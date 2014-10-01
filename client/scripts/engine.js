@@ -347,10 +347,11 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
      * @param {number} autoCashOut - Percentage of self cash outf
      * @param {function} callback(err, result)
      */
-    Engine.prototype.bet = function(amount, autoCashOut, callback) {
+    Engine.prototype.bet = function(amount, autoCashOut, autoPlay, callback) {
         console.assert(typeof amount == 'number');
         console.assert(!autoCashOut || (typeof autoCashOut === 'number' && autoCashOut >= 101));
 
+        this.autoPlay = autoPlay;
         this.nextBetAmount = amount;
         this.nextAutoCashout = autoCashOut;
 
@@ -364,6 +365,7 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
     };
 
     // Actually bet. Throw the bet at the server.
+    // autoC
     Engine.prototype.doBet =  function(amount, autoCashOut, callback) {
         var self = this;
         this.ws.emit('place_bet', amount, autoCashOut, function(error) {
@@ -384,9 +386,8 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
         });
     };
 
-    Engine.prototype.toggleAutoPlay = function() {
-        this.autoPlay = !this.autoPlay;
-        console.log('Set autoplay to: ', this.autoPlay);
+    Engine.prototype.cancelAutoPlay = function() {
+        this.autoPlay = false;
     };
 
      /**
@@ -396,7 +397,7 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
         this.autoPlay = false;
 
         if (!this.nextBetAmount)
-            return console.error('Can not cancel next bet, wasnt going to make it...');
+            return console.error('Can not cancel next bet, wasn\'t going to make it...');
 
         this.nextBetAmount = null;
 

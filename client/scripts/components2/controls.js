@@ -13,7 +13,8 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
             getInitialState: function() {
                 return {
                     bet_size: '1', // in bits
-                    cash_out: '2.00' // in multiplier
+                    cash_out: '2.00', // in multiplier
+                    auto_play: false
                 }
             },
 
@@ -66,7 +67,7 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
                 console.assert(Number.isFinite(cashOut));
 
 
-                this.props.engine.bet(bet, cashOut, function (err) {
+                this.props.engine.bet(bet, cashOut, this.state.auto_play, function (err) {
                     if (err) {
                         console.error('Got betting error: ', err);
                     }
@@ -237,6 +238,12 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
                 }
             },
 
+            toggleAutoPlay: function() {
+                var prev = this.state.auto_play;
+                if (prev) this.props.engine.cancelAutoPlay();
+                this.setState({ auto_play: !prev });
+            },
+
             render: function() {
                 console.log(this.props.engine.gameState, ' -> ', this.props.engine.userState);
 
@@ -269,8 +276,8 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
                             D.input({
                                 type: 'checkbox',
                                 name: 'autoplay',
-                                onChange: this.props.engine.toggleAutoPlay,
-                                checked: this.props.engine.autoPlay,
+                                onChange: this.toggleAutoPlay,
+                                checked: this.state.autoPlay,
                                 disabled: this.invalidBet()
                             }),
                             'auto bet'
