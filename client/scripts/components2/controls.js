@@ -31,7 +31,20 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
                 if (bet > 1e5)
                     return 'The bet must be less no more than 100,000 bits';
 
-                var ac =
+                var co = self.state.cash_out;
+
+                if (!/^\d+(\.\d{1,2})?$/.test(co)) {
+                    return 'Invalid auto cash out amount';
+                }
+
+                co = parseFloat(co);
+                console.assert(!Number.isNaN(co));
+
+
+                if (Number.isNaN(bet) || co < 1 || Math.floor(bet) !== bet)
+                    return 'The bet should be an integer greater than or equal to one';
+
+
 
 
                 if (self.props.engine.balanceSatoshis < bet * 100)
@@ -49,6 +62,8 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
                 var cashOut = parseFloat(this.state.cash_out);
                 console.assert(Number.isFinite(cashOut));
                 cashOut = Math.round(cashOut * 100);
+
+                console.assert(Number.isFinite(cashOut));
 
 
                 this.props.engine.bet(bet, cashOut, function (err) {
@@ -186,7 +201,7 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
                     ),
                     D.div({ className: 'col-6-12 place-bet'},
                         button,
-                        (invalidBet ? D.div({className: 'invalid cancel'}, self.invalidBet) : null)
+                        (invalidBet ? D.div({className: 'invalid cancel'}, invalidBet) : null)
                     ),
                     cashOut
                 );
@@ -205,18 +220,12 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
                 );
             },
 
-            getAutoCashOutMessage: function() {
-                console.assert(this.props.engine.autoCashOut);
-                return D.div({className: 'cancel'}, ' / Auto cash out at ' + (this.props.engine.autoCashOut / 100) + 'x');
-            },
-
             getCashOut: function() {
 
                 return D.div({ className: 'cash-out' },
                     D.a({className: 'big-button unclick', onClick: this.cashOut },
                         'Cash out at ', Payout({engine: this.props.engine}), ' bits'
-                    ),
-                    D.div({className: 'cancel'}, this.getAutoCashOutMessage())
+                    )
                 );
             },
 
