@@ -89,12 +89,18 @@ module.exports = function(server,game) {
 
     }
 
+    var clientCount = 0;
+
     function joined(socket, loggedIn, autoCashOut) {
+        ++clientCount;
+        console.log('Client joined: ', clientCount);
+
         socket.join('joined');
 
 
         socket.on('disconnect', function() {
-            console.log('client disconnected');
+            --clientCount;
+            console.log('Client disconnect, left: ', clientCount);
 
             if (loggedIn)
                 game.cashOut(loggedIn, function(err) {

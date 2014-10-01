@@ -7,7 +7,7 @@ var cryptoRand = require('crypto-rand');
 var _ = require('lodash');
 var lib = require('./lib');
 
-var maxWin = 3e7; // .3 BTC in satoshis. This is the most I can lose in a game
+var maxWin = 1e8; // 1 BTC in satoshis. This is the most I can lose in a game
 var tickRate = 150; // ping the client every X miliseconds
 var afterCrashTime = 3000; // how long from game_crash -> game_starting
 var restartTime = 4000; // How long from  game_starting -> game_started
@@ -387,6 +387,7 @@ Game.prototype.setForcePoint = function() {
 
        // in percent
        self.forcePoint = Math.max(Math.floor(ratio * 100), 101);
+       console.log('Setting force point to: ', self.forcePoint);
    }
 
 };
