@@ -99,7 +99,9 @@ app.use(function(req, res, next) {
         user.advice = req.query.m;
         user.error = req.query.err;
         user.eligible = lib.isEligibleForGiveAway(user.last_giveaway);
-        user.admin = user.username === 'Eric';
+        user.admin = user.userclass === 'admin';
+        user.moderator = user.userclass === 'admin' ||
+                         user.userclass === 'moderator';
         req.user = user;
         next();
     });

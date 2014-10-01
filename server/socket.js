@@ -79,10 +79,11 @@ module.exports = function(server,game) {
                 res['balance_satoshis'] = loggedIn ? loggedIn.balance_satoshis : null;
                 ack(null, res);
 
-                // Set admin flag. TODO: Move to db.
-                if (loggedIn)
-                    loggedIn.admin = loggedIn.username === 'Eric';
-
+                if (loggedIn) {
+                    loggedIn.admin     = loggedIn.userclass === 'admin';
+                    loggedIn.moderator = loggedIn.userclass === 'admin' ||
+                        loggedIn.userclass === 'moderator';
+                }
                 joined(socket, loggedIn, autoCashOut);
             }
         });
