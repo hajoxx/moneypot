@@ -246,6 +246,9 @@ Game.prototype.getInfo = function() {
         created: this.startTime
     };
 
+    if (this.state === 'ENDED')
+        res.crashed_at = this.crashPoint;
+
     return res;
 };
 

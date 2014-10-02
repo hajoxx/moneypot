@@ -306,8 +306,9 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
                         self.tableHistory = resp.table_history;
 
                         if (self.gameState == 'IN_PROGRESS')
-                            self.lastGameTick = Date.now(); 
-                        
+                            self.lastGameTick = Date.now();
+                        if (self.gameState == 'ENDED')
+                            self.lastGameCrashedAt = resp.crashed_at;
 
                         self.trigger('connected');
                     }

@@ -81,11 +81,17 @@ define(['lib/react', 'lib/clib', 'lib/lodash'], function(React, Clib, _) {
             } else if(self.props.engine.gameState === 'ENDED') {
 
                 trUsersLostPlaying = usersLostPlayingSorted.map(function(entry, i) {
+                    var bonus = entry.info.bonus;
+                    var profit = '-' + Clib.formatSatoshis(entry.info.bet);
+
+                    if (bonus)
+                        profit = profit + ' (+' + Clib.formatSatoshis(bonus) + ')';
+
                     return D.tr({ className: 'user-lost', key: 'user' + i },
                         D.td(null, entry.username),
                         D.td(null, '-'),
                         D.td(null, Clib.formatSatoshis(entry.info.bet, 0)),
-                        D.td(null, '-' + Clib.formatSatoshis(entry.info.bet))
+                        D.td(null, profit)
                     );
                 });
 
