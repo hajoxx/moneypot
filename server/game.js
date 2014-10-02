@@ -7,7 +7,7 @@ var cryptoRand = require('crypto-rand');
 var _ = require('lodash');
 var lib = require('./lib');
 
-var maxWin = 1e8; // 1 BTC in satoshis. This is the most I can lose in a game
+var maxWin = process.env.CRASH_AT || 2e8; // The max loss in a single game, in satoshis
 var tickRate = 150; // ping the client every X miliseconds
 var afterCrashTime = 3000; // how long from game_crash -> game_starting
 var restartTime = 5000; // How long from  game_starting -> game_started
