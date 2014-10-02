@@ -195,7 +195,7 @@ Game.prototype.endGame = function() {
     });
 
     self.gameHistory.addCompletedGame(
-      { id: gameId,
+      { game_id: gameId,
         game_crash: self.crashPoint,
         created: self.startTime,
         player_info: playerInfo
