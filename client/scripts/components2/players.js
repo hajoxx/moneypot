@@ -93,13 +93,17 @@ define(['lib/react', 'lib/clib', 'lib/lodash'], function(React, Clib, _) {
                     var bet = entry.info.bet;
                     var bonus = entry.info.bonus;
                     var stopped = entry.info.stopped_at;
+                    var profit = Clib.formatSatoshis(bet * (stopped - 100) / 100);
+
+                    if (bonus)
+                        profit = profit + ' (+' + Clib.formatSatoshis(bonus) + ')';
 
                     return D.tr(
                         { className: 'user-won', key: 'user' + i },
                         D.td(null, entry.username),
                         D.td(null, stopped / 100, 'x'),
                         D.td(null, Clib.formatSatoshis(bet, 0)),
-                        D.td(null, Clib.formatSatoshis((((stopped/ 100) * bet) - bet) + bonus)? ' (+' +  Clib.formatSatoshis(stopped) + ')' : '-')
+                        D.td(null, profit)
                     );
                 });
 
