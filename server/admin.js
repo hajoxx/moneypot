@@ -39,7 +39,7 @@ exports.giveAwayHandle = function(req, res, next) {
     assert(user.admin);
 
     if (process.env.NODE_ENV === 'production') {
-        var ref = req.headers['referer'];
+        var ref = req.headers['Referer'];
         if (!ref) return next(new Error('possible xsfr'));
 
 

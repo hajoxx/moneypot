@@ -387,7 +387,6 @@ Game.prototype.setForcePoint = function() {
 
        // in percent
        self.forcePoint = Math.max(Math.floor(ratio * 100), 101);
-       console.log('Setting force point to: ', self.forcePoint);
    }
 
 };
