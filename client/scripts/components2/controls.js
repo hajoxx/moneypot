@@ -142,7 +142,7 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
 
                         return D.span(null,
                             'Game crashed @ ', D.b({className: 'red'}, this.props.engine.lastGameCrashedAt/100, 'x'),
-                            ' / You lost ',  D.b({className: 'red'}, this.props.engine.lastBet), ' ', grammarBits(this.props.engine.lastBet),
+                            ' / You lost ',  D.b({className: 'red'}, this.props.engine.lastBet/100), ' ', grammarBits(this.props.engine.lastBet),
                             bonus
                         );
                     } else { // didn't bet
