@@ -292,8 +292,10 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
                         self.isConnected = true;
                         self.gameState = resp.state;
                         self.playerInfo = resp.player_info;
-                        self.userState = self.playerInfo[self.username] ?
-                                            'PLAYING' : 'WATCHING';
+                        self.userState =
+                            self.playerInfo[self.username] &&
+                            !self.playerInfo[self.username].stopped_at
+                                ? 'PLAYING' : 'WATCHING';
 
                         // set current game properties
                         self.gameId = resp.game_id;
