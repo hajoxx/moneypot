@@ -93,10 +93,9 @@ module.exports = function(server,game) {
 
     function joined(socket, loggedIn, autoCashOut) {
         ++clientCount;
-        console.log('Client joined: ', clientCount);
+        console.log('Client joined: ', clientCount, ' - ', loggedIn ? loggedIn.username : '~guest~');
 
         socket.join('joined');
-
 
         socket.on('disconnect', function() {
             --clientCount;
@@ -126,7 +125,7 @@ module.exports = function(server,game) {
 
             if (!autoCashOut)
                 autoCashOut = null;
-            else if (!lib.isInt(autoCashOut) || autoCashOut <= 100)
+            else if (!lib.isInt(autoCashOut) || autoCashOut < 100)
                 return sendError(socket, '[place_bet] auto_cashout problem');
 
             if (typeof ack !== 'function')

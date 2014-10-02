@@ -7,7 +7,7 @@ var cryptoRand = require('crypto-rand');
 var _ = require('lodash');
 var lib = require('./lib');
 
-var maxWin = process.env.CRASH_AT || 2e8; // The max loss in a single game, in satoshis
+var maxWin = process.env.MAX_LOSS || 2e8; // The max loss in a single game, in satoshis
 var tickRate = 150; // ping the client every X miliseconds
 var afterCrashTime = 3000; // how long from game_crash -> game_starting
 var restartTime = 5000; // How long from  game_starting -> game_started
@@ -80,6 +80,8 @@ function Game(gameHistory) {
         self.blocking = false;
         self.startTime = new Date();
 
+        self.setForcePoint();
+
         self.emit('game_started', { created: self.startTime });  // NOTE: this is approximate, and db value will be earlier
 
         callTick(0);
@@ -102,7 +104,9 @@ function Game(gameHistory) {
         var elapsed = new Date() - self.startTime;
         var at = growthFunc(elapsed);
 
-        if (self.forcePoint && self.forcePoint <= at && self.forcePoint <= self.crashPoint) {
+        self.runCashOuts(at);
+
+        if (self.forcePoint && self.forcePoint <= at && self.forcePoint < self.crashPoint) {
             self.cashOutAll(self.forcePoint, function (err) {
                 console.log('Just forced cashed out everyone at: ', self.forcePoint, ' got err: ', err);
 
@@ -110,8 +114,6 @@ function Game(gameHistory) {
             });
             return;
         }
-
-        self.runCashOuts(at);
 
         // and run the next
 
@@ -270,7 +272,6 @@ Game.prototype.placeBet = function(user, betAmount, autoCashOut, callback) {
     self.players[user.username] = { user: user, bet: betAmount, autoCashOut: autoCashOut, status: 'PENDING', playId: null };
     self.pending++;
 
-    self.setForcePoint();
 
     db.placeBet(betAmount, user.id, self.gameId, function(err, playId) {
         self.pending--;
@@ -339,6 +340,7 @@ Game.prototype.doCashOut = function(play, at, callback) {
 Game.prototype.runCashOuts = function(at) {
     var self = this;
 
+    var update = false;
     // Check for auto cashouts
 
     Object.keys(self.players).forEach(function (playerUserName) {
@@ -357,9 +359,12 @@ Game.prototype.runCashOuts = function(at) {
                     return;
                 }
             });
-            self.setForcePoint();
+            update = true;
         }
     });
+
+    if (update)
+        self.setForcePoint();
 };
 
 Game.prototype.setForcePoint = function() {
@@ -411,6 +416,10 @@ Game.prototype.cashOut = function(user, callback) {
 
     if (play.autoCashOut && play.autoCashOut <= at)
         at = play.autoCashOut;
+
+    if (self.forcePoint && self.forcePoint <= at)
+        at = play.forcePoint;
+
 
     if (at > self.crashPoint)
         return callback('GAME_ALREADY_CRASHED');
