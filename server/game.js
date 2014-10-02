@@ -404,15 +404,16 @@ Game.prototype.cashOut = function(user, callback) {
 
     var elapsed = new Date() - self.startTime;
     var at = growthFunc(elapsed);
-
-    if (at > self.crashPoint)
-        return callback('GAME_ALREADY_CRASHED');
-
     var play = lib.getOwnProperty(self.players, user.username);
 
     if (!play)
         return callback('NO_BET_PLACED');
 
+    if (play.autoCashOut && play.autoCashOut <= at)
+        at = play.autoCashOut;
+
+    if (at > self.crashPoint)
+        return callback('GAME_ALREADY_CRASHED');
 
     if (play.status === 'CASHED_OUT')
         return callback('ALREADY_CASHED_OUT');
