@@ -451,7 +451,10 @@ Game.prototype.cashOutAll = function(at, callback) {
 
         if (play.status === 'PLAYING') {
             tasks.push(function (callback) {
-                self.doCashOut(play, at, callback);
+                if (play.status === 'PLAYING')
+                    self.doCashOut(play, at, callback);
+                else
+                    callback();
             });
         }
     });

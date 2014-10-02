@@ -147,7 +147,10 @@ exports.profile = function(req, res, next) {
             var netProfitOffset = results[0];
             var plays = results[1];
 
-            assert(lib.isInt(netProfitOffset));
+            if (!lib.isInt(netProfitOffset)) {
+                console.error('[INTERNAL_ERROR] Warning: ' + username + ' does not have an integer net profit offset');
+                return next(new Error('Internal profit calc error'));
+            }
             assert(plays);
 
             plays.forEach(function(play) {
