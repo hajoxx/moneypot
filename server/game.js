@@ -10,7 +10,7 @@ var lib = require('./lib');
 var maxWin = 1e8; // 1 BTC in satoshis. This is the most I can lose in a game
 var tickRate = 150; // ping the client every X miliseconds
 var afterCrashTime = 3000; // how long from game_crash -> game_starting
-var restartTime = 4000; // How long from  game_starting -> game_started
+var restartTime = 5000; // How long from  game_starting -> game_started
 
 function Game(gameHistory) {
     var self = this;
