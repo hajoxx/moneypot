@@ -22,6 +22,10 @@ exports.register  = function(req, res, next) {
     var notValid = lib.isInvalidUsername(username);
     if (notValid) return res.render('register', { warning: 'username not valid because: ' + notValid, values: values.user });
 
+    // stop new registrations of >16 char usernames
+    if (username.length > 16)
+        return res.render('register', { warning: 'Username is too long', values: values.user });
+
     notValid = lib.isInvalidPassword(password);
     if (notValid) {
         values.user.password = null;
