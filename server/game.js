@@ -377,7 +377,7 @@ Game.prototype.setForcePoint = function() {
        var play = self.players[playerName];
 
        if (play.status === 'CASHED_OUT') {
-           var amount = play.bet * (play.stoppedAt/100);
+           var amount = play.bet * (play.stoppedAt - 100) / 100;
            totalCashedOut += amount;
        } else {
            assert(play.status == 'PLAYING' || play.status === 'PENDING');
