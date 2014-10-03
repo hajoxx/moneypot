@@ -1,4 +1,4 @@
-var assert = require('assert');
+var assert = require('better-assert');
 var async = require('async');
 var db = require('./database');
 var events = require('events');
@@ -418,7 +418,7 @@ Game.prototype.cashOut = function(user, callback) {
         at = play.autoCashOut;
 
     if (self.forcePoint && self.forcePoint <= at)
-        at = play.forcePoint;
+        at = self.forcePoint;
 
 
     if (at > self.crashPoint)
