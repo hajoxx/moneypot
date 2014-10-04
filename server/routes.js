@@ -5,6 +5,7 @@ var database = require('./database');
 var user = require('./user');
 var games = require('./games');
 var sendEmail = require('./sendEmail');
+var stats = require('./stats');
 
 
 function staticPageLogged(page, loggedGoTo) {
@@ -145,10 +146,10 @@ module.exports = function(app) {
             res.send(token);
         });
     });
+    app.get('/stats', stats.index);
+
 
     // Admin stuff
-    app.get('/admin', adminRestrict, admin.index);
-    app.get('/clean-games', adminRestrict, admin.cleanGames);
     app.get('/admin-giveaway', adminRestrict, admin.giveAway);
     app.post('/admin-giveaway', adminRestrict, admin.giveAwayHandle);
 

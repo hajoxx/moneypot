@@ -2,30 +2,6 @@ var assert = require('assert');
 var async = require('async');
 var database = require('./database');
 
-exports.index = function(req, res, next) {
-    var user = req.user;
-    assert(user.admin);
-
-    database.getSiteStats(function(err, results) {
-        if (err)
-            return next(new Error('Unable to get site stats: ' + err));
-
-        res.render('stats', {user: user, stats: results});
-    });
-};
-
-exports.cleanGames = function(req, res) {
-    var user = req.user;
-    assert(user.admin);
-
-    database.cleanGames(function(err, result){
-        if (err) {
-            console.error('[INTERNAL_ERROR] unable to clean games got ' + err);
-            return res.render('error');
-        }
-        res.send('Cleaned ' + result + ' games...');
-    });
-};
 
 exports.giveAway = function(req, res) {
     var user = req.user;
@@ -39,7 +15,7 @@ exports.giveAwayHandle = function(req, res, next) {
     assert(user.admin);
 
     if (process.env.NODE_ENV === 'production') {
-        var ref = req.headers['Referer'];
+        var ref = req.get('Referer');
         if (!ref) return next(new Error('possible xsfr'));
 
 
@@ -55,7 +31,7 @@ exports.giveAwayHandle = function(req, res, next) {
 
     var satoshis = Math.round(bits * 100);
 
-    database.addRawGiveaway(giveAwayUsers, satoshis , function(err, ret) {
+    database.addRawGiveaway(giveAwayUsers, satoshis , function(err) {
         if (err) return res.redirect('/admin-giveaway?err=' + err);
 
         res.redirect('/admin-giveaway?m=Done');

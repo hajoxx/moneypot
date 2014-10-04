@@ -51,6 +51,8 @@ function query(query, params, callback) {
     }
 }
 
+exports.query = query;
+
 
 // runner takes (client, callback)
 
@@ -826,15 +828,6 @@ exports.getLeaderBoard = function(callback) {
     });
 };
 
-exports.cleanGames = function(callback) {
-    query("UPDATE games g SET ended=true  WHERE g.ended = false AND g.created < NOW() - interval '5 minutes' " +
-     "AND ((SELECT COUNT(*) FROM plays WHERE game_id = g.id AND cash_out IS NULL) = 0 OR (game_crash = 100))",
-        function(err, result) {
-        if (err) return callback(err);
-        callback(null, result.rowCount);
-    });
-};
-
 exports.getSiteStats = function(callback) {
 
     function as(name, callback) {
@@ -855,10 +848,7 @@ exports.getSiteStats = function(callback) {
             query('SELECT COUNT(*) FROM games', as('games', callback));
         },
         function(callback) {
-            query('SELECT COALESCE(SUM(fundings.amount), 0) sum FROM fundings WHERE amount < 0', as('withdrawals', callback));
-        },
-        function(callback) {
-            query('SELECT SUM(giveaways.amount) FROM giveaways', as('give_aways', callback));
+            query('SELECT COALESCE(SUM(fundings.amount), 0)::bigint sum FROM fundings WHERE amount < 0', as('withdrawals', callback));
         },
         function(callback) {
             query("SELECT COUNT(*) FROM games WHERE ended = false AND created < NOW() - interval '5 minutes'", as('unterminated_games', callback));
@@ -867,19 +857,19 @@ exports.getSiteStats = function(callback) {
             query('SELECT COUNT(*) FROM fundings WHERE amount < 0 AND bitcoin_withdrawal_txid IS NULL', as('pending_withdrawals', callback));
         },
         function(callback) {
-            query('SELECT COALESCE(SUM(fundings.amount), 0) sum FROM fundings WHERE amount > 0', as('deposits', callback));
+            query('SELECT COALESCE(SUM(fundings.amount), 0)::bigint sum FROM fundings WHERE amount > 0', as('deposits', callback));
         },
         function(callback) {
             query('SELECT ' +
                 'COUNT(*) count, ' +
-                'SUM(plays.bet) total_bet, ' +
-                'SUM(plays.cash_out) cashed_out, ' +
-                'SUM(plays.bonus) bonused ' +
+                'SUM(plays.bet)::bigint total_bet, ' +
+                'SUM(plays.cash_out)::bigint cashed_out, ' +
+                'SUM(plays.bonus)::bigint bonused ' +
                 'FROM plays INNER JOIN games ON games.id = plays.game_id', as('plays', callback));
         }
     ];
 
-    async.parallelLimit(tasks, 3, function(err, results) {
+    async.series(tasks, function(err, results) {
        if (err) return callback(err);
 
        var data = {};

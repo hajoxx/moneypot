@@ -20,7 +20,7 @@ var _ = require('lodash');
 // Simplify and de-verbosify timeago output.
 var timeago = require('timeago');
 var timeago_strings = _.extend(timeago.settings.strings, {
-  seconds: '1 min',
+  seconds: '< 1 min',
   minute: '1 min',
   minutes: '%d mins',
   hour: '1 hour',

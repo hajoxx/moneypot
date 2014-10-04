@@ -272,7 +272,6 @@ Game.prototype.placeBet = function(user, betAmount, autoCashOut, callback) {
     self.players[user.username] = { user: user, bet: betAmount, autoCashOut: autoCashOut, status: 'PENDING', playId: null };
     self.pending++;
 
-
     db.placeBet(betAmount, user.id, self.gameId, function(err, playId) {
         self.pending--;
 
