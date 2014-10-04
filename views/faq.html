@@ -23,7 +23,7 @@
                 <li><a href="#odds">What are the game odds?</a></li>
                 <li><a href="#fair">Is the game fair?</a></li>
                 <li><a href="#force">What happens when the server forces people to cash out?</a></li>
-                <li><a href="#offline">Where are funds stored?</a></li>
+                <li><a href="#invest">Can we invest in your site?</a></li>
             </ul>
         </div>
     </div>
@@ -126,7 +126,7 @@
             <dd>
                 <b><a name="high"></a>How high can the game go?</b>
                 <p>
-                    Potentially infinite! However, if during a game we ever are facing a net loss of 200,000 bits or greater,
+                    Potentially infinite! However, if during a game we ever are facing a net loss of 2,000,000 bits (2 BTC) or greater,
                     the server will automatically cash out all players still in the game, forcing them to enjoy an early win and a sizeable profit.
                 </p>
             </dd>
@@ -143,30 +143,21 @@
                     The bonus is a special prize that is awarded to the last people to cash out before the game crashes. Getting the bonus
                     is critical to skillful playing of MoneyPot, as it is the <strong>only</strong> way to overcome house odds.
                 </p>
-                <p>
-                    The total bonus awarded each game is equal to 1 % of the sum of all players' bets. This whole amount is known
-                    as the <code>bonus pool</code>. Once all players' bets are made, a <code>bonus multiplier</code> is created,
-                    which is a number that can be multiplied by a player's bet to compute a suitable bonus for them.
-                    The bonus multiplier is chosen so that the <em>bonus pool</em> is sufficient to pay out
-                    the largest better, should he be the last person to cash out. This is key to making the bonus scheme fair for all,
-                    no matter how much or how little was wagered.
+                <p>1% of each player's stake goes into the bonus pot. So if there are 4 players, betting 400, 300, 200, and 100, there will be 10 bits in the pot.
+                    If the biggest player wins, he gets the whole pot. The site works out the rate he would be getting if he won, ie. 400 bits bet gives 10 bits bonus
+                    - or 1/40th bonus per bit bet. It then applies the same rate to whoever actually wins.
                 </p>
-                <p> Once the game ends, we find the player(s) that cashed out last. If no one cashed out, this is everyone. If
-                    multiple players cashed out at the same price point, we consider these players equal. We multiply their bets
-                    by the <em>bonus multiplier</em> and deduct it from the <em>bonus pool</em>. If there's not enough money left in the bonus pool, all players
-                    that cashed out at that same price point share the remainder, according to their relative bet amounts.
+                <p>So if the 100 bit player wins, he gets 1/40th of 100, or 2.5 bits. That leaves 7.5 bits in the pot,
+                    which goes to the next best placing player(s).
+                </p>
+                <p>Suppose the 200 bit player comes 2nd. He is due 1/40th of 200, or 5 bits. There are still 7.5 bits in the pot,
+                    so he gets the full 5 bits he is due - the same as if he had come in 1st place.
                 </p>
                 <p>
-                    If there is money left in the bonus pool, we move on to the next best cash-out point and repeat the
-                    previous procedure. This continues until the bonus pool is exhausted, or until we have given a
-                    bonus to all players who didn't cash out (which would guarantee the exhaustion of the bonus pool).
+                    Suppose the 300 bit player comes 3rd. He's due 7.5 bits (300/40) but there are only 2.5 bits left in the pot, so he gets those and that's all. There's nothing left for the 4th or worse place players.
                 </p>
                 <p>
-                    The bonus is <strong>not</strong> funded by the house odds, but rather by players. Each game has 1 %
-                    chance of <code>instant-crashing</code>, where the game instantly crashes at the 1x multiplier. If this
-                    happens, <strong>no</strong> bonuses are awarded. So in effect, the bonuses are funded directly by
-                    the players and you compete for it against them. All successful MoneyPot strategies revolve around securing
-                    this bonus.
+                    1% of games will instant crash (0x) and no bonuses will be awarded, all other games have bonuses equal to 1% of the amount wagered.
                 </p>
             </dd>
             <h3>Fairness</h3>
@@ -224,19 +215,12 @@
                     cash-out, we allocate the last cash-out bonus to a random player.
                 </p>
             </dd>
-            <h3>Security</h3>
+            <h3>Investing</h3>
             <dd>
-                <b><a name="offline"></a>Where are funds stored?</b>
+                <b><a name="invest"></a>Can we invest in your site?</b>
                 <p>
-                    100 % offline! All deposit addresses are generated using <a href="https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki">BIP32</a>,
-                    which allows us to deterministically generate addresses that our servers do not have access to. The server can monitor these addresses to credit deposits
-                    but are not able to spend the funds held in them. This has the huge advantage that even if our site were to be compromised, attackers would not be able
-                    to steal a bit!
-                </p>
-                <p>
-                    To instantly process withdrawals of small size we have a <em>completely</em> separate hot wallet that
-                    is not part of the sites bankroll–and we bare all risk for ourselves. For this reason, if the withdrawal amount exceeds
-                    what we store in our hot wallet, the withdrawal will be delayed while we process it manually.
+                    At the moment we do not have the ability to accept bankroll investments, how ever we would recommend
+                    <a href="https://dice.ninja">dice.ninja</a> for investments.
                 </p>
             </dd>
         </dl>

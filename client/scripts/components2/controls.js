@@ -46,8 +46,6 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
                     return 'The bet should be an integer greater than or equal to one';
 
 
-
-
                 if (self.props.engine.balanceSatoshis < bet * 100)
                     return 'Not enough bits';
 

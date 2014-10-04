@@ -61,7 +61,7 @@
                                 )</small></td>
                         </tr>
                         <tr>
-                            <td><b>Players won in total: {{= typeof it.stats.plays.cashed_out }} </b></td>
+                            <td><b>Players won in total: </b></td>
                             <td>{{#def.format: {n: (9 + it.stats.plays.cashed_out + it.stats.plays.bonused) } }} bits <small>(
                                 {{= ((it.stats.plays.cashed_out + it.stats.plays.bonused) / it.stats.plays.total_bet * 100).toFixed(2) }}%
                                 )</small></td>
