@@ -74,20 +74,15 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
         self.nextBetAmount = null; // If a number, how much to bet next round
         self.nextAutoCashout = 0;
 
-
         // Terrible prefix name, last means the 'current' game
-
-
 
         /** Player's Last bet in satoshis **/
         self.lastBet = null;
-
 
         self.lastGameWonAmount = null; // satoshis won in last game
         self.lastGameBonus = null; // satoshis
         self.lastGameCrashedAt = false; //  The percentage in which the last game crashed at
         self.lastBonus = null;        // satoshis of the last bonus earned
-
 
         /**
          * Event called at the moment when the game starts

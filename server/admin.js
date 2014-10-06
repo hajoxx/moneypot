@@ -14,10 +14,11 @@ exports.giveAwayHandle = function(req, res, next) {
     var user = req.user;
     assert(user.admin);
 
+    console.log('Give away referer is: ', req.get('Referer'));
+
     if (process.env.NODE_ENV === 'production') {
         var ref = req.get('Referer');
         if (!ref) return next(new Error('possible xsfr'));
-
 
         if (ref.lastIndexOf('https://www.moneypot.com/admin-giveaway', 0) !== 0)
             return next(new Error('Bad referrer got: ' + ref));

@@ -21,7 +21,6 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
         render: function() {
             var rows = [];
             var gamesList = this.props.engine.tableHistory;
-            console.log('Games list: ', gamesList);
             var cashed_at, bet, profit;
 
             for(var i = 0; i < this.maxGamesShowed; i++) {

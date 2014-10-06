@@ -10,6 +10,13 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
                 engine: React.PropTypes.object.isRequired
             },
 
+            componentWillMount: function() {
+                var self = this;
+                self.props.engine.on('cancel_bet', function() {
+                    self.setState({ auto_play: false });
+                });
+            },
+
             getInitialState: function() {
                 return {
                     bet_size: '1', // in bits
@@ -24,13 +31,17 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
                 if (self.props.engine.balanceSatoshis < 100)
                     return 'Not enough bits to play';
 
-                var bet = parseFloat(self.state.bet_size); // in bits..
 
-                if (Number.isNaN(bet) || bet < 1 || Math.floor(bet) !== bet)
-                    return 'The bet should be an integer greater than or equal to one';
+                if (!/^\d+k*$/.test(self.state.bet_size))
+                    return 'Bet may only contain digits, and k (to mean 1000)';
 
-                if (bet > 1e5)
-                    return 'The bet must be less no more than 100,000 bits';
+                var bet = parseInt(self.state.bet_size.replace(/k/g, '000'));
+
+                if (bet < 1)
+                    return 'The bet should be at least 1 bit';
+
+                if (bet > 1e6)
+                    return 'The bet must be less no more than 1,000,000 bits';
 
                 var co = self.state.cash_out;
 
@@ -54,16 +65,15 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
             },
 
             placeBet: function() {
-                var bet = parseFloat(this.state.bet_size);
+
+                var bet = parseInt(this.state.bet_size.replace(/k/g, '000')) * 100;
                 console.assert(Number.isFinite(bet));
 
-                bet = Math.round(bet * 100);
                 var cashOut = parseFloat(this.state.cash_out);
                 console.assert(Number.isFinite(cashOut));
                 cashOut = Math.round(cashOut * 100);
 
                 console.assert(Number.isFinite(cashOut));
-
 
                 this.props.engine.bet(bet, cashOut, this.state.auto_play, function (err) {
                     if (err) {
@@ -183,8 +193,8 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
                         D.div({ className: 'left-side unselect' },
                             D.span({ className: 'bet-span strong' }, 'Bet'),
                             D.input({
-                                type: 'number',
-                                name: 'bet-size', min: 1,
+                                type: 'text',
+                                name: 'bet-size',
                                 value: self.state.bet_size,
                                 onChange: function(e) {
                                     self.setState({ bet_size: e.target.value })
@@ -201,6 +211,14 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
                 );
             },
 
+            getSendingBet: function() {
+                var cancel;
+                if (this.props.engine.gameState !== 'STARTING')
+                    cancel = D.a({ onClick: this.props.engine.cancelBet.bind(this.props.engine) }, 'cancel');
+
+                return D.span(null, 'Sending bet...', cancel);
+            },
+
             getBetting: function() {
                 var bet = this.props.engine.nextBetAmount;
                 var aco = this.props.engine.nextAutoCashout;
@@ -210,7 +228,7 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
                 return D.div({ className: 'cash-out' },
                     D.a({className: 'big-button-disable unclick' },
                             'Betting ' + Clib.formatSatoshis(bet) + ' ' + grammarBits(bet), msg),
-                    D.div({className: 'cancel'}, 'Sending bet...')
+                    D.div({className: 'cancel'}, this.getSendingBet())
                 );
             },
 
@@ -224,7 +242,6 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
             },
 
             getContents: function() {
-                console.log('next bet amount: ', this.props.engine.nextBetAmount);
                 if (this.props.engine.gameState === 'IN_PROGRESS' && this.props.engine.userState === 'PLAYING') {
                     return this.getCashOut();
                 } else if (this.props.engine.nextBetAmount || // a bet is queued
@@ -275,7 +292,7 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
                                 type: 'checkbox',
                                 name: 'autoplay',
                                 onChange: this.toggleAutoPlay,
-                                checked: this.state.autoPlay,
+                                checked: this.state.auto_play,
                                 disabled: this.invalidBet()
                             }),
                             'auto bet'
