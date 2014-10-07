@@ -90,37 +90,6 @@ exports.formatSatoshis = function(n, decimals) {
     return (n/100).toFixed(decimals).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 };
 
-function gamma (alpha, beta) {
-    if (alpha >= 1)
-        throw new Error('Gamma requires low alpha');
-
-    var x;
-    while (true) {
-        var u = Math.random();
-        var b = (Math.E + alpha) / Math.E;
-        var p = b * u;
-        if (p <= 1.0) {
-            x = Math.pow(p, 1.0 / alpha);
-        } else {
-            x = - Math.log((b - p) / alpha);
-        }
-        var u1 = Math.random();
-        if (p > 1.0) {
-            if (u1 <= Math.pow(x, (alpha - 1.0))) {
-                break;
-            }
-        } else if (u1 <= Math.exp(-x)) {
-            break;
-        }
-    }
-    return x * beta;
-}
-
-exports.gRand = function(avg) {
-    var beta = avg * 5;
-    return Math.round(gamma(avg / beta, beta));
-};
-
 exports.isInt = function (n) {
     return (typeof n === 'number') && (n === (n | 0));
 };
