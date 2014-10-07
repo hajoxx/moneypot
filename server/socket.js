@@ -4,7 +4,7 @@ var database = require('./database');
 var lib = require('./lib');
 var withdraw = require('../server/withdraw.js');
 
-module.exports = function(server,game) {
+module.exports = function(server,game,chat) {
     var io = socketio(server);
 
     (function() {
@@ -20,10 +20,17 @@ module.exports = function(server,game) {
         on('game_crash');
         on('cashed_out');
         on('player_bet');
-        on('say');
     })();
 
-    var chatHistory = new CBuffer(40);
+    (function() {
+        function on(event) {
+            chat.on(event, function (data) {
+                io.to('joined').emit(event, data);
+            });
+        }
+
+        on('msg');
+    })();
 
     io.on('connection', onConnection);
 
@@ -73,7 +80,7 @@ module.exports = function(server,game) {
 
             function cont(loggedIn) {
                 var res = game.getInfo();
-                res['chat'] = chatHistory.toArray();
+                res['chat'] = chat.getHistory();
                 res['table_history'] = game.gameHistory.getHistory();
                 res['username'] = loggedIn ? loggedIn.username : null;
                 res['balance_satoshis'] = loggedIn ? loggedIn.balance_satoshis : null;
@@ -176,19 +183,62 @@ module.exports = function(server,game) {
             if (message.length == 0 || message.length > 500)
                 return sendError(socket, '[say] invalid message side');
 
-            if (loggedIn.admin && message === '/shutdown') {
-                game.shutDown();
+            var cmdReg = /^\/([a-zA-z]*)\s*(.*)$/;
+            var cmdMatch = message.match(cmdReg);
+
+            if (cmdMatch) {
+                var cmd  = cmdMatch[1];
+                var rest = cmdMatch[2];
+
+                switch (cmd) {
+                case 'shutdown':
+                    if (loggedIn.admin) {
+                        game.shutDown();
+                    } else {
+                        return sendErrorChat(socket, 'Not an admin.');
+                    }
+                    break;
+                case 'mute':
+                case 'shadowmute':
+                    if (loggedIn.moderator) {
+                        var muteReg = /^\s*([a-zA-Z0-9_\-]*)\s*([1-9]\d*[dhms])?\s*$/;
+                        var muteMatch = rest.match(muteReg);
+
+                        if (!muteMatch)
+                            return sendErrorChat(socket, 'Usage: /mute <user> [time]');
+
+                        var username = muteMatch[1];
+                        var timespec = muteMatch[2] ? muteMatch[2] : "30m";
+
+                        chat.mute(cmd === 'shadowmute', loggedIn, username, timespec,
+                                  function (err) {
+                                      if (err)
+                                          return sendErrorChat(socket, err);
+                                  });
+
+                        if (cmd === 'shadowmute') {
+                            socket.emit('msg', {
+                                time: new Date(),
+                                type: 'info',
+                                message: 'Shadow muted ' + username + ' for ' + timespec
+                            });
+                        }
+                    } else {
+                        return sendErrorChat(socket, 'Not a moderator.');
+                    }
+                    break;
+                default:
+                    socket.emit('msg', {
+                        time: new Date(),
+                        type: 'error',
+                        message: 'Unknown command ' + cmd
+                    });
+                    break;
+                }
                 return;
             }
 
-            var msg = {
-                time: new Date(),
-                message: message,
-                username: loggedIn.username
-            };
-
-            chatHistory.push(msg);
-            io.to('joined').emit('say', msg);
+            chat.say(loggedIn, message);
         });
 
 
@@ -204,6 +254,15 @@ module.exports = function(server,game) {
 
             autoCashOut = amount;
             game.updateAutoCashOut(loggedIn, autoCashOut);
+        });
+    }
+
+    function sendErrorChat(socket, message) {
+        console.warn('Warning: sending client: ', message);
+        socket.emit('msg', {
+            time: new Date(),
+            type: 'error',
+            message: message
         });
     }
 

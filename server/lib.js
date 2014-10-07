@@ -132,3 +132,23 @@ exports.hasOwnProperty = function(obj, propName) {
 exports.getOwnProperty = function(obj, propName) {
     return Object.prototype.hasOwnProperty.call(obj, propName) ? obj[propName] : undefined;
 };
+
+exports.parseTimeString = function(str) {
+    var reg   = /^\s*([1-9]\d*)([dhms])\s*$/;
+    var match = str.match(reg);
+
+    if (!match)
+        return null;
+
+    var num = parseInt(match[1]) * 1000;
+    switch (match[2]) {
+    case 'd': num *= 24;
+    case 'h': num *= 60;
+    case 'm': num *= 60;
+    case 's': num *= 1000;
+    }
+
+
+    assert(num > 0);
+    return num;
+}

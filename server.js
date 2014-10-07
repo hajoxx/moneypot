@@ -11,6 +11,7 @@ var routes = require('./server/routes');
 var socket = require('./server/socket');
 var database = require('./server/database');
 var Game = require('./server/game');
+var Chat = require('./server/chat');
 var GameHistory = require('./server/gamehistory');
 var lib = require('./server/lib');
 var dotCaching = true;
@@ -132,10 +133,12 @@ database.getGameHistory(function(err,rows) {
 
     var gameHistory = new GameHistory(rows);
     var game = new Game(gameHistory);
+    var chat = new Chat();
+
     process.on('SIGTERM', function() {
         console.log('Got SIGTERM... triggering emergency shutdown');
         game.shutDownFast();
     });
 
-    socket(server,game);
+    socket(server, game, chat);
 });

@@ -244,10 +244,10 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
         });
 
 
-        self.ws.on('say', function(data) {
+        self.ws.on('msg', function(data) {
             self.chat.push(data);
 
-            self.trigger('say', data);
+            self.trigger('msg', data);
         });
 
         self.ws.on('update', function() {

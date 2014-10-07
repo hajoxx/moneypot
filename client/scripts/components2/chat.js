@@ -1,14 +1,54 @@
 define(['lib/react', 'lib/clib'], function(React, Clib) {
     var D = React.DOM;
 
-    //Priorities:
-    // -1. Bad
-    //  0. Neutral
-    //  1. Good
-    //  2. Notice
-
     /* Constants */
     var SCROLL_OFFSET = 120;
+
+    function renderMessage(message, index) {
+        var pri;
+        switch(message.type) {
+        case 'say':
+            switch(message.role) {
+            case 'admin':
+                pri = 'msg-admin-message';
+                break;
+            case 'moderator':
+                pri = 'msg-moderator-message';
+                break;
+            case 'user':
+            default:
+                pri = 'msg-chat-message';
+                break;
+            }
+            return D.li({ className: pri , key: 'msg' + index },
+                        D.a({ href: '/user/' + message.username,
+                              target: '_blank'
+                            },
+                            '<'+message.username+'>'),
+                        ' ' + message.message);
+        case 'mute':
+            pri = 'msg-mute-message';
+            return D.li({ className: pri , key: 'msg' + index },
+                        D.a({ href: '/user/' + message.moderator,
+                              target: '_blank'
+                            },
+                            '*** <'+message.moderator+'>'),
+                        ' muted ',
+                        D.a({ href: '/user/' + message.username,
+                              target: '_blank'
+                            },
+                            '<'+message.username+'>'),
+                        ' for ' + message.timespec);
+        case 'error':
+        case 'info':
+            pri = 'msg-info-message';
+            return D.li({ className: pri, key: 'msg' + index },
+                        D.span(null, ' *** ' + message.message));
+            break;
+        default:
+            break;
+        }
+    };
 
     return React.createClass({
         displayName: 'Chat',
@@ -32,62 +72,31 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
 
         render: function() {
             var self = this;
-            var messages = this.props.engine.chat.map(function(message, index) {
-                var pri, fa;
-                switch(message.pri) {
-                    case -2:
-                        pri = 'msg-bad';
-                        fa = 'fa fa-bomb';
-                        break;
-                    case -1:
-                        pri = 'msg-warn';
-                        fa = 'fa fa-warning';
-                        break;
-                    case 0:
-                        pri = 'msg-message';
-                        fa = 'fa fa-dot-circle-o';
-                        break;
-                    case 1:
-                        pri = 'msg-neutral';
-                        fa = 'fa fa-spinner';
-                        break;
-                    case 2: //not sure what is it...
-                        pri = 'msg-good';
-                        fa = 'fa fa-money';
-                        var bonus;
-                        if (message.winner)
-                            bonus = [D.span({ key: 'usr-txt'}, ' - User '), D.a({ href: '/user/' + message.winner, target: '_blank', key: 'usr-lnk' }, message.winner), D.span({ key: 'usr-bns' }, ' got ' + Clib.formatSatoshis(message.bonus) + ' bonus')];
-                        else
-                            bonus = null;
-                        //return D.li({ className: pri , key: 'msg' + index }, ' Game crashed @ ' + message.payout, bonus );
-                        break;
-                    case 3:
-                        pri = 'msg-notice';
-                        fa = 'fa fa-gamepad';
-                        break;
-                    case 4:
-                        pri = 'msg-game-info';
-                        fa = 'fa fa-info';
-                        return D.li({ className: pri + ' hint--bottom', key: 'msg' + index, rel: 'tooltip', 'data-hint': 'Click to copy game info', onClick: self.copyGameInfo(message) }, D.i({ className: fa }, null), ' ' + message.msg);
-                    default:
-                        pri = 'msg-chat-message';
-                        fa = '';
-                        return D.li({ className: pri , key: 'msg' + index }, D.i({ className: fa }, null), D.a({ href: '/user/' + message.username, target: '_blank' }, '<'+message.username+'>'), ' ' + message.message);
-                        break;
-                }
-            });
+            var messages = this.props.engine.chat.map(renderMessage);
             var chatInput;
-            if(this.props.engine.username) //TODO: Engine should have a variable loggedIn or similar.
-                chatInput = D.input({ className: 'chat-input', onKeyDown: this.sendMessage, ref: 'input', placeholder: 'Type here...' });
-            else
-                chatInput = D.input({ className: 'chat-input', onKeyDown: this.sendMessage, ref: 'input', placeholder: 'Log in to chat...', disabled: true });
 
-            return D.div({ className: 'messages-container' }, 
-                D.ul({ className: 'messages', ref: 'messages'}, 
-                    messages
-                ),
-                chatInput
-            );
+            if(this.props.engine.username) //TODO: Engine should have a variable loggedIn or similar.
+                chatInput = D.input(
+                    { className: 'chat-input',
+                      onKeyDown: this.sendMessage,
+                      ref: 'input',
+                      placeholder: 'Type here...'
+                    });
+            else
+                chatInput = D.input(
+                    { className: 'chat-input',
+                      onKeyDown: this.sendMessage,
+                      ref: 'input',
+                      placeholder: 'Log in to chat...',
+                      disabled: true
+                    });
+
+            return D.div({ className: 'messages-container' },
+                         D.ul({ className: 'messages', ref: 'messages'},
+                              messages
+                             ),
+                         chatInput
+                        );
         },
 
         sendMessage: function(e) {
