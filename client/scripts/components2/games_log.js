@@ -1,6 +1,8 @@
 define(['lib/react', 'lib/clib'], function(React, Clib) {
     var D = React.DOM;
 
+    var maxGamesShowed = 10;
+
     return React.createClass({
         displayName: 'gamesLog',
 
@@ -8,25 +10,21 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
             engine: React.PropTypes.object.isRequired
         },
 
-        componentWillMount: function() {
-            this.maxGamesShowed = 10;
-        },
-
-        gameDetails: function(gameId) {
-            return function() {
-                window.open('/game/'+gameId, '_blank');
+        gameDetails: function (gameId) {
+            return function () {
+                window.open('/game/' + gameId, '_blank');
             }
         },
 
-        render: function() {
-            var rows = [];
-            var gamesList = this.props.engine.tableHistory;
-            var cashed_at, bet, profit;
+        render: function () {
+            var self = this;
 
-            for(var i = 0; i < this.maxGamesShowed; i++) {
 
-                //If we played this game
-                var player = gamesList[i].player_info[this.props.engine.username];
+
+            var rows = self.props.engine.tableHistory.slice(0, maxGamesShowed).map(function (game, i) {
+                var cashed_at, bet, profit;
+
+                var player = game.player_info[self.props.engine.username];
                 if (player) {
                     bet = Clib.formatSatoshis(player.bet);
 
@@ -42,24 +40,24 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
                     if (player.bonus)
                         profit = profit + ' (+' + Clib.formatSatoshis(player.bonus) + ')';
 
-                //If we did'nt play
+                    //If we did'nt play
                 } else {
                     cashed_at = '-';
                     bet = '-';
                     profit = '-';
                 }
 
-                rows.push(D.tr({ key: 'game_' + i, onClick: this.gameDetails(gamesList[i].game_id) },
-                    D.td(null, Clib.formatSatoshis(gamesList[i].game_crash), D.i(null, 'x')),
+                return D.tr({ key: 'game_' + i, onClick: self.gameDetails(game.game_id) },
+                    D.td(null, Clib.formatSatoshis(game.game_crash), D.i(null, 'x')),
                     D.td(null, cashed_at),
                     D.td(null, bet),
                     D.td(null, profit)
-                ));
-            }
+                );
+            });
 
-            return D.table({ className: 'games-log' }, 
+            return D.table({ className: 'games-log' },
                 D.thead(null,
-                    D.tr(null, 
+                    D.tr(null,
                         D.th(null, 'Crash'),
                         D.th(null, '@'),
                         D.th(null, 'Bet'),
@@ -67,9 +65,10 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
                     )
                 ),
                 D.tbody(null,
-                     rows
+                    rows
                 )
             );
         }
+
     });
 });
