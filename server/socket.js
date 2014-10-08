@@ -209,20 +209,21 @@ module.exports = function(server,game,chat) {
 
                         var username = muteMatch[1];
                         var timespec = muteMatch[2] ? muteMatch[2] : "30m";
+                        var shadow   = cmd === 'shadowmute';
 
-                        chat.mute(cmd === 'shadowmute', loggedIn, username, timespec,
+                        chat.mute(shadow, loggedIn, username, timespec,
                                   function (err) {
                                       if (err)
                                           return sendErrorChat(socket, err);
-                                  });
 
-                        if (cmd === 'shadowmute') {
-                            socket.emit('msg', {
-                                time: new Date(),
-                                type: 'info',
-                                message: 'Shadow muted ' + username + ' for ' + timespec
-                            });
-                        }
+                                      if (shadow) {
+                                          socket.emit('msg', {
+                                              time: new Date(),
+                                              type: 'info',
+                                              message: 'Shadow muted ' + username + ' for ' + timespec
+                                          });
+                                      }
+                                  });
                     } else {
                         return sendErrorChat(socket, 'Not a moderator.');
                     }

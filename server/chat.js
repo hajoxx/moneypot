@@ -85,6 +85,12 @@ Chat.prototype.mute = function(shadow, moderatorInfo, username, time, callback) 
             callback(err);
             return;
         }
+        assert(userInfo);
+
+        if (userInfo.admin) {
+            callback('Cannot mute an admin');
+            return;
+        }
 
         // Overriding previous mutes.
         self.muted[userInfo.username] =
