@@ -201,7 +201,7 @@ module.exports = function(server,game,chat) {
                 case 'mute':
                 case 'shadowmute':
                     if (loggedIn.moderator) {
-                        var muteReg = /^\s*([a-zA-Z0-9_\-]*)\s*([1-9]\d*[dhms])?\s*$/;
+                        var muteReg = /^\s*([a-zA-Z0-9_\-]+)\s*([1-9]\d*[dhms])?\s*$/;
                         var muteMatch = rest.match(muteReg);
 
                         if (!muteMatch)
