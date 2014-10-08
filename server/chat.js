@@ -87,7 +87,7 @@ Chat.prototype.mute = function(shadow, moderatorInfo, username, time, callback) 
         }
 
         // Overriding previous mutes.
-        self.muted[username] =
+        self.muted[userInfo.username] =
             { time:        now,
               moderator:   moderatorInfo.username,
               timespec:    time,
@@ -100,7 +100,7 @@ Chat.prototype.mute = function(shadow, moderatorInfo, username, time, callback) 
                 time:        now,
                 type:        'mute',
                 moderator:   moderatorInfo.username,
-                username:    username,
+                username:    userInfo.username,
                 timespec:    time
             };
 
