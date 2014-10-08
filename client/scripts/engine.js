@@ -1,6 +1,6 @@
 define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events, _) {
 
-    var defaultHost = window.document.location.host === 'www.moneypot.com' ? 'https://moneypot.herokuapp.com' : window.document.location.host;
+    var defaultHost = window.document.location.host === 'www.moneypot.com' ? 'https://moneypot.jit.su' : window.document.location.host;
     
     var TICK_LAG_LAPSE = 600;
     var STOP_PREDICTING_LAPSE = 300;
