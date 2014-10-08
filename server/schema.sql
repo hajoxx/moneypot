@@ -194,7 +194,7 @@ CREATE TABLE sessions (
     ott boolean DEFAULT false
 );
 
-CREATE TYPE UserClass AS ENUM ('user', 'moderator', 'admin');
+CREATE TYPE UserClassEnum AS ENUM ('user', 'moderator', 'admin');
 
 --
 -- TOC entry 180 (class 1259 OID 87724)
@@ -208,7 +208,7 @@ CREATE TABLE users (
     email text,
     password text NOT NULL,
     balance_satoshis bigint DEFAULT 0 NOT NULL,
-    userclass UserClass DEFAULT 'user' NOT NULL,
+    userclass UserClassEnum DEFAULT 'user' NOT NULL,
     CONSTRAINT users_balance_satoshis_check CHECK ((balance_satoshis >= 0))
 );
 
