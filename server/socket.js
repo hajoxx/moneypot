@@ -238,7 +238,7 @@ module.exports = function(server,game,chat) {
                 return;
             }
 
-            chat.say(loggedIn, message);
+            chat.say(socket, loggedIn, message);
         });
 
 

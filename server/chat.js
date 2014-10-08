@@ -15,9 +15,14 @@ function Chat() {
     /*
       Collection of muted users.
         key:   Username
-        value: Date object until when the user is muted
+        value: Object with the following fields
+                  time:       Date object when the user was muted
+                  moderator:  The username of the moderator that muted the user
+                  timespec:   Initial (nominal diff) time the user has been muted
+                  end:        Until when the user is muted
+                  shadow:     If the mute is a shadow mute
     */
-    self.muted = new Object();
+    self.muted = {};
 
     events.EventEmitter.call(self);
 }
@@ -28,19 +33,9 @@ Chat.prototype.getHistory = function () {
     return this.chatTable.toArray();
 }
 
-Chat.prototype.say = function(userInfo, message) {
+Chat.prototype.say = function(socket, userInfo, message) {
     var self = this;
     var now = new Date();
-
-    if (lib.hasOwnProperty(self.muted, userInfo.username)) {
-        if (self.muted[userInfo.username] < now) {
-            // User has been muted before, but enough time has passed.
-            delete self.muted[userInfo.username];
-        } else {
-            // User is muted. Ignore the message.
-            return 'USER_IS_MUTED';
-        }
-    }
 
     var msg = {
         time:      now,
@@ -50,10 +45,31 @@ Chat.prototype.say = function(userInfo, message) {
         message:   message
     };
 
-    console.log(msg);
+    if (lib.hasOwnProperty(self.muted, userInfo.username)) {
+        var muted = self.muted[userInfo.username];
+        if (muted.end < now) {
+            // User has been muted before, but enough time has passed.
+            delete self.muted[userInfo.username];
+        } else if (muted.shadow) {
+            // User is shadow muted. Echo the message back to the
+            // user but don't broadcast.
+            socket.emit('msg', msg);
+            return;
+        } else {
+            // Inform the user that he is still muted.
+            socket.emit('msg',
+                        { time: now,
+                          type: 'info',
+                          message: 'You\'re muted. ' +
+                            lib.printTimeString(muted.end - now) +
+                            ' remaining'
+                        });
+            return;
+        }
+    }
+
     self.chatTable.push(msg);
     self.emit('msg', msg);
-    return null;
 }
 
 Chat.prototype.mute = function(shadow, moderatorInfo, username, time, callback) {
@@ -70,12 +86,14 @@ Chat.prototype.mute = function(shadow, moderatorInfo, username, time, callback) 
             return;
         }
 
-        if (lib.hasOwnProperty(self.muted, username)) {
-            // User has already been muted.
-            var end2 = self.muted[username];
-            end = new Date(Math.max(end,end2));
-        }
-        self.muted[username] = end;
+        // Overriding previous mutes.
+        self.muted[username] =
+            { time:        now,
+              moderator:   moderatorInfo.username,
+              timespec:    time,
+              end:         end,
+              shadow:      shadow
+            };
 
         if (!shadow) {
             var msg = {
