@@ -33,7 +33,7 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
                               target: '_blank'
                             },
                             '*** <'+message.moderator+'>'),
-                        ' muted ',
+                        message.shadow ? ' shadow muted ' : ' muted ',
                         D.a({ href: '/user/' + message.username,
                               target: '_blank'
                             },

@@ -101,17 +101,16 @@ Chat.prototype.mute = function(shadow, moderatorInfo, username, time, callback) 
               shadow:      shadow
             };
 
-        if (!shadow) {
-            var msg = {
-                time:        now,
-                type:        'mute',
-                moderator:   moderatorInfo.username,
-                username:    userInfo.username,
-                timespec:    time
-            };
+        var msg = {
+            time:        now,
+            type:        'mute',
+            moderator:   moderatorInfo.username,
+            username:    userInfo.username,
+            timespec:    time,
+            shadow:      shadow
+        };
 
-            self.emit('msg', msg);
-        }
+        self.emit('msg', msg);
         callback(null);
     });
 }
