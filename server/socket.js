@@ -22,15 +22,12 @@ module.exports = function(server,game,chat) {
         on('player_bet');
     })();
 
-    (function() {
-        function on(event) {
-            chat.on(event, function (data) {
-                io.to('joined').emit(event, data);
-            });
-        }
-
-        on('msg');
-    })();
+    // Forward chat messages to clients.
+    chat.on('msg', function (msg) {
+        var group = msg.type == 'mute' && msg.shadow
+            ? 'moderators' : 'joined';
+        io.to(group).emit('msg', msg);
+    });
 
     io.on('connection', onConnection);
 
@@ -104,6 +101,9 @@ module.exports = function(server,game,chat) {
         console.log('Client joined: ', clientCount, ' - ', loggedIn ? loggedIn.username : '~guest~');
 
         socket.join('joined');
+        if (loggedIn && loggedIn.moderator) {
+            socket.join('moderators');
+        }
 
         socket.on('disconnect', function() {
             --clientCount;
@@ -215,14 +215,6 @@ module.exports = function(server,game,chat) {
                                   function (err) {
                                       if (err)
                                           return sendErrorChat(socket, err);
-
-                                      if (shadow) {
-                                          socket.emit('msg', {
-                                              time: new Date(),
-                                              type: 'info',
-                                              message: 'Shadow muted ' + username + ' for ' + timespec
-                                          });
-                                      }
                                   });
                     } else {
                         return sendErrorChat(socket, 'Not a moderator.');
