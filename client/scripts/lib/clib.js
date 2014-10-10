@@ -1,4 +1,4 @@
-define(['lib/seedrandom'], function(Seedrandom) {
+define(['lib/seedrandom', 'lib/lodash'], function(Seedrandom, _) {
 
     var rng;
     var currentTime;
@@ -21,7 +21,7 @@ define(['lib/seedrandom'], function(Seedrandom) {
 
             var textNum = text.replace(',', '');
             var bits = parseFloat(textNum);
-            if (Number.isNaN(bits) || bits < 0)
+            if (_.isNaN(bits) || bits < 0)
                 return null;
             return bits*100;
         },
