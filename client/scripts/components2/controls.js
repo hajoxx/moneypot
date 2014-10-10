@@ -1,6 +1,10 @@
-define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
+define(['lib/react',
+        'lib/clib',
+        'lib/lodash',
+        'components2/payout',
+        'components2/countdown'],
 
-    function(React, Clib, Payout, Countdown) {
+function(React, Clib, _, Payout, Countdown) {
         var D = React.DOM;
 
         return React.createClass({
@@ -50,10 +54,10 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
                 }
 
                 co = parseFloat(co);
-                console.assert(!Number.isNaN(co));
+                console.assert(!_.isNaN(co));
 
 
-                if (Number.isNaN(bet) || co < 1 || Math.floor(bet) !== bet)
+                if (_.isNaN(bet) || co < 1 || Math.floor(bet) !== bet)
                     return 'The bet should be an integer greater than or equal to one';
 
 
@@ -67,13 +71,13 @@ define(['lib/react', 'lib/clib', 'components2/payout', 'components2/countdown'],
             placeBet: function() {
 
                 var bet = parseInt(this.state.bet_size.replace(/k/g, '000')) * 100;
-                console.assert(Number.isFinite(bet));
+                console.assert(_.isFinite(bet));
 
                 var cashOut = parseFloat(this.state.cash_out);
-                console.assert(Number.isFinite(cashOut));
+                console.assert(_.isFinite(cashOut));
                 cashOut = Math.round(cashOut * 100);
 
-                console.assert(Number.isFinite(cashOut));
+                console.assert(_.isFinite(cashOut));
 
                 this.props.engine.bet(bet, cashOut, this.state.auto_play, function (err) {
                     if (err) {

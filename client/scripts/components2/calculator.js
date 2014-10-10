@@ -13,9 +13,9 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
         },
 
         checkErr: function(a, c) {
-            if (Number.isNaN(a))
+            if (isNaN(a))
                 return 'Table amount must be set';
-            else if (Number.isNaN(c))
+            else if (isNaN(c))
                 return 'Cashout amount must be set';
             if (a < 1)
                 return 'Table amount must be at least 1';

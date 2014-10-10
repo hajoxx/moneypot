@@ -1,4 +1,4 @@
-define(['lib/clib'], function(Clib) {
+define(['lib/clib', 'lib/lodash'], function(Clib, _) {
 
     function Graph(width, height) {
         //Canvas settings
@@ -162,7 +162,7 @@ define(['lib/clib'], function(Clib) {
 
         //Function to calculate the plotting values of the Axes
         function stepValues(x) {
-            console.assert(Number.isFinite(x));
+            console.assert(_.isFinite(x));
             var c = .4;
             var r = .1;
             while (true) {
