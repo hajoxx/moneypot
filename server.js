@@ -1,6 +1,8 @@
 var assert = require('assert');
 var compression = require('compression');
 var express = require('express');
+var fs = require('fs');
+var https = require('https');
 var path = require('path');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
@@ -60,11 +62,6 @@ app.set("view engine", "html");
 app.disable('x-powered-by');
 app.enable('trust proxy');
 
-var port = process.env.PORT || 3841;
-
-var server = app.listen(port, function(){
-    console.log('Listening on port ', port);
-});
 
 app.use(compression());
 
@@ -124,10 +121,24 @@ function errorHandler(err, req, res, next) {
 routes(app);
 app.use(errorHandler);
 
+
+
+var port = process.env.PORT || 3841;
+var options = {
+    key: fs.readFileSync(process.env.HTTPS_KEY || 'key.pem'),
+    cert: fs.readFileSync(process.env.HTTPS_CERT || 'cert.pem')
+};
+
+var server = https.createServer(options, app).listen(port, function() {
+    console.log('Listening on port ', port, ' on HTTPS!');
+});
+
+
+
 database.getGameHistory(function(err,rows) {
     if (err) {
         console.error('[INTERNAL_ERROR] got error: ', err,
-                      'Unable to get table history');
+            'Unable to get table history');
         throw err;
     }
 
