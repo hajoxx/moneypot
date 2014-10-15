@@ -10,7 +10,7 @@
                     <tbody>
                         <tr>
                             <td>
-                                <b>Pending Withdraws</b><br />
+                                <b>Pending Withdraws:</b><br />
                                 <small>(withdrawals that require admin to look at)</small>
 
                             </td>
@@ -18,7 +18,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <b>Unterminated Games</b><br />
+                                <b>Unterminated Games:</b><br />
                                 <small>(games that require admin to look at)</small>
                             </td>
                             <td>{{=it.stats.unterminated_games.count}} </td>
@@ -45,7 +45,7 @@
                             <td></td>
                         </tr>
                         <tr>
-                            <td><b>Total Wagered</b></td>
+                            <td><b>Total Wagered:</b></td>
                             <td>{{#def.format: {n: it.stats.plays.total_bet } }} bits</td>
                         </tr>
                         <tr>
@@ -67,7 +67,7 @@
                                 )</small></td>
                         </tr>
                         <tr>
-                            <td class="strong">Our Profit</td>
+                            <td class="strong">Our Profit:</td>
                             <td class="strong">
                                 {{#def.format: {n: it.stats.plays.total_bet - it.stats.plays.cashed_out - it.stats.plays.bonused  } }} bits
                                 <small>(
@@ -84,11 +84,11 @@
                             <td>{{=it.stats.users.count}}</td>
                         </tr>
                         <tr>
-                            <td><b>Total Plays</b></td>
+                            <td><b>Total Plays:</b></td>
                             <td>{{=it.stats.plays.count }}</td>
                         </tr>
                         <tr>
-                            <td><b>Total Games</b></td>
+                            <td><b>Total Games:</b></td>
                             <td>{{=it.stats.games.count}}</td>
                         </tr>
                     </tbody>
