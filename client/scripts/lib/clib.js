@@ -79,16 +79,16 @@ define(['lib/seedrandom', 'lib/lodash'], function(Seedrandom, _) {
 
                Combining with the first phase of the RNG we get the probability
                of losing
-                     0.01 + 0.99 * (1 - 99 / (factor-1))
+                     1/101 + 100/101 * (1 - 99 / (factor-1))
                and the win probability
-                  1 - 0.01 - 0.99 * (1 - 99 / (factor-1)).
-                = 0.99 - 0.99 * (1 - 99 / (factor-1))
-                = 0.99 * (1 - (1 - 99 / (factor-1))
-                = 0.99 * (99 / (factor-1))
-                = 0.99 * (99 / (factor-1))
-                = 9801 / (100*(factor-1))
+                  1 - 1/101 - 100/101 * (1 - 99 / (factor-1)).
+                = 100/101 - 100/101 * (1 - 99 / (factor-1))
+                = 100/101 * (1 - (1 - 99 / (factor-1))
+                = 100/101 * (99 / (factor-1))
+                = 100/101 * (99 / (factor-1))
+                = 9900 / (101*(factor-1))
              */
-            return 9801 / (100*(factor-1));
+            return 9900 / (101*(factor-1));
         },
 
         profit: function(amount, cashOut) {
@@ -107,7 +107,7 @@ define(['lib/seedrandom', 'lib/lodash'], function(Seedrandom, _) {
              var v1,v2,v3;
 
              // Instant crash.
-             p1 = 0.01;
+             p1 = 1/101;
              v1 = amount;
 
              // Player win.
