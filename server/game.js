@@ -612,6 +612,8 @@ function inverseGrowth(result) {
     return c * Math.log(0.01 * result);
 }
 
+// calculate game crash in %
+//   e.g. 150 = 1.50x crash
 function genGameCrash() {
     if (process.env.CRASH_AT) { // Set env variable to simulate a crash at...
         if (process.env.NODE_ENV == 'production') throw new Error('wtf? manual crashing on prod?');
@@ -621,9 +623,7 @@ function genGameCrash() {
         return at;
     }
 
-    // calculate game crash in %
-    //   e.g. 150 = 1.50x crash
-    var ic = cryptoRand.randInt(0, 99);
+    var ic = cryptoRand.randInt(0, 100); // 1 in 101 chance
     if (ic === 0)
         return 0; // instant crash;
 
