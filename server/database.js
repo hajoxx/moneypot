@@ -428,7 +428,7 @@ exports.getGame = function(gameId, callback) {
 
 exports.getGamesPlays = function(gameId, callback) {
     query('SELECT u.username, p.bet, p.cash_out, p.bonus FROM plays p, users u ' +
-        ' WHERE game_id = $1 AND p.user_id = u.id ORDER by p.cash_out DESC NULLS LAST', [gameId],
+        ' WHERE game_id = $1 AND p.user_id = u.id ORDER by p.cash_out/p.bet DESC NULLS LAST, p.bet DESC', [gameId],
         function(err, result) {
             if (err) return callback(err);
             return callback(null, result.rows);
