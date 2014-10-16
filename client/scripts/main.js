@@ -1,10 +1,9 @@
 define([
     'lib/react',
     'components2/game',
-    'lib/socket.io-1.0.6',
     'lib/clib',
     'engine'
-], function(React, Game, io, Clib, Engine) {
+], function(React, Game, Clib, Engine) {
 
     var engine = new Engine();
 
@@ -17,7 +16,6 @@ define([
     var elem = document.getElementById('balance_bits');
 
     function render() {
-
         React.renderComponent(
             Game({ engine: engine }),
             document.getElementById('game')

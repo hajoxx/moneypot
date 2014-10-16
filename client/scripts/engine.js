@@ -1,6 +1,10 @@
-define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events, _) {
+define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash'], function(io, Events, _) {
 
-    var defaultHost = window.document.location.host === 'www.moneypot.com' ? 'https://game.moneypot.com' : window.document.location.host;
+    var defaultHost = window.document.location.host === 'www.moneypot.com' ?
+        'https://game.moneypot.com' :
+        window.document.location.host.replace(/:3841$/, ':3842');
+
+    console.log('Connecting to: ', defaultHost);
     
     var TICK_LAG_LAPSE = 600;
     var STOP_PREDICTING_LAPSE = 300;
