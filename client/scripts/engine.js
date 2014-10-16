@@ -291,6 +291,8 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
                             self.playerInfo[self.username] &&
                             !self.playerInfo[self.username].stopped_at
                                 ? 'PLAYING' : 'WATCHING';
+                        if(self.userState === 'PLAYING')
+                            self.lastBet = self.playerInfo[self.username].bet;
 
                         // set current game properties
                         self.gameId = resp.game_id;
@@ -302,6 +304,7 @@ define(['lib/socket.io-1.0.6', 'lib/events', 'lib/lodash'], function(io, Events,
 
                         if (self.gameState == 'IN_PROGRESS')
                             self.lastGameTick = Date.now();
+
                         if (self.gameState == 'ENDED')
                             self.lastGameCrashedAt = resp.crashed_at;
 

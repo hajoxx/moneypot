@@ -224,10 +224,17 @@ function(React, Clib, _, Payout, Countdown) {
             },
 
             getBetting: function() {
-                var bet = this.props.engine.nextBetAmount;
                 var aco = this.props.engine.nextAutoCashout;
+                var bet;
 
-                var msg = ' with auto cash-out at ' + (aco / 100) + 'x';
+                if(this.props.engine.lastBet == null)
+                    bet = this.props.engine.nextBetAmount;
+                else
+                    bet = this.props.engine.lastBet;
+
+                var msg = null;
+                if(this.props.engine.nextAutoCashout)
+                    msg = ' with auto cash-out at ' + (aco / 100) + 'x';
 
                 return D.div({ className: 'cash-out' },
                     D.a({className: 'big-button-disable unclick' },
@@ -264,7 +271,7 @@ function(React, Clib, _, Payout, Countdown) {
             },
 
             render: function() {
-                console.log(this.props.engine.gameState, ' -> ', this.props.engine.userState);
+                //console.log(this.props.engine.gameState, ' -> ', this.props.engine.userState);
 
                 var self = this;
 
