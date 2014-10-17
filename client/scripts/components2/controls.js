@@ -333,7 +333,7 @@ define(['lib/react',
 
                     D.div({ className: 'hash-cont'  },
                         D.span({ className: 'hash-text' }, 'Hash'),
-                        D.input({ className: 'hash-input', type: 'text', value: this.props.engine.hash }),
+                        D.input({ className: 'hash-input', type: 'text', value: this.props.engine.hash, readOnly: true }),
                         D.div({ className: 'hash-copy-cont', onClick: self.copyHash },
                             D.span({ className: 'hash-copy' }, D.i({ className: 'fa fa-clipboard' })))
                     )
