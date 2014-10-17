@@ -31,12 +31,28 @@ exports.show = function(req, res, next) {
 
  exports.getLeaderBoard = function(req, res, next) {
      var user = req.user;
+     var by = req.query.by;
 
-     database.getLeaderBoard(function(err, leaders) {
+     var byDb, order;
+     switch(by) {
+         case 'net_desc':
+             byDb = 'net_profit';
+             order = 'DESC';
+             break;
+         case 'net_asc':
+             byDb = 'net_profit';
+             order = 'ASC';
+             break;
+         default :
+             byDb = 'gross_profit';
+             order = 'DESC';
+     }
+
+     database.getLeaderBoard(byDb, order ,function(err, leaders) {
          if (err)
              return next(new Error('Unable to get leader board: '));
 
-        res.render('leaderboard', {user: user, leaders: leaders});
+        res.render('leaderboard', { user: user, leaders: leaders, sortBy: byDb, order: order });
      });
  };
 
