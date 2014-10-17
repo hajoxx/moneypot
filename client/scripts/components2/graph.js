@@ -232,15 +232,18 @@ define(['lib/clib', 'lib/lodash'], function(Clib, _) {
             else
                 this.ctx.fillStyle = "black";
             this.ctx.font="80px Verdana";
-            this.ctx.fillText(parseFloat(this.lastBalance).toFixed(2) + 'x', 150, 150);
+            this.ctx.fillText(parseFloat(this.lastBalance).toFixed(2) + 'x', this.canvasWidth/4, 150);
         }
 
         //If the engine enters in the room @ ENDED it doesnt have the crash value, so we dont display it
         if(this.engine.gameState === 'ENDED' && this.engine.lastGameCrashedAt) {
+            if(this.canvasWidth > 500)
+                    this.ctx.font="60px Verdana";
+            else
+                this.ctx.font="40px Verdana";
             this.ctx.fillStyle = "red";
-            this.ctx.font="60px Verdana";
-            this.ctx.fillText('Game crashed', 100, 100);
-            this.ctx.fillText('@ ' + Clib.formatSatoshis(this.engine.lastGameCrashedAt) + 'x', 160, 180);
+            this.ctx.fillText('Game crashed', this.canvasWidth/5, 100);
+            this.ctx.fillText('@ ' + Clib.formatSatoshis(this.engine.lastGameCrashedAt) + 'x', this.canvasWidth/5, 180);
         }
 
         /*if(this.lostConnection) {
