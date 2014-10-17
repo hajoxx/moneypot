@@ -191,13 +191,20 @@ define(['lib/react',
                         )
                     );
                 } else if (this.props.engine.nextBetAmount || // a bet is queued
-                    (this.props.engine.gameState === 'STARTING' && this.props.engine.userState === 'PLAYING')
-                    ) {
-                    var bet = this.props.engine.nextBetAmount;
+                      (this.props.engine.gameState === 'STARTING' && this.props.engine.userState === 'PLAYING')
+                    )
+                {
                     var aco = this.props.engine.nextAutoCashout;
 
+                    var bet;
+                    if(this.props.engine.lastBet == null)
+                      bet = this.props.engine.nextBetAmount;
+                    else
+                      bet = this.props.engine.lastBet;
 
-                    var msg = ' with auto cash-out at ' + (aco / 100) + 'x';
+                    var msg = null;
+                    if(this.props.engine.nextAutoCashout)
+                        msg = ' with auto cash-out at ' + (aco / 100) + 'x';
 
                     return D.div({ className: 'cash-out' },
                         D.a({className: 'big-button-disable unclick' },
