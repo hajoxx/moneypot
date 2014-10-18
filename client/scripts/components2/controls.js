@@ -185,8 +185,8 @@ define(['lib/react',
                 var self = this;
 
                 if (this.props.engine.gameState === 'IN_PROGRESS' && this.props.engine.userState === 'PLAYING') {
-                    return D.div({ className: 'cash-out' },
-                        D.a({className: 'big-button unclick', onClick: this.cashOut },
+                    return D.div({ className: 'cash-out', onClick: this.cashOut },
+                        D.a({className: 'big-button unclick' },
                             'Cash out at ', Payout({engine: this.props.engine}), ' bits'
                         )
                     );
@@ -220,9 +220,9 @@ define(['lib/react',
                     if (invalidBet)
                         button = D.a({className: 'big-button-disable unclick unselect' }, 'Place Bet!');
                     else
-                        button = D.a({className: 'big-button unselect', onClick: self.placeBet }, 'Place Bet!');
+                        button = D.a({className: 'big-button unselect' }, 'Place Bet!');
 
-                    return D.div(null,
+                    return D.div({ onClick: self.placeBet },
                         button,
                         (invalidBet ? D.div({className: 'invalid cancel'}, invalidBet) : null)
                     );
