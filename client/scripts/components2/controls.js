@@ -295,7 +295,7 @@ define(['lib/react',
 
                 // If they're not logged in, let just show a login to play
                 if (!this.props.engine.username)
-                    return D.div({ className: 'grid grid-pad' },
+                    return D.div({ className: 'login-container grid grid-pad' },
                         D.div({ className: 'controls'},
                             D.div({className: 'login'}, D.a({className: 'big-button unselect', href: '/login' }, 'Login to play'),
                                 D.a({href: '/register', className: 'register'}, 'or register ')
