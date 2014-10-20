@@ -44,8 +44,8 @@ define(['lib/react',
                 if (bet < 1)
                     return 'The bet should be at least 1 bit';
 
-                if (bet > 1e6)
-                    return 'The bet must be less no more than 1,000,000 bits';
+                if (bet > 1e5)
+                    return 'The bet must be less no more than 100,000 bits';
 
                 var co = self.state.cash_out;
 
