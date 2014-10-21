@@ -188,11 +188,10 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash'], function(io, Events,
 
             //Everytime the game starts checks if there is a queue bet and send it
             if (self.nextBetAmount) {
-
                 self.doBet(self.nextBetAmount, self.nextAutoCashout, function(err) {
-                    console.log('Response from placing a bet: ', err);
+                    if(err)
+                        console.log('Response from placing a bet: ', err);
                 });
-
             }
 
             self.trigger('game_starting', info);
