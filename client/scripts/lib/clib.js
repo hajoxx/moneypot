@@ -3,17 +3,22 @@ define(['lib/seedrandom', 'lib/lodash'], function(Seedrandom, _) {
     var rng;
     var currentTime;
 
+    function formatDecimals(n, decimals) {
+        if (typeof decimals === 'undefined') {
+            if (n % 100 === 0)
+                decimals = 0;
+            else
+                decimals = 2;
+        }
+        return n.toFixed(decimals).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+    }
+
     return {
         formatSatoshis: function(n, decimals) {
-            if (typeof decimals === 'undefined') {
-                if (n % 100 === 0)
-                    decimals = 0;
-                else
-                    decimals = 2;
-            }
-
-            return (n/100).toFixed(decimals).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+            return formatDecimals(n/100, decimals);
         },
+
+        formatDecimals: formatDecimals,
         
         parseBits: function(text) {
             if(typeof text !== 'string')
@@ -122,6 +127,6 @@ define(['lib/seedrandom', 'lib/lodash'], function(Seedrandom, _) {
              return p1 * v1 + p2 * v2 + p3 * v3;
         }
 
-    }
+    };
 
 });

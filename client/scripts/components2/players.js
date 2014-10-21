@@ -1,6 +1,10 @@
 define(['lib/react', 'lib/clib', 'lib/lodash'], function(React, Clib, _) {
     var D = React.DOM;
 
+    function calcProfit(bet, stoppedAt) {
+        return ((stoppedAt - 100) * bet)/100;
+    }
+
     return React.createClass({
         displayName: 'usersPlaying',
 
@@ -43,7 +47,7 @@ define(['lib/react', 'lib/clib', 'lib/lodash'], function(React, Clib, _) {
                 return o.info.bet;
             }).reverse();
 
-            //Users Playing and users cahed
+            //Users Playing and users cashed
             if(self.props.engine.gameState === 'IN_PROGRESS' || self.props.engine.gameState === 'STARTING') {
 
                 trUsersLostPlaying = [];
@@ -53,6 +57,7 @@ define(['lib/react', 'lib/clib', 'lib/lodash'], function(React, Clib, _) {
                         D.td(null, usersLostPlayingSorted[i].username),
                         D.td(null, '-'),
                         D.td(null, Clib.formatSatoshis(usersLostPlayingSorted[i].info.bet, 0)),
+                        D.td(null, '-'),
                         D.td(null, '-')
                     ));
                 }
@@ -61,11 +66,13 @@ define(['lib/react', 'lib/clib', 'lib/lodash'], function(React, Clib, _) {
                 for (var i=0, length = usersWonCashedSorted.length; i < length; i++) {
                     var user = usersWonCashedSorted[i];
                     var bet = user.info.bet;
+                    var profit = calcProfit(bet, user.info.stopped_at);
                     trUsersWonCashed.push( D.tr({ className: 'user-cashed', key: 'user' + i },
                         D.td(null, user.username),
                         D.td(null, user.info.stopped_at/100 + 'x'),
                         D.td(null, Clib.formatSatoshis(bet, 0)),
-                        D.td(null, Clib.formatSatoshis(((user.info.stopped_at / 100) * bet) - bet))
+                        D.td(null, '-'),
+                        D.td(null, Clib.formatSatoshis(profit))
                     ));
                 }
 
@@ -81,16 +88,23 @@ define(['lib/react', 'lib/clib', 'lib/lodash'], function(React, Clib, _) {
             } else if(self.props.engine.gameState === 'ENDED') {
 
                 trUsersLostPlaying = usersLostPlayingSorted.map(function(entry, i) {
+                    var bet = entry.info.bet;
                     var bonus = entry.info.bonus;
-                    var profit = '-' + Clib.formatSatoshis(entry.info.bet);
+                    var profit = -bet;
 
-                    if (bonus)
-                        profit = profit + ' (+' + Clib.formatSatoshis(bonus) + ')';
+                    if (bonus) {
+                        profit = Clib.formatSatoshis(profit + bonus);
+                        bonus = Clib.formatSatoshis(bonus/100*bet)+'%';
+                    } else {
+                        profit = Clib.formatSatoshis(profit);
+                        bonus = '0%';
+                    }
 
                     return D.tr({ className: 'user-lost', key: 'user' + i },
                         D.td(null, entry.username),
                         D.td(null, '-'),
                         D.td(null, Clib.formatSatoshis(entry.info.bet, 0)),
+                        D.td(null, bonus),
                         D.td(null, profit)
                     );
                 });
@@ -99,16 +113,22 @@ define(['lib/react', 'lib/clib', 'lib/lodash'], function(React, Clib, _) {
                     var bet = entry.info.bet;
                     var bonus = entry.info.bonus;
                     var stopped = entry.info.stopped_at;
-                    var profit = Clib.formatSatoshis(bet * (stopped - 100) / 100);
+                    var profit = bet * (stopped - 100) / 100;
 
-                    if (bonus)
-                        profit = profit + ' (+' + Clib.formatSatoshis(bonus) + ')';
+                    if (bonus) {
+                        profit = Clib.formatSatoshis(profit + bonus);
+                        bonus = Clib.formatDecimals(bonus*100/bet, 2)+'%';
+                    } else {
+                        profit = Clib.formatSatoshis(profit);
+                        bonus = '0%';
+                    }
 
                     return D.tr(
                         { className: 'user-won', key: 'user' + i },
                         D.td(null, entry.username),
                         D.td(null, stopped / 100, 'x'),
                         D.td(null, Clib.formatSatoshis(bet, 0)),
+                        D.td(null, bonus),
                         D.td(null, profit)
                     );
                 });
@@ -130,6 +150,7 @@ define(['lib/react', 'lib/clib', 'lib/lodash'], function(React, Clib, _) {
                             D.th(null, 'User'),
                             D.th(null, '@'),
                             D.th(null, 'Bet'),
+                            D.th(null, 'Bonus'),
                             D.th(null, 'Profit')
                         )
                     ),
