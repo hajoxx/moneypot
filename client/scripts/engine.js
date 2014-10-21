@@ -250,12 +250,9 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash'], function(io, Events,
 
         self.ws.on('msg', function(data) {
             //The chat only renders if the Arr length is diff, remove blocks of the array
-            if(self.chat.length < 300){
-                self.chat.push(data);
-            } else {
-                self.chat.splice(0, self.chat.length - 100);
-                self.chat.push(data);
-            }
+            if (self.chat.length > 500)
+                self.chat.splice(0, 400);
+            self.chat.push(data);
 
             self.trigger('msg', data);
         });
