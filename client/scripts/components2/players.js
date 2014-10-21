@@ -94,7 +94,7 @@ define(['lib/react', 'lib/clib', 'lib/lodash'], function(React, Clib, _) {
 
                     if (bonus) {
                         profit = Clib.formatSatoshis(profit + bonus);
-                        bonus = Clib.formatSatoshis(bonus/100*bet)+'%';
+                        bonus = Clib.formatDecimals(bonus*100/bet, 2)+'%';
                     } else {
                         profit = Clib.formatSatoshis(profit);
                         bonus = '0%';
