@@ -22,8 +22,8 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
                 pri = 'msg-chat-message';
                 break;
             }
-	    var username = self.props.engine.username;
-            if (message.username != username && message.message.indexOf(username) != -1) {
+	    var username = self.props.engine.username.toLowerCase();
+            if (message.username != username && message.message.toLowerCase().indexOf(username) != -1) {
                 pri += ' msg-highlight-message';
             }
             return D.li({ className: pri , key: 'msg' + index },
