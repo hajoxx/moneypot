@@ -792,21 +792,21 @@ i {
     padding-left: 6px;
     max-width: 3rem;
 }
-.user-won td {
+.user-won td a {
     color: #408609;
 }
 
-.user-lost td {
+.user-lost td a {
     color: #e03e3e;
 }
 
 /* Users Summary */
 
-.user-playing td {
+.user-playing td a {
     color: #ff8100;
 }
 
-.user-cashed td {
+.user-cashed td a {
     color: #408609;
 }
 

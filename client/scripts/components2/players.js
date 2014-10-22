@@ -54,7 +54,10 @@ define(['lib/react', 'lib/clib', 'lib/lodash'], function(React, Clib, _) {
                 for(var i=0, length = usersLostPlayingSorted.length; i < length; i++) {
 
                     trUsersLostPlaying.push( D.tr({ className: 'user-playing', key: 'user' + i },
-                        D.td(null, usersLostPlayingSorted[i].username),
+                        D.td(null, D.a({ href: '/user/' + usersLostPlayingSorted[i].username,
+                                         target: '_blank'
+                                       },
+                                       usersLostPlayingSorted[i].username)),
                         D.td(null, '-'),
                         D.td(null, Clib.formatSatoshis(usersLostPlayingSorted[i].info.bet, 0)),
                         D.td(null, '-'),
@@ -68,7 +71,10 @@ define(['lib/react', 'lib/clib', 'lib/lodash'], function(React, Clib, _) {
                     var bet = user.info.bet;
                     var profit = calcProfit(bet, user.info.stopped_at);
                     trUsersWonCashed.push( D.tr({ className: 'user-cashed', key: 'user' + i },
-                        D.td(null, user.username),
+                        D.td(null, D.a({ href: '/user/' + user.username,
+                                         target: '_blank'
+                                       },
+                                       user.username)),
                         D.td(null, user.info.stopped_at/100 + 'x'),
                         D.td(null, Clib.formatSatoshis(bet, 0)),
                         D.td(null, '-'),
@@ -101,7 +107,10 @@ define(['lib/react', 'lib/clib', 'lib/lodash'], function(React, Clib, _) {
                     }
 
                     return D.tr({ className: 'user-lost', key: 'user' + i },
-                        D.td(null, entry.username),
+                        D.td(null, D.a({ href: '/user/' + entry.username,
+                                         target: '_blank'
+                                       },
+                                       entry.username)),
                         D.td(null, '-'),
                         D.td(null, Clib.formatSatoshis(entry.info.bet, 0)),
                         D.td(null, bonus),
@@ -125,7 +134,10 @@ define(['lib/react', 'lib/clib', 'lib/lodash'], function(React, Clib, _) {
 
                     return D.tr(
                         { className: 'user-won', key: 'user' + i },
-                        D.td(null, entry.username),
+                        D.td(null, D.a({ href: '/user/' + entry.username,
+                                         target: '_blank'
+                                       },
+                                       entry.username)),
                         D.td(null, stopped / 100, 'x'),
                         D.td(null, Clib.formatSatoshis(bet, 0)),
                         D.td(null, bonus),
