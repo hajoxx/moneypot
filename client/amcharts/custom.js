@@ -8,7 +8,13 @@ function CustomChart(startingFrom, cum, chartData) {
         cum += profit;
         entry.cum_profit = (cum/100);
         entry.n = startingFrom+i;
-        entry.force_color = profit > 0 ? 'green' : 'red';
+        if (profit > 0) {
+          entry.force_color = 'green'
+        } else if (profit < 0) {
+          entry.force_color = 'red'
+        } else {
+          entry.force_color = 'gray'
+        }
     });
 
     AmCharts.ready(function () {
