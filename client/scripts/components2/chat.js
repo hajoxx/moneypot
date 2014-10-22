@@ -5,6 +5,8 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
     var SCROLL_OFFSET = 120;
 
     function renderMessage(message, index) {
+        var self = this;
+
         var pri;
         switch(message.type) {
         case 'say':
@@ -19,6 +21,10 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
             default:
                 pri = 'msg-chat-message';
                 break;
+            }
+	    var username = self.props.engine.username;
+            if (message.username != username && message.message.indexOf(username) != -1) {
+                pri += ' msg-highlight-message';
             }
             return D.li({ className: pri , key: 'msg' + index },
                         D.a({ href: '/user/' + message.username,
@@ -72,7 +78,7 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
 
         render: function() {
             var self = this;
-            var messages = this.props.engine.chat.map(renderMessage);
+            var messages = this.props.engine.chat.map(renderMessage, self);
             var chatInput;
 
             if(this.props.engine.username) //TODO: Engine should have a variable loggedIn or similar.
