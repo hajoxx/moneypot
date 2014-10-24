@@ -67,6 +67,10 @@
     font-size: 14px;
 }
 
+.msg-highlight-message {
+    background: #ADD8E6;
+}
+
 .msg-mute-message {
     line-height: 17px;
 }
