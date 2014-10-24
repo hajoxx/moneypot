@@ -19,17 +19,6 @@ define(['lib/seedrandom', 'lib/lodash'], function(Seedrandom, _) {
         },
 
         formatDecimals: formatDecimals,
-        
-        parseBits: function(text) {
-            if(typeof text !== 'string')
-                return null;
-
-            var textNum = text.replace(',', '');
-            var bits = parseFloat(textNum);
-            if (_.isNaN(bits) || bits < 0)
-                return null;
-            return bits*100;
-        },
 
         payout: function(betSize, ms) {
             return betSize * Math.pow(Math.E, (0.00006*ms));
@@ -42,22 +31,6 @@ define(['lib/seedrandom', 'lib/lodash'], function(Seedrandom, _) {
         seed: function(newSeed) {
             rng = Seedrandom(newSeed);
             currentTime = 0;
-        },
-
-        payoutNoise: function(betSize, ms, type) {
-            var c1 = 0.00006;
-            var c2 = 1;
-            var c3 = 1;
-            switch(type) {
-                case 1:
-                    return betSize * Math.pow(Math.E, (c1*ms)) + (Math.sin(ms * c2) * c3);
-                case 2:
-                    return betSize * Math.pow(Math.E, (c1*ms)) + (Math.sin(Math.random() * c2) * c3);
-                case 3:
-                    var rand = rng();
-                    var payout = betSize * Math.pow(Math.E, (c1*ms) + (rand * c2) * c3);
-                    return betSize * Math.pow(Math.E, (c1*ms)) + ((rand * c2) * c3);
-            }
         },
 
         isNumber: function(n) {

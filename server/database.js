@@ -11,9 +11,7 @@ var databaseUrl = process.env.DATABASE_URL;
 if (!databaseUrl)
     throw new Error('must set DATABASE_URL environment var');
 
-
 console.log('DATABASE_URL: ', databaseUrl);
-
 
 pg.types.setTypeParser(20, function(val) { // parse int8 as an integer
     return val === null ? null : parseInt(val);

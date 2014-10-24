@@ -18,9 +18,6 @@
             {{?it.user}}
                 <div class="balance-bits">Bits: <span id="balance_bits">{{#def.format:{n: it.user.balance_satoshis, decimals:2} }}</span></div>
                 <div class="username"><a href="/account">{{=it.user.username}}</a></div>
-                {{?it.user.admin}}
-                <div><a class="username" href="/admin">admin</a></div>
-                {{?}}
             {{??}}
                 <a href="/register">Register</a>
                 <a href="/login">Log in</a>

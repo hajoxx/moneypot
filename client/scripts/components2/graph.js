@@ -134,28 +134,6 @@ define(['lib/clib', 'lib/lodash'], function(Clib, _) {
         }
         this.ctx.stroke();
 
-        /* Draw little circles in the positions where users cash out */
-        /*for(var i = 0, length = this.playersCashedOut.length; i < length; i++) {
-            payout = this.playersCashedOut[i]
-            var time = Clib.payoutTime(this.betSize, payout);
-            var payoutNoise = Clib.payoutNoise(this.betSize, time, 3);
-            var payoutAdj = payoutNoise - this.adjust;
-
-            var y = this.plotHeight - (payoutAdj * this.heightIncrement);
-            var x = time * this.widthIncrement;
-            this.ctx.fillStyle = 'black';
-            this.ctx.lineWidth = 1;
-            this.ctx.beginPath();
-            this.ctx.arc(x + this.xStart, y, 5, 0, 2 * Math.PI, false);
-            this.ctx.fill();
-            this.ctx.stroke();
-            this.ctx.fillStyle = 'white';
-            this.ctx.beginPath();
-            this.ctx.arc(x + this.xStart, y, 3, 0, 2 * Math.PI, false);
-            this.ctx.fill();
-            this.ctx.stroke();
-            //console.log('Circle: ', x, y);
-        }*/
     };
 
     Graph.prototype.drawAxes = function() {

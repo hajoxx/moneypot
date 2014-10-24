@@ -11,27 +11,27 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
         switch(message.type) {
         case 'say':
             switch(message.role) {
-            case 'admin':
-                pri = 'msg-admin-message';
-                break;
-            case 'moderator':
-                pri = 'msg-moderator-message';
-                break;
-            case 'user':
-            default:
-                pri = 'msg-chat-message';
-                break;
+                case 'admin':
+                    pri = 'msg-admin-message';
+                    break;
+                case 'moderator':
+                    pri = 'msg-moderator-message';
+                    break;
+                case 'user':
+                default:
+                    pri = 'msg-chat-message';
+                    break;
             }
-	    var username = self.props.engine.username.toLowerCase();
-            if (message.username != username && message.message.toLowerCase().indexOf(username) != -1) {
+            var username = self.props.engine.username;
+            if (username && message.username != username && message.message.toLowerCase().indexOf(username.toLowerCase()) != -1) {
                 pri += ' msg-highlight-message';
             }
             return D.li({ className: pri , key: 'msg' + index },
-                        D.a({ href: '/user/' + message.username,
+                        D.a({
+                              href: '/user/' + message.username,
                               target: '_blank'
                             },
-                            '<'+message.username+'>'),
-                        ' ' + message.message);
+                            message.username), ' ', message.message);
         case 'mute':
             pri = 'msg-mute-message';
             return D.li({ className: pri , key: 'msg' + index },

@@ -27,6 +27,7 @@
     color: #1e1e1e;
     font-size: 13px;
     font-weight: 600;
+    font-family: courier;
 }
 .msg-chat-message span {
     color: #1e1e1e;
@@ -40,6 +41,7 @@
     color: #ce1e1e;
     font-size: 13px;
     font-weight: 600;
+    font-family: courier;
 }
 .msg-admin-message span {
     color: #5e1e1e;
@@ -53,6 +55,7 @@
     font-size: 13px;
     color: #1e1e7e;
     font-weight: 600;
+    font-family: courier;
 }
 .msg-moderator-message span {
     color: #1e1e1e;
