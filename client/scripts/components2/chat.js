@@ -31,7 +31,7 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
                               href: '/user/' + message.username,
                               target: '_blank'
                             },
-                            message.username), ' ', message.message);
+                            message.username, ':'), ' ', message.message);
         case 'mute':
             pri = 'msg-mute-message';
             return D.li({ className: pri , key: 'msg' + index },

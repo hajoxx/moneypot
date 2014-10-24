@@ -27,7 +27,8 @@
     color: #1e1e1e;
     font-size: 13px;
     font-weight: 600;
-    font-family: courier;
+    background-color: #EEEEEE;
+    font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
 }
 .msg-chat-message span {
     color: #1e1e1e;
@@ -41,7 +42,8 @@
     color: #ce1e1e;
     font-size: 13px;
     font-weight: 600;
-    font-family: courier;
+    background-color: #FFE0EB;
+    font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
 }
 .msg-admin-message span {
     color: #5e1e1e;
@@ -53,9 +55,9 @@
 }
 .msg-moderator-message a{
     font-size: 13px;
-    color: #1e1e7e;
+    color: #E6E6FF;
     font-weight: 600;
-    font-family: courier;
+    font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
 }
 .msg-moderator-message span {
     color: #1e1e1e;
