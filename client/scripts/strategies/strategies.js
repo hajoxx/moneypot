@@ -4,14 +4,16 @@ define(['../lib/multiline'], function(m) {
 
         custom: m(function(){
 /*@preserve
-// This strategy editor is in BETA mode, please exercise extreme caution and
-// use exclusively at your own risk. No bets can or will be refunded in case of
-// errors.
+// This strategy editor is in BETA mode, please
+// exercise extreme caution and use exclusively at
+// your own risk. No bets can or will be refunded in
+// case of errors.
 
-// Please note the strategy editor executes arbitrary javascript without a
-// sandbox and as such, only use strategies from trusted sources, as
-// they can be backdoored to lose all your money or have intentional
-// exploitable weaknesses etc.
+// Please note the strategy editor executes arbitrary
+// javascript without a sandbox and as such, only use
+// strategies from trusted sources, as they can be
+// backdoored to lose all your money or have
+// intentional exploitable weaknesses etc.
 
 // To see the full engine API go to:
 // https://github.com/moneypot/webserver/blob/strategy/client/scripts/engine-proxy.js
