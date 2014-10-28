@@ -37,7 +37,7 @@ engine.onUserBet = function(data) {
     console.log('I bet ', data.bet, ' satoshis');
 };
 
-engine.onCashedOut = function(resp) {
+engine.onUserCashedOut = function(resp) {
     console.log('I cashed out at ', resp.stopped_at/100, 'x');
 };
 
@@ -57,7 +57,7 @@ engine.onPlayerBet = function(data) {
     console.log('The player ', data.username, ' placed a bet. This player could be me :o.');
 };
 
-engine.onUserCashedOut = function(resp) {
+engine.onCashedOut = function(resp) {
     console.log('The player ', resp.username, ' cashed out. This could be me.');
 };
 
