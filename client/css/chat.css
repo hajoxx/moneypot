@@ -23,6 +23,7 @@
 .msg-chat-message {
     line-height: 17px;
 }
+
 .msg-chat-message a{
     color: #1e1e1e;
     font-size: 13px;
@@ -30,6 +31,7 @@
     background-color: #EEEEEE;
     font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
 }
+
 .msg-chat-message span {
     color: #1e1e1e;
     font-size: 14px;
@@ -38,6 +40,7 @@
 .msg-admin-message {
     line-height: 17px;
 }
+
 .msg-admin-message a{
     color: #ce1e1e;
     font-size: 13px;
@@ -45,6 +48,7 @@
     background-color: #FFE0EB;
     font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
 }
+
 .msg-admin-message span {
     color: #5e1e1e;
     font-size: 14px;
@@ -53,12 +57,14 @@
 .msg-moderator-message {
     line-height: 17px;
 }
+
 .msg-moderator-message a{
     font-size: 13px;
     color: #E6E6FF;
     font-weight: 600;
     font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
 }
+
 .msg-moderator-message span {
     color: #1e1e1e;
     font-size: 14px;
@@ -67,6 +73,7 @@
 .msg-info-message {
     line-height: 17px;
 }
+
 .msg-info-message span {
     color: #1e5e1e;
     font-size: 14px;
@@ -79,11 +86,13 @@
 .msg-mute-message {
     line-height: 17px;
 }
+
 .msg-mute-message a{
     color: #1e3e1e;
     font-size: 13px;
     font-weight: 600;
 }
+
 .msg-mute-message span {
     color: #1e3e1e;
     font-size: 14px;

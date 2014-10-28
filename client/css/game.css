@@ -925,6 +925,22 @@ i {
     font-weight: 800;
 }
 
+/* ==========================================================================
+   Strategy Editor
+   ========================================================================== */
+.strategy-container {
+    height: 100%;
+}
+
+    .strategy-input {
+        height: 253px;
+        width: 100%;
+    }
+
+    .strategy-start {
+
+    }
+
 /* FOUNDATION MEDIA QUERIES */
 
 @media only screen { } /* Define mobile styles */

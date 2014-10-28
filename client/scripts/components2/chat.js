@@ -54,7 +54,7 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
         default:
             break;
         }
-    };
+    }
 
     return React.createClass({
         displayName: 'Chat',
@@ -87,7 +87,8 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
                       onKeyDown: this.sendMessage,
                       ref: 'input',
                       placeholder: 'Type here...'
-                    });
+                    }
+                );
             else
                 chatInput = D.input(
                     { className: 'chat-input',
@@ -95,14 +96,15 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
                       ref: 'input',
                       placeholder: 'Log in to chat...',
                       disabled: true
-                    });
+                    }
+                );
 
             return D.div({ className: 'messages-container' },
-                         D.ul({ className: 'messages', ref: 'messages'},
-                              messages
-                             ),
-                         chatInput
-                        );
+                 D.ul({ className: 'messages', ref: 'messages'},
+                      messages
+                     ),
+                 chatInput
+            );
         },
 
         sendMessage: function(e) {

@@ -1,4 +1,4 @@
-define(['lib/react', 'components2/chat', 'components2/games_log'], function(React, Chat, GamesLog) {
+define(['lib/react', 'components2/chat', 'components2/games_log', 'components2/strategy_editor'], function(React, Chat, GamesLog, strategyEditor) {
     var D = React.DOM;
 
     return React.createClass({
@@ -10,7 +10,7 @@ define(['lib/react', 'components2/chat', 'components2/games_log'], function(Reac
 
         getInitialState: function() {
             return {
-                widget: 'gamesLog' //Widgets: chat, gamesLog
+                widget: 'strategyEditor' //Widgets: chat, gamesLog(default), strategyEditor
             }
         },
 
@@ -23,6 +23,20 @@ define(['lib/react', 'components2/chat', 'components2/games_log'], function(Reac
 
         render: function() {
 
+            var widget, contClass = '';
+            switch(this.state.widget) {
+                case 'gamesLog':
+                    widget = GamesLog({ engine: this.props.engine });
+                    contClass = 'gamesLog';
+                break;
+                case 'chat':
+                    widget = Chat({ engine: this.props.engine });
+                break;
+                case 'strategyEditor':
+                    widget = strategyEditor({ engine: this.props.engine });
+                break;
+            }
+
             return D.div({ className: 'log-chat-tabs-container' },
                 D.ul({ className: 'chat-log-tabs unselect' },
                     D.li({
@@ -32,14 +46,20 @@ define(['lib/react', 'components2/chat', 'components2/games_log'], function(Reac
                         D.a(null, 'History')
                     ),
                     D.li({
-                            className: 'chat-log-tab ' + ((this.state.widget === 'usersPlaying') ? 'tab-active' : ''),
-                            onClick: this.selectWidget('usersPlaying')
+                            className: 'chat-log-tab ' + ((this.state.widget === 'chat') ? 'tab-active' : ''),
+                            onClick: this.selectWidget('chat')
                         },
                         D.a(null, 'Chat')
+                    ),
+                    D.li({
+                            className: 'chat-log-tab ' + ((this.state.widget === 'strategyEditor') ? 'tab-active' : ''),
+                            onClick: this.selectWidget('strategyEditor')
+                        },
+                        D.a(null, 'Strategy')
                     )
                 ),
-                D.div({ className: 'log-chat-container ' + ((this.state.widget == 'gamesLog')? 'scroll': '') },
-                    (this.state.widget === 'gamesLog')? GamesLog({ engine: this.props.engine }) : Chat({ engine: this.props.engine })
+                D.div({ className: 'log-chat-container ' + contClass },
+                   widget
                 )
             );
 
