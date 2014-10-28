@@ -10,7 +10,7 @@ define(['lib/react', 'components2/chat', 'components2/games_log', 'components2/s
 
         getInitialState: function() {
             return {
-                widget: 'strategyEditor' //Widgets: chat, gamesLog(default), strategyEditor
+                widget: 'gamesLog' //Widgets: chat, gamesLog(default), strategyEditor
             }
         },
 
