@@ -1,4 +1,4 @@
-define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash'], function(io, Events, _) {
+define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function(io, Events, _, Clib) {
 
     var defaultHost = window.document.location.host === 'www.moneypot.com' ?
         'https://game.moneypot.com' :
@@ -84,9 +84,12 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash'], function(io, Events,
         self.lastBet = null;
 
         self.lastGameWonAmount = null; // satoshis won in last game
-        self.lastGameBonus = null; // satoshis
         self.lastGameCrashedAt = false; //  The percentage in which the last game crashed at
         self.lastBonus = null;        // satoshis of the last bonus earned
+
+        self.ws.on('err', function(err) {
+            console.error('Server sent us the error: ', err);
+        });
 
         /**
          * Event called at the moment when the game starts
@@ -103,6 +106,7 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash'], function(io, Events,
             }
 
             self.trigger('game_started');
+
         });
 
         /**
@@ -161,7 +165,7 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash'], function(io, Events,
             self.lastBonus = self.playerInfo[self.username] ? self.playerInfo[self.username].bonus : null;
             self.userState = 'WATCHING';
 
-            self.trigger('game_crash');
+            self.trigger('game_crash', data);
         });
 
         /**
@@ -210,14 +214,12 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash'], function(io, Events,
                 self.userState = 'PLAYING';
                 self.balanceSatoshis -= data.bet;
                 self.lastBet = data.bet;
-                self.trigger('user_bet');
+                self.trigger('user_bet', data);
             }
 
             self.playerInfo[data.username] = { bet: data.bet };
             self.trigger('player_bet', data);
         });
-
-
 
         /**
          * Event called every time the server cash out a user
@@ -233,7 +235,7 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash'], function(io, Events,
                 self.lastGameWonAmount = resp.amount;
                 self.balanceSatoshis += resp.amount;
                 self.userState = 'WATCHING';
-                self.trigger('user_cashed_out');
+                self.trigger('user_cashed_out', resp);
             }
 
             //Add the cashout percetage of each user at cash out
@@ -246,12 +248,22 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash'], function(io, Events,
             self.trigger('cashed_out', resp);
         });
 
-
+        /**
+         * Event called every time we receive a chat message
+         * @param {object} resp - JSON payload
+         * @param {string} time - Time when the message was sended
+         * @param {string} type - The 'command': say, mute, error, info
+         * @param {username} string - The username of who sent it
+         * @param {role} string - admin, moderator, user
+         * @param {message} string - Da message
+         */
         self.ws.on('msg', function(data) {
             //The chat only renders if the Arr length is diff, remove blocks of the array
             if (self.chat.length > 500)
                 self.chat.splice(0, 400);
             self.chat.push(data);
+
+            console.log(data);
 
             self.trigger('msg', data);
         });
@@ -356,7 +368,8 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash'], function(io, Events,
      */
     Engine.prototype.bet = function(amount, autoCashOut, autoPlay, callback) {
         console.assert(typeof amount == 'number');
-        console.assert(!autoCashOut || (typeof autoCashOut === 'number' && autoCashOut >= 101));
+        console.assert(Clib.isInteger(amount));
+        console.assert(!autoCashOut || (typeof autoCashOut === 'number' && autoCashOut >= 100));
 
         this.autoPlay = autoPlay;
         this.nextBetAmount = amount;
@@ -384,12 +397,14 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash'], function(io, Events,
                     alert('There was an error, please reload the window: ' + error);
                     self.autoPlay = false;
                 }
-
-                return callback(error);
+                if (callback)
+                    callback(error);
+                return;
             }
 
             self.trigger('bet_placed');
-            return callback(null);
+            if (callback)
+                callback(null);
         });
     };
 
@@ -430,7 +445,8 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash'], function(io, Events,
     };
 
     /**
-     * Returns the game payout as a percentage if game is in progress.
+     * Returns the game payout as a percentage if game is in progress
+     * if the game is not in progress returns null.
      * 
      * If the last was time exceed the STOP_PREDICTING_LAPSE constant
      * It returns the last game tick elpased time + the STOP_PREDICTING_LAPSE
@@ -440,7 +456,8 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash'], function(io, Events,
      * @return {number}
      */
     Engine.prototype.getGamePayout = function() {
-        console.assert(this.gameState === 'IN_PROGRESS');
+        if(!(this.gameState === 'IN_PROGRESS'))
+            return null;
 
         if((Date.now() - this.lastGameTick) < STOP_PREDICTING_LAPSE) {
             var elapsed = Date.now() - this.startTime;
