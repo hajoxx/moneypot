@@ -123,7 +123,7 @@ define(['lib/react',
 
                         var bonus;
                         if (this.props.engine.lastBonus) {
-                            bonus = D.span(null, D.br(), ' (+',
+                            bonus = D.span(null, ' (+',
                                 Clib.formatSatoshis(this.props.engine.lastBonus), ' ',
                                 grammarBits(this.props.engine.lastBonus), ' bonus)'
                             );
@@ -141,7 +141,7 @@ define(['lib/react',
 
                         var bonus;
                         if (this.props.engine.lastBonus) {
-                            bonus = D.span(null, D.br(), '..but got a ',
+                            bonus = D.span(null, '..but got a ',
                                 Clib.formatSatoshis(this.props.engine.lastBonus), ' ',
                                 grammarBits(this.props.engine.lastBonus), ' bonus'
                             );
