@@ -32,14 +32,14 @@ define(['engine-proxy'], function(EngineProxy) {
 
             /* User Events */
             user_bet: engineProxy.onUserBet.bind(engineProxy),
-            cashed_out: engineProxy.onCashedOut.bind(engineProxy),
+            user_cashed_out: engineProxy.onUserCashedOut.bind(engineProxy),
             bet_queued: engineProxy.onBetQueued.bind(engineProxy),
             cancel_bet: engineProxy.onCancelBet.bind(engineProxy),
             bet_placed: engineProxy.onBetPlaced.bind(engineProxy),
 
             /* Players Events */
             player_bet: engineProxy.onPlayerBet.bind(engineProxy),
-            user_cashed_out: engineProxy.onUserCashedOut.bind(engineProxy),
+            cashed_out: engineProxy.onCashedOut.bind(engineProxy),
 
             /* Chat Events */
             msg: engineProxy.onChatMsg.bind(engineProxy),

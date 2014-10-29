@@ -19,7 +19,7 @@ define(['lib/events', 'lib/clib', 'lib/lodash'], function(Events, Clib, _) {
     //};
 
     /* ==========================================================================
-     Events
+     Game State Events
      ========================================================================== */
 
     /**
@@ -46,9 +46,12 @@ define(['lib/events', 'lib/clib', 'lib/lodash'], function(Events, Clib, _) {
      */
     EngineProxy.prototype.onGameCrash = function(data) { };
 
+    /* ==========================================================================
+     User Events
+     ========================================================================== */
+
     /**
-     * Event called every time a user places a bet
-     * the user that placed the bet could be me so we check for that
+     * Event called every time we place a bet
      * @param {object} resp - JSON payload
      * @param {string} resp.username - The player username
      * @param {number} resp.bet - The player bet in satoshis
@@ -56,15 +59,14 @@ define(['lib/events', 'lib/clib', 'lib/lodash'], function(Events, Clib, _) {
     EngineProxy.prototype.onUserBet = function(data) { };
 
     /**
-     * Event called every time the server cash out a user
+     * Event called every time the server cashes us out
      * if we call cash out the server is going to call this event
-     * with our name.
      * @param {object} resp - JSON payload
      * @param {string} resp.username - The player username
      * @param {number} resp.amount - The amount the user cashed out
      * @param {number} resp.stopped_at -The percentaje at wich the user cashed out
      */
-    EngineProxy.prototype.onCashedOut = function(resp) { };
+    EngineProxy.prototype.onUserCashedOut = function(resp) { };
 
     /**
      * The cant be place right now so we queue it for
@@ -81,6 +83,10 @@ define(['lib/events', 'lib/clib', 'lib/lodash'], function(Events, Clib, _) {
      * A bet was placed
      */
     EngineProxy.prototype.onBetPlaced = function() { };
+
+    /* ==========================================================================
+     Player Events
+     ========================================================================== */
 
     /**
      * Event called every time a user places a bet
@@ -100,7 +106,11 @@ define(['lib/events', 'lib/clib', 'lib/lodash'], function(Events, Clib, _) {
      * @param {number} resp.amount - The amount the user cashed out
      * @param {number} resp.stopped_at -The percentaje at wich the user cashed out
      */
-    EngineProxy.prototype.onUserCashedOut = function(resp) { };
+    EngineProxy.prototype.onCashedOut = function(resp) { };
+
+    /* ==========================================================================
+     Chat Events
+     ========================================================================== */
 
     /**
      * Event called every time we receive a chat message
@@ -112,6 +122,10 @@ define(['lib/events', 'lib/clib', 'lib/lodash'], function(Events, Clib, _) {
      * @param {message} string - Da message
      */
     EngineProxy.prototype.onChatMsg = function(data) { };
+
+    /* ==========================================================================
+     Connection Events
+     ========================================================================== */
 
     /**
      * The engine is connected to the server
