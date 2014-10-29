@@ -16,10 +16,10 @@ define(['../lib/multiline'], function(m) {
 // intentional exploitable weaknesses etc.
 
 // To see the full engine API go to:
-// https://github.com/moneypot/webserver/blob/strategy/client/scripts/engine-proxy.js
+///https://github.com/moneypot/webserver/blob/master/client/scripts/engine-proxy.js
 
 // To discuss, request or post a strategy checkout:
-// http://www.reddit.com/r/moneypot/
+///http://www.reddit.com/r/moneypot/
 
 //Engine events:
 

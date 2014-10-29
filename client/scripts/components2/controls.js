@@ -116,10 +116,8 @@ define(['lib/react',
                         return D.span(null, 'Game in progress..');
                     }
                 } else if (this.props.engine.gameState === 'ENDED') {
-                    console.log('sm: ended');
 
                     if (this.props.engine.lastBet && this.props.engine.lastGameWonAmount) { // bet and won
-                        console.log('sm: bet and won');
 
                         var bonus;
                         if (this.props.engine.lastBonus) {
@@ -137,7 +135,6 @@ define(['lib/react',
                             bonus
                         );
                     } else if (this.props.engine.lastBet) { // bet and lost
-                        console.log('sm: bet and lost');
 
                         var bonus;
                         if (this.props.engine.lastBonus) {

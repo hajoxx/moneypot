@@ -1,4 +1,4 @@
-define(['lib/react', 'components2/chat', 'components2/games_log', 'components2/strategy_editor'], function(React, Chat, GamesLog, strategyEditor) {
+define(['lib/react', 'components2/chat', 'components2/games_log', 'components2/strategy_editor', '../strategy-controller'], function(React, Chat, GamesLog, StrategyEditor, StrategyController) {
     var D = React.DOM;
 
     return React.createClass({
@@ -6,6 +6,11 @@ define(['lib/react', 'components2/chat', 'components2/games_log', 'components2/s
 
         propTypes: {
             engine: React.PropTypes.object.isRequired
+        },
+
+        componentWillMount: function() {
+            //Instantiate the strategy controller
+            this.strategyController = new StrategyController(this.props.engine);
         },
 
         getInitialState: function() {
@@ -22,7 +27,6 @@ define(['lib/react', 'components2/chat', 'components2/games_log', 'components2/s
         },
 
         render: function() {
-
             var widget, contClass = '';
             switch(this.state.widget) {
                 case 'gamesLog':
@@ -33,7 +37,7 @@ define(['lib/react', 'components2/chat', 'components2/games_log', 'components2/s
                     widget = Chat({ engine: this.props.engine });
                 break;
                 case 'strategyEditor':
-                    widget = strategyEditor({ engine: this.props.engine });
+                    widget = StrategyEditor({ engine: this.props.engine, strategyController: this.strategyController });
                 break;
             }
 
