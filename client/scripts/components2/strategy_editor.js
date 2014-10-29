@@ -1,41 +1,51 @@
-define(['lib/react', '../engine-controller', '../strategies/strategies-min', '../lib/lodash', '../lib/clib'], function(React, EngineController, Strategies, _, Clib){
+define(['lib/react', '../strategies', '../lib/lodash', '../lib/clib'], function(React, Strategies, _, Clib){
 
     var D = React.DOM;
 
     return React.createClass({
         displayName: 'strategyEditor',
 
-        getInitialState: function() {
-            return {
-                active: false,
-                script: Strategies.custom
-            }
+        propTypes: {
+            engine: React.PropTypes.object.isRequired,
+            strategyController: React.PropTypes.object.isRequired
         },
 
-        propTypes: {
-            engine: React.PropTypes.object.isRequired
+        getInitialState: function() {
+            this.controller = this.props.strategyController;
+            return this.controller.getState();
+        },
+
+        componentDidMount: function() {
+            this.controller.on('change', this.onChange);
+        },
+
+        componentWillUnmount: function() {
+            this.controller.off('change', this.onChange);
+        },
+
+        onChange: function() {
+            this.setState(this.controller.getState());
         },
 
         runStrategy: function() {
-            this.engineController = new EngineController(this.props.engine, this.state.script, this.stopStrategy);
-            this.setState({ active: true });
+            this.props.strategyController.runStrategy(this.state.script, this.stopStrategy);
+            this.controller.setActive(true);
         },
 
         stopStrategy: function() {
-            this.engineController.stop();
-            if(this.isMounted()) {
-                this.setState({ active: false });
-            }
+            this.controller.stopScript();
+            if(this.isMounted())
+                this.controller.setActive(false);
         },
 
         updateScript: function() {
             var script = this.refs.input.getDOMNode().value;
-            this.setState({ script: script });
+            this.controller.updateScript(script);
         },
 
         selectStrategy: function() {
             var strategyName = this.refs.strategies.getDOMNode().value;
-            this.setState({ script: Strategies[strategyName] });
+            this.controller.selectStrategy(strategyName);
         },
 
         render: function() {
@@ -49,8 +59,7 @@ define(['lib/react', '../engine-controller', '../strategies/strategies-min', '..
                 D.textarea({ className: 'strategy-input', ref: 'input', value: self.state.script, onChange: self.updateScript, disabled: this.state.active }),
                 D.button({ className: 'strategy-start', onClick: self.runStrategy, disabled: this.state.active }, 'RUN!'),
                 D.button({ className: 'strategy-stop', onClick: self.stopStrategy, disabled: !this.state.active }, 'STOP'),
-                D.select({ className: 'strategy-select',  onChange: self.selectStrategy, ref: 'strategies', disabled: this.state.active }, strategiesOptions)
-
+                D.select({ className: 'strategy-select', value: this.state.selectedStrategy,  onChange: self.selectStrategy, ref: 'strategies', disabled: this.state.active }, strategiesOptions)
             );
         }
     });

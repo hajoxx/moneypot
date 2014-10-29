@@ -263,8 +263,6 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
                 self.chat.splice(0, 400);
             self.chat.push(data);
 
-            console.log(data);
-
             self.trigger('msg', data);
         });
 
