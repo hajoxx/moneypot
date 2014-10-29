@@ -1,4 +1,4 @@
-define(['strategies/strategies', 'engine-controller', 'lib/events', 'lib/lodash'], function(Strategies, EngineController, Events, _) {
+define(['strategies', 'engine-controller', 'lib/events', 'lib/lodash'], function(Strategies, EngineController, Events, _) {
 
     var strategyController = function(engine) {
         _.extend(this, Events);

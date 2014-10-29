@@ -1,4 +1,4 @@
-define(['lib/react', '../strategies/strategies', '../lib/lodash', '../lib/clib'], function(React, Strategies, _, Clib){
+define(['lib/react', '../strategies', '../lib/lodash', '../lib/clib'], function(React, Strategies, _, Clib){
 
     var D = React.DOM;
 
