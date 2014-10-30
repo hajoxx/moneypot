@@ -4,14 +4,7 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
         'https://game.moneypot.com' :
         window.document.location.host.replace(/:3841$/, ':3842');
 
-    console.log('Connecting to: ', defaultHost);
-    
-    var TICK_LAG_LAPSE = 600;
     var STOP_PREDICTING_LAPSE = 300;
-
-    //TODOS:
-        //Lag
-
 
     // Engine inherits from BackBone events:
     // http://backbonejs.org/#Events
@@ -99,6 +92,7 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
             self.gameState = 'IN_PROGRESS';
             self.startTime = Date.now(); // TODO: This date will be sent by the server in the near future
             self.lastGameTick = self.startTime;
+            self.placingBet = false;
 
             if (!self.autoPlay) {
                 self.nextBetAmount = null;
@@ -164,6 +158,7 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
             self.lastGameCrashedAt = data.game_crash;
             self.lastBonus = self.playerInfo[self.username] ? self.playerInfo[self.username].bonus : null;
             self.userState = 'WATCHING';
+            self.cashingOut = false;
 
             self.trigger('game_crash', data);
         });
@@ -211,6 +206,7 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
         self.ws.on('player_bet', function(data) {
 
             if (self.username === data.username) {
+                self.placingBet = false;
                 self.userState = 'PLAYING';
                 self.balanceSatoshis -= data.bet;
                 self.lastBet = data.bet;
@@ -232,6 +228,7 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
          */
         self.ws.on('cashed_out', function(resp) {
             if (self.username === resp.username) {
+                self.cashingOut = false;
                 self.lastGameWonAmount = resp.amount;
                 self.balanceSatoshis += resp.amount;
                 self.userState = 'WATCHING';
@@ -386,6 +383,8 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
     // autoC
     Engine.prototype.doBet =  function(amount, autoCashOut, callback) {
         var self = this;
+
+        self.placingBet = true;
         this.ws.emit('place_bet', amount, autoCashOut, function(error) {
 
             if (error) {
@@ -401,9 +400,11 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
             }
 
             self.trigger('bet_placed');
+
             if (callback)
                 callback(null);
         });
+        self.trigger('placing_bet');
     };
 
     Engine.prototype.cancelAutoPlay = function() {
@@ -431,15 +432,14 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
     Engine.prototype.cashOut = function(callback) {
         var self = this;
         this.cashingOut = true;
-        this.ws.emit('cash_out', function(error) {
-            self.cashingOut = false;
+        this.ws.emit('cash_out', function(error) { //TODO: Deprecate callback
             if (error) {
                 console.warn('Cashing out error: ', error);
             }
 
             callback(error);
         });
-
+        this.trigger('cashing_out');
     };
 
     /**

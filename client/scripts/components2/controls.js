@@ -3,8 +3,13 @@ define(['lib/react',
         'lib/lodash',
         'components2/payout',
         'components2/countdown'],
-
     function (React, Clib, _, Payout, Countdown) {
+
+        //Returns plural or singular, for a given amount of bits.
+        function grammarBits(bits) {
+            return bits <= 100 ? 'bit' : 'bits';
+        }
+
         var D = React.DOM;
 
         return React.createClass({
@@ -172,7 +177,6 @@ define(['lib/react',
                 this.setState({ auto_play: !prev });
             },
 
-
             copyHash: function () {
                 prompt('Game ' + this.props.engine.gameId + ' hash:', this.props.engine.hash);
             },
@@ -181,10 +185,16 @@ define(['lib/react',
             getBetButton: function () {
                 var self = this;
 
-                if (this.props.engine.gameState === 'IN_PROGRESS' && this.props.engine.userState === 'PLAYING') {
-                    return D.div({ className: 'cash-out', onClick: this.cashOut },
-                        D.a({className: 'big-button unclick' },
-                            'Cash out at ', Payout({engine: this.props.engine}), ' bits'
+                if (this.props.engine.cashingOut) {
+                    return D.div({ className: 'cash-out' },
+                        D.a({ className: 'big-button-disable unclick' },
+                            'Cash out at ', Payout({ engine: this.props.engine }), ' bits'
+                        )
+                    );
+                } else if (this.props.engine.gameState === 'IN_PROGRESS' && this.props.engine.userState === 'PLAYING') {
+                    return D.div({ className: 'cash-out', onMouseDown: this.cashOut },
+                        D.a({ className: 'big-button unclick' },
+                            'Cash out at ', Payout({ engine: this.props.engine }), ' bits'
                         )
                     );
                 } else if (this.props.engine.nextBetAmount || // a bet is queued
@@ -204,9 +214,9 @@ define(['lib/react',
                         msg = ' with auto cash-out at ' + (aco / 100) + 'x';
 
                     return D.div({ className: 'cash-out' },
-                        D.a({className: 'big-button-disable unclick' },
+                        D.a({ className: 'big-button-disable unclick' },
                                 'Betting ' + Clib.formatSatoshis(bet) + ' ' + grammarBits(bet), msg),
-                        D.div({className: 'cancel'}, this.getSendingBet())
+                        D.div({ className: 'cancel' }, this.getSendingBet())
                     );
 
                     //User can place a bet
@@ -214,15 +224,21 @@ define(['lib/react',
                     var invalidBet = this.invalidBet();
 
                     var button;
-                    if (invalidBet)
-                        button = D.a({className: 'big-button-disable unclick unselect' }, 'Place Bet!');
-                    else
-                        button = D.a({className: 'big-button unselect' }, 'Place Bet!');
+                    if (invalidBet || this.props.engine.placingBet) {
+                        button = D.a({ className: 'big-button-disable unclick unselect' }, 'Place Bet!');
+                        return D.div({ className: 'bet-button-container' },
+                            button,
+                            (invalidBet ? D.div({ className: 'invalid cancel' }, invalidBet) : null)
+                        );
+                    } else {
+                        button = D.a({ className: 'big-button unselect' }, 'Place Bet!');
+                        return D.div({ className: 'bet-button-container', onClick: self.placeBet },
+                            button,
+                            (invalidBet ? D.div({ className: 'invalid cancel' }, invalidBet) : null)
+                        );
+                    }
 
-                    return D.div({ onClick: self.placeBet },
-                        button,
-                        (invalidBet ? D.div({className: 'invalid cancel'}, invalidBet) : null)
-                    );
+
                 }
             },
 
@@ -270,11 +286,12 @@ define(['lib/react',
 
             render: function () {
                 var self = this;
+
                 //If the game is able to bet
                 var buttonCol, controlInputs;
-                if (!(this.props.engine.gameState === 'IN_PROGRESS' && this.props.engine.userState === 'PLAYING') && !(this.props.engine.nextBetAmount || // a bet is queued
-                    (this.props.engine.gameState === 'STARTING' && this.props.engine.userState === 'PLAYING')
-                    )) {
+                if (!(this.props.engine.gameState === 'IN_PROGRESS' && this.props.engine.userState === 'PLAYING') &&
+                    !(this.props.engine.nextBetAmount || (this.props.engine.gameState === 'STARTING' && this.props.engine.userState === 'PLAYING'))) {
+
                     buttonCol = D.div({ className: 'col-1-2 mobile-col-1-1' },
                         this.getBetButton()
                     );
@@ -282,6 +299,7 @@ define(['lib/react',
                     controlInputs = D.div({ className: 'col-1-2 mobile-col-1-1' },
                         this.getControlInputs()
                     );
+
                     //If the game is not able to bet
                 } else {
                     buttonCol = D.div({ className: 'col-1-1 mobile-col-1-1' },
@@ -294,8 +312,8 @@ define(['lib/react',
                 if (!this.props.engine.username)
                     return D.div({ className: 'login-container grid grid-pad' },
                         D.div({ className: 'controls'},
-                            D.div({className: 'login'}, D.a({className: 'big-button unselect', href: '/login' }, 'Login to play'),
-                                D.a({href: '/register', className: 'register'}, 'or register ')
+                            D.div({ className: 'login'}, D.a({className: 'big-button unselect', href: '/login' }, 'Login to play'),
+                                D.a({ href: '/register', className: 'register'}, 'or register ')
                             )
                         )
                     );
@@ -337,11 +355,5 @@ define(['lib/react',
                 );
             }
         });
-
-
-        //Returns plural or singular, for a given amount of bits.
-        function grammarBits(bits) {
-            return bits <= 100 ? 'bit' : 'bits';
-        }
     }
 );
