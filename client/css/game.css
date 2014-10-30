@@ -128,13 +128,116 @@ i {
     }
 }
 
+/* Bet Button (Organizing this mess)
+   ========================================================================== */
+
+.bet-button-container {
+
+}
+
+.button {
+    display: block;
+    background-position: 0 0;
+    margin: 0 0 0 15px;
+    width: 100px;
+    height: 33px;
+    text-align: center;
+    color: #FFFFFF;
+    font-size: 26px;
+    padding-right: 10px;
+    padding-top: 13px;
+    text-transform: uppercase;
+}
+
+.big-button {
+    position: relative;
+    color: rgba(255,255,255,1);
+    text-decoration: none;
+    background-color: rgba(243, 150, 47,1);
+    font-weight: 300;
+    font-size: 2em;
+    display: block;
+    padding: 15px;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+    -webkit-box-shadow: 0 6px 0 rgb(255, 82, 5), 0px 9px 25px rgba(0,0,0,.1);
+    -moz-box-shadow: 0 6px 0 rgb(255, 82, 5), 0px 9px 25px rgba(0,0,0,.1);
+    box-shadow: 0px 6px 0px rgb(255, 81, 20), 0px 9px 25px rgba(0,0,0,0.1);
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+@media handheld, only screen and (max-width: 767px) {
+    .big-button {
+        width: 95%;
+    }
+}
+
+.big-button:active {
+    -webkit-box-shadow: 0px 3px 0px rgb(186, 60, 18), 0px 3px 6px rgba(0,0,0,.2);
+    -moz-box-shadow: 0px 3px 0px rgb(186, 60, 18), 0px 3px 6px rgba(0,0,0,.2);
+    box-shadow: 0px 3px 0px rgb(186, 60, 18), 0px 3px 6px rgba(0,0,0,0.2);
+    position: relative;
+    top: 6px;
+}
+
+.big-button-disable {
+    position: relative;
+    color: rgba(255,255,255,1);
+    text-decoration: none;
+    background-color: rgba(168, 168, 168, 1);
+    font-weight: 300;
+    font-size: 2em;
+    display: block;
+    padding: 15px;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+    -webkit-box-shadow: 0px 3px 0px rgb(186, 60, 18), 0px 3px 6px rgba(0,0,0,.2);
+    -moz-box-shadow: 0px 3px 0px rgb(186, 60, 18), 0px 3px 6px rgba(0,0,0,.2);
+    box-shadow: 0px 3px 0px rgb(102, 102, 102), 0px 3px 6px rgba(0,0,0,0.2);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.cash-out .big-button-disable {
+    font-size: 1.4em;
+    padding: 18px;
+}
+
+.cash-out .big-button {
+    font-size: 1.5em;
+    padding: 18px;
+    cursor: pointer;
+}
+
+.unselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.unclick {
+    cursor: default;
+}
+
+
+/* Button Styles ??
+   ========================================================================== */
+
 .sticky {
     margin-left: -4px;
     color: #9C9696;
-}
-
-.cash-out {
-    margin-top: 13px;
 }
 
 .autoplay input, .cashout input{
@@ -183,10 +286,6 @@ i {
     text-align: center;
     margin-left: 9px;
     font-weight: bold;
-}
-
-.cash-out {
-    margin-top: 13px;
 }
 
 .cash-out input{
@@ -364,108 +463,10 @@ i {
      cursor: pointer;
  }
 
-.button {
-    display: block;
-    background-position: 0 0;
-    margin: 0 0 0 15px;
-    width: 100px;
-    height: 33px;
-    text-align: center;
-    color: #FFFFFF;
-    font-size: 26px;
-    padding-right: 10px;
-    padding-top: 13px;
-    text-transform: uppercase;
-}
-
-.big-button {
-    position: relative;
-    color: rgba(255,255,255,1);
-    text-decoration: none;
-    background-color: rgba(243, 150, 47,1);
-    font-weight: 300;
-    font-size: 2em;
-    display: block;
-    padding: 15px;
-    -webkit-border-radius: 8px;
-    -moz-border-radius: 8px;
-    border-radius: 8px;
-    -webkit-box-shadow: 0 6px 0 rgb(255, 82, 5), 0px 9px 25px rgba(0,0,0,.1);
-    -moz-box-shadow: 0 6px 0 rgb(255, 82, 5), 0px 9px 25px rgba(0,0,0,.1);
-    box-shadow: 0px 6px 0px rgb(255, 81, 20), 0px 9px 25px rgba(0,0,0,0.1);
-    width: 90%;
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-@media handheld, only screen and (max-width: 767px) {
-    .big-button {
-            width: 95%;
-    }
-}
-
-.big-button:active {
-    -webkit-box-shadow: 0px 3px 0px rgb(186, 60, 18), 0px 3px 6px rgba(0,0,0,.2);
-    -moz-box-shadow: 0px 3px 0px rgb(186, 60, 18), 0px 3px 6px rgba(0,0,0,.2);
-    box-shadow: 0px 3px 0px rgb(186, 60, 18), 0px 3px 6px rgba(0,0,0,0.2);
-    position: relative;
-    top: 6px;
-}
-
-.big-button-disable {
-    position: relative;
-    color: rgba(255,255,255,1);
-    text-decoration: none;
-    background-color: rgba(168, 168, 168, 1);
-    font-weight: 300;
-    font-size: 2em;
-    display: block;
-    padding: 15px;
-    -webkit-border-radius: 8px;
-    -moz-border-radius: 8px;
-    border-radius: 8px
-    -webkit-box-shadow: 0px 3px 0px rgb(186, 60, 18), 0px 3px 6px rgba(0,0,0,.2);
-    -moz-box-shadow: 0px 3px 0px rgb(186, 60, 18), 0px 3px 6px rgba(0,0,0,.2);
-    box-shadow: 0px 3px 0px rgb(102, 102, 102), 0px 3px 6px rgba(0,0,0,0.2);
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    text-align: center;
-    width: 90%;
-    margin-bottom: 10px;
-}
-
-.cash-out .big-button-disable {
-    width: 90%;
-    font-size: 1.5em;
-    padding: 18px;
-}
-
-.cash-out .big-button {
-    width: 90%;
-    font-size: 1.5em;
-    padding: 18px;
-    cursor: pointer;
-}
-
-.unselect {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-.unclick {
-    cursor: default;
-}
 
 
-/* Game Button
+
+/* ? (Organizing)
    ========================================================================== */
 
 .login-container {
@@ -474,7 +475,7 @@ i {
 }
 
 .login {
-    width: 90%;
+
 }
 
 .game {
