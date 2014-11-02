@@ -22,7 +22,7 @@ define([
         );
 
         if (elem)
-            elem.innerHTML = Clib.formatSatoshis(engine.balanceSatoshis);
+            elem.innerHTML = Clib.formatSatoshis(engine.balanceSatoshis, 2);
     }
 
 });

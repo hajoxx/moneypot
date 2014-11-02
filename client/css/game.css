@@ -80,9 +80,9 @@ i {
    ========================================================================== */
 
 .controls-container {
-    padding: 10px 10px;
+    padding: .4em;
     border: 1px solid rgba(0, 0, 0, 0.1);
-    font-size: 20px;
+    font-size: 1em;
     background-image: url(../img/controls-back.png);
     min-width: 0;
     border-radius: 3px;
@@ -402,6 +402,7 @@ i {
 
 .information {
     text-align: center;
+    overflow-x: hidden;
 }
 
 .information .small {
@@ -462,8 +463,6 @@ i {
 .auto-bet-cont label:hover, .auto-bet-cont input:hover {
      cursor: pointer;
  }
-
-
 
 
 /* ? (Organizing)

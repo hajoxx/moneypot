@@ -125,6 +125,11 @@ define(['lib/seedrandom', 'lib/lodash'], function(Seedrandom, _) {
 
         isInteger: function(nVal) {
             return typeof nVal === "number" && isFinite(nVal) && nVal > -9007199254740992 && nVal < 9007199254740992 && Math.floor(nVal) === nVal;
+        },
+
+        //Returns plural or singular, for a given amount of bits.
+        grammarBits: function(bits) {
+            return bits <= 100 ? 'bit' : 'bits';
         }
     };
 
