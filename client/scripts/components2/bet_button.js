@@ -1,5 +1,5 @@
 define(['lib/react', 'lib/clib', 'components2/payout'], function(React, Clib, Payout) {
-    var initialDisableTime = 1000; //The time the button is disabled after cashing out and after the game crashes //TODO: used?
+    var initialDisableTime = 500; //The time the button is disabled after cashing out and after the game crashes
 
     var D = React.DOM;
 
