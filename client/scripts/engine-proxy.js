@@ -154,7 +154,14 @@ define(['lib/events', 'lib/clib', 'lib/lodash'], function(Events, Clib, _) {
      * if the game is not in progress returns null
      */
     EngineProxy.prototype.getCurrentGamePayout = function() {
-      return this.engine.getGamePayout();
+        return this.engine.getGamePayout();
+    };
+
+    /**
+     * Returns the username if the user or null
+     */
+    EngineProxy.prototype.getUsername = function() {
+        return this.engine.username;
     };
 
 
@@ -209,6 +216,13 @@ define(['lib/events', 'lib/clib', 'lib/lodash'], function(Events, Clib, _) {
      */
     EngineProxy.prototype.stop = function() {
         this.stopEngine();
+    };
+
+    /**
+     * Say something in the chat, from 1 to 500 chars
+     */
+    EngineProxy.prototype.chat = function(msg) {
+        this.engine.say(msg);
     };
 
     return EngineProxy;

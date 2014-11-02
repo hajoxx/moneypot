@@ -1,6 +1,6 @@
 define(['lib/react', 'lib/clib'], function(React, Clib) {
     var D = React.DOM;
-    
+
     return React.createClass({
         displayName: 'payout',
 
@@ -27,7 +27,6 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
                 this.setState({ payout: po * this.props.engine.lastBet });
             else
                 this.setState({ payout: null });
-
 
             window.requestAnimationFrame(this.draw);
         },

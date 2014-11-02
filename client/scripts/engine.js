@@ -73,7 +73,7 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
 
         // Terrible prefix name, last means the 'current' game
 
-        /** Player's Last bet in satoshis **/
+        /** The current bet from 'player_bet' to 'game_starting'*/
         self.lastBet = null;
 
         self.lastGameWonAmount = null; // satoshis won in last game
