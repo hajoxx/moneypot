@@ -67,13 +67,14 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
         /** True if cashing out.. */
         self.cashingOut = false;
 
-
+        /** Saves the queued bet if the game is not 'game_starting', cleared in 'bet_placed' by us and 'game_started' and 'cancel bet' **/
         self.nextBetAmount = null; // If a number, how much to bet next round
+
         self.nextAutoCashout = 0;
 
-        // Terrible prefix name, last means the 'current' game
+        //TODO: Terrible prefix name, last means the 'current' game
 
-        /** The current bet from 'player_bet' to 'game_starting'*/
+        /** The current bet from 'player_bet' to 'game_starting' */
         self.lastBet = null;
 
         self.lastGameWonAmount = null; // satoshis won in last game
@@ -100,7 +101,6 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
             }
 
             self.trigger('game_started');
-
         });
 
         /**
@@ -210,6 +210,7 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
                 self.userState = 'PLAYING';
                 self.balanceSatoshis -= data.bet;
                 self.lastBet = data.bet;
+                this.nextBetAmount = null;
                 self.trigger('user_bet', data);
             }
 
@@ -358,7 +359,7 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
     /**
      * Places a bet with a giving amount.
      * @param {number} amount - Bet amount in bits
-     * @param {number} autoCashOut - Percentage of self cash outf
+     * @param {number} autoCashOut - Percentage of self cash out
      * @param {function} callback(err, result)
      */
     Engine.prototype.bet = function(amount, autoCashOut, autoPlay, callback) {
@@ -367,15 +368,15 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
         console.assert(!autoCashOut || (typeof autoCashOut === 'number' && autoCashOut >= 100));
 
         this.autoPlay = autoPlay;
-        this.nextBetAmount = amount;
         this.nextAutoCashout = autoCashOut;
 
         if (this.gameState === 'STARTING')
             return this.doBet(amount, autoCashOut, callback);
 
-
-        // otherwise, lets queue the bet...
+        //otherwise, lets queue the bet
+        this.nextBetAmount = amount;
         callback(null, 'WILL_JOIN_NEXT');
+
         this.trigger('bet_queued');
     };
 
