@@ -202,6 +202,16 @@ define(['lib/react',
             render: function () {
                 var self = this;
 
+                // If they're not logged in, let just show a login to play
+                if (!this.props.engine.username)
+                    return D.div({ className: 'login-container grid grid-pad' },
+                        D.div({ className: 'controls'},
+                            D.div({ className: 'login'}, D.a({className: 'big-button unselect', href: '/login' }, 'Login to play'),
+                                D.a({ href: '/register', className: 'register'}, 'or register ')
+                            )
+                        )
+                    );
+
                 //If the game is able to bet (If the user is not playing & does not have a queued bet)
                 function ableTobet(engine) {
                     return (!(engine.gameState === 'IN_PROGRESS' && engine.userState === 'PLAYING') &&
@@ -243,16 +253,6 @@ define(['lib/react',
                     controlInputs = null;
                 }
                 buttonCol = D.div({ className: buttonClass }, button );
-
-                // If they're not logged in, let just show a login to play
-                if (!this.props.engine.username)
-                    return D.div({ className: 'login-container grid grid-pad' },
-                        D.div({ className: 'controls'},
-                            D.div({ className: 'login'}, D.a({className: 'big-button unselect', href: '/login' }, 'Login to play'),
-                                D.a({ href: '/register', className: 'register'}, 'or register ')
-                            )
-                        )
-                    );
 
                 //If the user is logged in render the controls
                 return D.div(null,

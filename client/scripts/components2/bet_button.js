@@ -43,10 +43,10 @@ define(['lib/react', 'lib/clib', 'components2/payout'], function(React, Clib, Pa
                 var aco = this.props.engine.nextAutoCashout;
 
                 var bet;
-                if(this.props.engine.lastBet == null)
+                if(this.props.engine.nextBetAmount) //If the bet is queued
                     bet = this.props.engine.nextBetAmount;
                 else
-                    bet = this.props.engine.lastBet;
+                    bet = this.props.engine.lastBet; //Current bet
 
                 var msg = null;
                 if(this.props.engine.nextAutoCashout)
