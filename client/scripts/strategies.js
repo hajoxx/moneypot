@@ -82,7 +82,7 @@ console.log('The last game was played? ', engine.lastGamePlayed()?'yes':'no');\n
 \n\
 //Actions:\n\
 //Do this between the 'game_starting' and 'game_started' events\n\
-//engine.placeBet(betInSatoshis, autoCashOutinPercent, autoPlay);\n\
+//engine.placeBet(betInSatoshis, autoCashOutinPercent);\n\
 \n\
 //engine.cashOut(); //Do this when playing\n",
 

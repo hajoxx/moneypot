@@ -24,7 +24,7 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
 
             var po = this.props.engine.getGamePayout();
             if (po)
-                this.setState({ payout: po * this.props.engine.lastBet });
+                this.setState({ payout: po * this.props.engine.currentPlay().bet });
             else
                 this.setState({ payout: null });
 
@@ -32,7 +32,7 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
         },
 
         render: function() {
-            var decimals = this.props.engine.lastBet < 10000 ? 2 : 0;
+            var decimals = this.props.engine.currentPlay().bet < 10000 ? 2 : 0;
 
             return D.span(null, Clib.formatSatoshis(this.state.payout, decimals));
         }

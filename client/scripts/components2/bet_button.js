@@ -39,22 +39,20 @@ define(['lib/react', 'lib/clib', 'components2/payout'], function(React, Clib, Pa
             var self = this;
 
             // If betting (a bet is queued or the user already bet and the game has not started yet)
-            if (this.props.engine.nextBetAmount || (this.props.engine.gameState === 'STARTING' && this.props.engine.userState === 'PLAYING')) {
+            if (this.props.engine.isBetting()) {
                 var aco = this.props.engine.nextAutoCashout;
 
                 var bet;
                 if(this.props.engine.nextBetAmount) //If the bet is queued
-                    bet = this.props.engine.nextBetAmount;
-                else
-                    bet = this.props.engine.lastBet; //Current bet
+                    bet = Clib.formatSatoshis(this.props.engine.nextBetAmount, 0) + ' ' + Clib.grammarBits(this.props.engine.nextBetAmount);
 
                 var msg = null;
-                if(this.props.engine.nextAutoCashout)
+                if (aco)
                     msg = ' with auto cash-out at ' + (aco / 100) + 'x';
 
                 return D.div({ className: 'cash-out' },
                     D.a({ className: 'big-button-disable unclick' },
-                            'Betting ' + Clib.formatSatoshis(bet) + ' ' + Clib.grammarBits(bet), msg),
+                            'Betting ', bet, msg),
                     D.div({ className: 'cancel' }, this.getSendingBet())
                 );
 

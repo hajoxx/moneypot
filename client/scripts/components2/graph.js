@@ -27,7 +27,6 @@ define(['lib/clib', 'lib/lodash'], function(Clib, _) {
         this.canvas = canvas;
         this.engine = engine;
         this.gameState = engine.gameState;
-        this.userState = engine.userState;
 
         this.cashingOut = engine.cashingOut;
         //this.lastWinnings = lastWinnings; //The payout of the last game
@@ -83,19 +82,17 @@ define(['lib/clib', 'lib/lodash'], function(Clib, _) {
     };
 
     Graph.prototype.drawGraph = function() {
+        var pi = this.engine.currentPlay();
 
         /* Style the line depending on the game states */
         this.ctx.strokeStyle = "Black";
         //if(this.lastGameWon) {
-        if(this.userState === 'PLAYING'){
+        if(pi && pi.bet && !pi.stopped_at){
             this.ctx.lineWidth=6;
             this.ctx.strokeStyle = '#7cba00';
         } else if(this.cashingOut) {
             this.ctx.lineWidth=6;
             this.ctx.strokeStyle = "Grey";
-        //} else if (this.userState === 'crashing' || this.roomState === 'standby') {
-        //    this.ctx.strokeStyle = "Red";
-        //    this.ctx.lineWidth=5;
         } else {
             this.ctx.lineWidth=4;
         }
@@ -205,7 +202,9 @@ define(['lib/clib', 'lib/lodash'], function(Clib, _) {
     Graph.prototype.drawGameData = function() {
 
         if(this.engine.gameState === 'IN_PROGRESS') {
-            if(this.userState === 'PLAYING')
+            var pi = this.engine.currentPlay();
+
+            if (pi && pi.bet && !pi.stopped_at)
                 this.ctx.fillStyle = '#7cba00';
             else
                 this.ctx.fillStyle = "black";
@@ -214,14 +213,14 @@ define(['lib/clib', 'lib/lodash'], function(Clib, _) {
         }
 
         //If the engine enters in the room @ ENDED it doesnt have the crash value, so we dont display it
-        if(this.engine.gameState === 'ENDED' && this.engine.lastGameCrashedAt) {
+        if(this.engine.gameState === 'ENDED') {
             if(this.canvasWidth > 500)
                     this.ctx.font="60px Verdana";
             else
                 this.ctx.font="40px Verdana";
             this.ctx.fillStyle = "red";
             this.ctx.fillText('Game crashed', this.canvasWidth/5, 100);
-            this.ctx.fillText('@ ' + Clib.formatSatoshis(this.engine.lastGameCrashedAt) + 'x', this.canvasWidth/5, 180);
+            this.ctx.fillText('@ ' + Clib.formatDecimals(this.engine.tableHistory[0].game_crash/100, 2) + 'x', this.canvasWidth/5, 180);
         }
 
         /*if(this.lostConnection) {

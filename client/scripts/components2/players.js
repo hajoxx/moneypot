@@ -20,54 +20,69 @@ define(['lib/react', 'lib/clib', 'lib/lodash'], function(React, Clib, _) {
 
             var trUsersWonCashed;
             var trUsersLostPlaying;
-            var trMe;
 
-            var tHead;
             var tBody;
 
             var containerClass;
             var tableClass;
 
-            //In progress: Users with cashed out are users chased
-            //Ended: Users with cashed are users Won
-            _.forEach(self.props.engine.playerInfo, function(value, key, collection) {
-                //if(key == self.props.engine.username)
-                //    return;
-                if(value.stopped_at)
-                    usersWonCashed.push({ username: key, info: value });
-                else
-                    usersLostPlaying.push({ username: key, info: value });
-            });
+            if (self.props.engine.gameState === 'STARTING') {
+                usersLostPlaying = self.props.engine.joined.map(function(player) {
+                    var bet; // can be undefined
 
-            var usersWonCashedSorted = _.sortBy(usersWonCashed, function(o) {
-                return o.info.stopped_at;
-            }).reverse();
+                    if (player === self.props.engine.username)
+                        bet = self.props.engine.nextBetAmount;
 
-            var usersLostPlayingSorted = _.sortBy(usersLostPlaying, function(o) {
-                return o.info.bet;
-            }).reverse();
+                    return { username: player, info: { bet: bet } };
+                });
+            } else {
+
+                //In progress: Users with cashed out are users chased
+                //Ended: Users with cashed are users Won
+                _.forEach(self.props.engine.playerInfo, function (value, key) {
+                    if (value.stopped_at)
+                        usersWonCashed.push({ username: key, info: value });
+                    else
+                        usersLostPlaying.push({ username: key, info: value });
+                });
+
+                usersWonCashed.sort(function(a, b) {
+                    var r = b.info.stopped_at - a.info.stopped_at;
+                    if (r !== 0) return r;
+                    return a.username < b.username ? 1 : -1;
+                });
+
+                usersLostPlaying.sort(function(a, b) {
+                    var r = b.info.bet - a.info.bet;
+                    if (r !== 0) return r;
+                    return a.username < b.username ? 1 : -1;
+                });
+
+            }
 
             //Users Playing and users cashed
             if(self.props.engine.gameState === 'IN_PROGRESS' || self.props.engine.gameState === 'STARTING') {
 
                 trUsersLostPlaying = [];
-                for(var i=0, length = usersLostPlayingSorted.length; i < length; i++) {
+                for(var i=0, length = usersLostPlaying.length; i < length; i++) {
 
                     trUsersLostPlaying.push( D.tr({ className: 'user-playing', key: 'user' + i },
-                        D.td(null, D.a({ href: '/user/' + usersLostPlayingSorted[i].username,
+                        D.td(null, D.a({ href: '/user/' + usersLostPlaying[i].username,
                                          target: '_blank'
                                        },
-                                       usersLostPlayingSorted[i].username)),
+                                       usersLostPlaying[i].username)),
                         D.td(null, '-'),
-                        D.td(null, Clib.formatSatoshis(usersLostPlayingSorted[i].info.bet, 0)),
+                        D.td(null,
+                            usersLostPlaying[i].info.bet ? Clib.formatSatoshis(usersLostPlaying[i].info.bet, 0) : '?'
+                        ),
                         D.td(null, '-'),
                         D.td(null, '-')
                     ));
                 }
 
                 trUsersWonCashed = [];
-                for (var i=0, length = usersWonCashedSorted.length; i < length; i++) {
-                    var user = usersWonCashedSorted[i];
+                for (var i=0, length = usersWonCashed.length; i < length; i++) {
+                    var user = usersWonCashed[i];
                     var bet = user.info.bet;
                     var profit = calcProfit(bet, user.info.stopped_at);
                     trUsersWonCashed.push( D.tr({ className: 'user-cashed', key: 'user' + i },
@@ -93,7 +108,7 @@ define(['lib/react', 'lib/clib', 'lib/lodash'], function(React, Clib, _) {
             //Users Lost and users Won
             } else if(self.props.engine.gameState === 'ENDED') {
 
-                trUsersLostPlaying = usersLostPlayingSorted.map(function(entry, i) {
+                trUsersLostPlaying = usersLostPlaying.map(function(entry, i) {
                     var bet = entry.info.bet;
                     var bonus = entry.info.bonus;
                     var profit = -bet;
@@ -118,7 +133,7 @@ define(['lib/react', 'lib/clib', 'lib/lodash'], function(React, Clib, _) {
                     );
                 });
 
-                trUsersWonCashed = usersWonCashedSorted.map(function(entry, i) {
+                trUsersWonCashed = usersWonCashed.map(function(entry, i) {
                     var bet = entry.info.bet;
                     var bonus = entry.info.bonus;
                     var stopped = entry.info.stopped_at;

@@ -240,12 +240,12 @@ i {
     color: #9C9696;
 }
 
-.autoplay input, .cashout input{
+.cashout input{
     width: 18px;
     margin-left: -5px;
 }
 
-.autoplay, .cashout {
+.cashout {
     font-size: 13px;
     display: inline;
     line-height: 2rem;
@@ -721,16 +721,6 @@ i {
     }
 }
 
-
-/* Auto play */
-
-@media only screen and (max-width: 40em) { 
-    .autoplay {
-        float: none;
-        display: block !important;
-        text-align: right;
-    }
-}
 
 /* Users playing + Users Summary */
 

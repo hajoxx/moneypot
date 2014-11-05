@@ -1,4 +1,4 @@
-define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function(io, Events, _, Clib) {
+define(['lib/socket.io-1.2.0', 'lib/events', 'lib/lodash', 'lib/clib'], function(io, Events, _, Clib) {
 
     var defaultHost = window.document.location.host === 'www.moneypot.com' ?
         'https://game.moneypot.com' :
@@ -26,10 +26,13 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
         self.balanceSatoshis = null;
 
         /** Array containing chat history */
-        self.chat = null;
+        self.chat = [];
 
         /** Object containig the game history */
-        self.tableHistory = null;
+        self.tableHistory = [];
+
+        // The current players who joined the game, while the game is STARTING
+        self.joined = [];
 
         /** Object containing the current game players and their status, this is saved in game history every game crash */
         self.playerInfo = null;
@@ -40,13 +43,6 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
          */
         self.gameState = null;
 
-        /**
-         * User state
-         * Posible states: 'WATCHING'  || 'PLAYING'
-         * WATCHING: Just watching the game
-         * PLAYING: Bet in the current game
-        */
-        self.userState = null;
 
         self.created = null; // Creation time of current game. This is the server time, not clients..
 
@@ -59,10 +55,8 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
         self.startTime = null;
 
 
-        /** True if you send place_bet to the server but the server has not yet responded */
+        /** If you are currently placing a bet. This is cleared on game_started */
         self.placingBet = false;
-
-        self.autoPlay = false;
 
         /** True if cashing out.. */
         self.cashingOut = false;
@@ -72,15 +66,6 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
 
         self.nextAutoCashout = 0;
 
-        //TODO: Terrible prefix name, last means the 'current' game
-
-        /** The current bet from 'player_bet' to 'game_starting' */
-        self.lastBet = null;
-
-        self.lastGameWonAmount = null; // satoshis won in last game
-        self.lastGameCrashedAt = false; //  The percentage in which the last game crashed at
-        self.lastBonus = null;        // satoshis of the last bonus earned
-
         self.ws.on('err', function(err) {
             console.error('Server sent us the error: ', err);
         });
@@ -88,17 +73,25 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
         /**
          * Event called at the moment when the game starts
          */
-        self.ws.on('game_started', function() {
+        self.ws.on('game_started', function(bets) {
+            self.joined = [];
 
             self.gameState = 'IN_PROGRESS';
-            self.startTime = Date.now(); // TODO: This date will be sent by the server in the near future
+            self.startTime = Date.now();
             self.lastGameTick = self.startTime;
             self.placingBet = false;
 
-            if (!self.autoPlay) {
-                self.nextBetAmount = null;
-                self.nextAutoCashout = null;
-            }
+
+            self.nextBetAmount = null;
+            self.nextAutoCashout = null;
+
+            Object.keys(bets).forEach(function(username) {
+                if (self.username === username)
+                   self.balanceSatoshis -= bets[username];
+
+
+                self.playerInfo[username] = { bet: bets[username] };
+            });
 
             self.trigger('game_started');
         });
@@ -155,9 +148,6 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
 
             //Clear current game properties
             self.gameState = 'ENDED';
-            self.lastGameCrashedAt = data.game_crash;
-            self.lastBonus = self.playerInfo[self.username] ? self.playerInfo[self.username].bonus : null;
-            self.userState = 'WATCHING';
             self.cashingOut = false;
 
             self.trigger('game_crash', data);
@@ -171,21 +161,16 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
          * @param {number} info.time_till_start - Time lapse for the next game to begin
          */
         self.ws.on('game_starting', function(info) {
+            self.playerInfo = {};
+            self.joined = [];
 
             self.gameState = 'STARTING';
             self.gameId = info.game_id;
             self.hash = info.hash;
             self.startTime = new Date(Date.now() + info.time_till_start);
 
-            self.lastBet = null;
-            self.lastGameWonAmount = null;
-            self.lastGameCrashedAt = null;
-            self.lastBonus = null;
 
-            /** Clear the users playing object */
-            self.playerInfo = {};
-
-            //Everytime the game starts checks if there is a queue bet and send it
+            // Everytime the game starts checks if there is a queue bet and send it
             if (self.nextBetAmount) {
                 self.doBet(self.nextBetAmount, self.nextAutoCashout, function(err) {
                     if(err)
@@ -205,16 +190,9 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
          */
         self.ws.on('player_bet', function(data) {
 
-            if (self.username === data.username) {
-                self.placingBet = false;
-                self.userState = 'PLAYING';
-                self.balanceSatoshis -= data.bet;
-                self.lastBet = data.bet;
-                this.nextBetAmount = null;
-                self.trigger('user_bet', data);
-            }
+            self.joined.splice(data.index, 0, data.username);
 
-            self.playerInfo[data.username] = { bet: data.bet };
+            // self.playerInfo[data.username] = { bet: data.bet }
             self.trigger('player_bet', data);
         });
 
@@ -224,24 +202,20 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
          * with our name.
          * @param {object} resp - JSON payload
          * @param {string} resp.username - The player username
-         * @param {number} resp.amount - The amount the user cashed out
          * @param {number} resp.stopped_at -The percentaje at wich the user cashed out
          */
         self.ws.on('cashed_out', function(resp) {
-            if (self.username === resp.username) {
-                self.cashingOut = false;
-                self.lastGameWonAmount = resp.amount;
-                self.balanceSatoshis += resp.amount;
-                self.userState = 'WATCHING';
-                self.trigger('user_cashed_out', resp);
-            }
-
             //Add the cashout percetage of each user at cash out
             if (!self.playerInfo[resp.username])
                 return console.warn('Username not found in playerInfo at cashed_out: ', resp.username);
 
             self.playerInfo[resp.username].stopped_at = resp.stopped_at;
-            self.playerInfo[resp.username].amount = resp.amount;
+
+            if (self.username === resp.username) {
+                self.cashingOut = false;
+                self.balanceSatoshis += self.playerInfo[resp.username].bet * resp.stopped_at / 100;
+                self.trigger('user_cashed_out', resp);
+            }
 
             self.trigger('cashed_out', resp);
         });
@@ -267,7 +241,6 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
         self.ws.on('update', function() {
             alert('Please refresh your browser! We just pushed a new update to the server!');
         });
-
 
         self.ws.on('connect', function() {
 
@@ -301,26 +274,17 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
                         self.isConnected = true;
                         self.gameState = resp.state;
                         self.playerInfo = resp.player_info;
-                        self.userState =
-                            self.playerInfo[self.username] &&
-                            !self.playerInfo[self.username].stopped_at
-                                ? 'PLAYING' : 'WATCHING';
-                        if(self.userState === 'PLAYING')
-                            self.lastBet = self.playerInfo[self.username].bet;
 
                         // set current game properties
                         self.gameId = resp.game_id;
                         self.hash = resp.hash;
                         self.created = resp.created;
                         self.startTime = new Date(Date.now() - resp.elapsed);
-
+                        self.joined = resp.joined;
                         self.tableHistory = resp.table_history;
 
                         if (self.gameState == 'IN_PROGRESS')
                             self.lastGameTick = Date.now();
-
-                        if (self.gameState == 'ENDED')
-                            self.lastGameCrashedAt = resp.crashed_at;
 
                         self.trigger('connected');
                     }
@@ -362,19 +326,18 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
      * @param {number} autoCashOut - Percentage of self cash out
      * @param {function} callback(err, result)
      */
-    Engine.prototype.bet = function(amount, autoCashOut, autoPlay, callback) {
+    Engine.prototype.bet = function(amount, autoCashOut, callback) {
         console.assert(typeof amount == 'number');
         console.assert(Clib.isInteger(amount));
         console.assert(!autoCashOut || (typeof autoCashOut === 'number' && autoCashOut >= 100));
 
-        this.autoPlay = autoPlay;
+        this.nextBetAmount = amount;
         this.nextAutoCashout = autoCashOut;
 
         if (this.gameState === 'STARTING')
             return this.doBet(amount, autoCashOut, callback);
 
         //otherwise, lets queue the bet
-        this.nextBetAmount = amount;
         callback(null, 'WILL_JOIN_NEXT');
 
         this.trigger('bet_queued');
@@ -393,7 +356,6 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
 
                 if (error !== 'GAME_IN_PROGRESS' && error !== 'ALREADY_PLACED_BET') {
                     alert('There was an error, please reload the window: ' + error);
-                    self.autoPlay = false;
                 }
                 if (callback)
                     callback(error);
@@ -408,15 +370,10 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
         self.trigger('placing_bet');
     };
 
-    Engine.prototype.cancelAutoPlay = function() {
-        this.autoPlay = false;
-    };
-
      /**
       * Cancels a bet, if the game state is able to do it so
       */
     Engine.prototype.cancelBet = function() {
-        this.autoPlay = false;
 
         if (!this.nextBetAmount)
             return console.error('Can not cancel next bet, wasn\'t going to make it...');
@@ -475,6 +432,28 @@ define(['lib/socket.io-1.1.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
      */
     Engine.prototype.calcGamePayout = function(ms) {
          return growthFunc(ms);
+    };
+
+
+    // is either queuing up a bet, placing a bet, or placed a bet
+    Engine.prototype.isBetting = function() {
+         if (!this.username) return false;
+
+         if (this.nextBetAmount) return true;
+
+         for (var i = 0 ; i < this.joined.length; ++i) {
+             if (this.joined[i] == this.username)
+                return true;
+         }
+
+
+        return false;
+    };
+
+    Engine.prototype.currentPlay = function() {
+        if (!this.username) return null;
+
+        return this.playerInfo[this.username];
     };
 
     /**

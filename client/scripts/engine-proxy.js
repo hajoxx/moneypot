@@ -198,8 +198,8 @@ define(['lib/events', 'lib/clib', 'lib/lodash'], function(Events, Clib, _) {
      * @param {boolean} autoplay - True to bet automatically with the current settings
      * @param {function} callback - Optional callback to catch errors
      */
-    EngineProxy.prototype.placeBet = function(bet, cashOut, autoplay, callback) {
-        this.engine.bet(bet, cashOut, autoplay, callback);
+    EngineProxy.prototype.placeBet = function(bet, cashOut, callback) {
+        this.engine.bet(bet, cashOut, callback);
     };
 
     /**

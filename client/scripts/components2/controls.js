@@ -15,18 +15,10 @@ define(['lib/react',
                 engine: React.PropTypes.object.isRequired
             },
 
-            componentWillMount: function () {
-                var self = this;
-                self.props.engine.on('cancel_bet', function () {
-                    self.setState({ auto_play: false });
-                });
-            },
-
             getInitialState: function () {
                 return {
                     bet_size: '1', // in bits
-                    cash_out: '2.00', // in multiplier
-                    auto_play: false
+                    cash_out: '2.00' // in multiplier
                 }
             },
 
@@ -66,20 +58,22 @@ define(['lib/react',
             },
 
             getStatusMessage: function () {
+                var pi = this.props.engine.currentPlay();
+
                 if (this.props.engine.gameState === 'STARTING') {
                     return Countdown({ engine: this.props.engine });
                 }
 
                 if (this.props.engine.gameState === 'IN_PROGRESS') {
                     //user is playing
-                    if (this.props.engine.userState === 'PLAYING') {
+                    if (pi && pi.bet && !pi.stopped_at) {
                         return D.span(null, 'Currently playing...');
-                    } else if (this.props.engine.lastGameWonAmount) { // user has cashed out
+                    } else if (pi && pi.stopped_at) { // user has cashed out
                         return D.span(null, 'Cashed Out @  ',
-                            D.b({className: 'green'}, (this.props.engine.lastGameWonAmount / this.props.engine.lastBet), 'x'),
+                            D.b({className: 'green'}, pi.stopped_at / 100, 'x'),
                             ' / Won: ',
-                            D.b({className: 'green'}, Clib.formatSatoshis(this.props.engine.lastGameWonAmount)),
-                            ' ', Clib.grammarBits(this.props.engine.lastGameWonAmount)
+                            D.b({className: 'green'}, Clib.formatSatoshis(pi.bet * pi.stopped_at / 100)),
+                            ' ', Clib.grammarBits(pi.bet * pi.stopped_at / 100)
                         );
 
                     } else { // user still in game
@@ -87,52 +81,47 @@ define(['lib/react',
                     }
                 } else if (this.props.engine.gameState === 'ENDED') {
 
-                    if (this.props.engine.lastBet && this.props.engine.lastGameWonAmount) { // bet and won
+                    if (pi && pi.stopped_at) { // bet and won
 
                         var bonus;
-                        if (this.props.engine.lastBonus) {
+                        if (pi.bonus) {
                             bonus = D.span(null, ' (+',
-                                Clib.formatSatoshis(this.props.engine.lastBonus), ' ',
-                                Clib.grammarBits(this.props.engine.lastBonus), ' bonus)'
+                                Clib.formatSatoshis(pi.bonus), ' ',
+                                Clib.grammarBits(pi.bonus), ' bonus)'
                             );
                         }
 
                         return D.span(null, 'Cashed Out @ ',
-                            D.b({className: 'green'}, (this.props.engine.lastGameWonAmount / this.props.engine.lastBet), 'x'),
+                            D.b({className: 'green'}, pi.stopped_at / 100, 'x'),
                             ' / Won: ',
-                            D.b({className: 'green'}, Clib.formatSatoshis(this.props.engine.lastGameWonAmount)),
-                            ' ', Clib.grammarBits(this.props.engine.lastGameWonAmount),
+                            D.b({className: 'green'}, Clib.formatSatoshis(pi.bet * pi.stopped_at / 100)),
+                            ' ', Clib.grammarBits(pi.bet * pi.stopped_at / 1000),
                             bonus
                         );
-                    } else if (this.props.engine.lastBet) { // bet and lost
+                    } else if (pi) { // bet and lost
 
                         var bonus;
-                        if (this.props.engine.lastBonus) {
+                        if (pi.bonus) {
                             bonus = D.span(null, ' (+ ',
-                                Clib.formatSatoshis(this.props.engine.lastBonus), ' ',
-                                Clib.grammarBits(this.props.engine.lastBonus), ' bonus)'
+                                Clib.formatSatoshis(pi.bonus), ' ',
+                                Clib.grammarBits(pi.bonus), ' bonus)'
                             );
                         }
 
                         return D.span(null,
-                            'Game crashed @ ', D.b({className: 'red'}, this.props.engine.lastGameCrashedAt / 100, 'x'),
-                            ' / You lost ', D.b({className: 'red'}, this.props.engine.lastBet / 100), ' ', Clib.grammarBits(this.props.engine.lastBet),
+                            'Game crashed @ ', D.b({className: 'red'},
+                                    this.props.engine.tableHistory[0].game_crash / 100, 'x'),
+                            ' / You lost ', D.b({className: 'red'}, pi.bet / 100), ' ', Clib.grammarBits(pi.bet),
                             bonus
                         );
 
                     } else { // didn't bet
                         return D.span(null,
-                            'Game crashed @ ', D.b({className: 'red'}, this.props.engine.lastGameCrashedAt / 100, 'x')
+                            'Game crashed @ ', D.b({className: 'red'}, this.props.engine.tableHistory[0].game_crash / 100, 'x')
                         );
                     }
 
                 }
-            },
-
-            toggleAutoPlay: function () {
-                var prev = this.state.auto_play;
-                if (prev) this.props.engine.cancelAutoPlay();
-                this.setState({ auto_play: !prev });
             },
 
             copyHash: function () {
@@ -192,7 +181,7 @@ define(['lib/react',
 
                 console.assert(_.isFinite(cashOut));
 
-                this.props.engine.bet(bet, cashOut, this.state.auto_play, function (err) {
+                this.props.engine.bet(bet, cashOut, function (err) {
                     if (err) {
                         console.error('Got betting error: ', err);
                     }
@@ -201,6 +190,7 @@ define(['lib/react',
 
             render: function () {
                 var self = this;
+                var pi = this.props.engine.currentPlay();
 
                 // If they're not logged in, let just show a login to play
                 if (!this.props.engine.username)
@@ -212,22 +202,20 @@ define(['lib/react',
                         )
                     );
 
-                //If the game is able to bet (If the user is not playing & does not have a queued bet)
-                function ableTobet(engine) {
-                    return (!(engine.gameState === 'IN_PROGRESS' && engine.userState === 'PLAYING') &&
-                        !(engine.nextBetAmount || (engine.gameState === 'STARTING' && engine.userState === 'PLAYING')));
-                }
+                // Able to bet, and not betting
+                var ableToBet;
+                if (this.props.engine.isBetting())
+                    ableToBet = false;
+                else if (this.props.engine.gameState === 'IN_PROGRESS' && pi && pi.bet && !pi.stopped_at)
+                    ableToBet = false;
+                else
+                    ableToBet = true;
 
-                function ableToBetOrBetting(engine) {
-                    //If the user is not playing
-                    return (!(engine.gameState === 'IN_PROGRESS' && engine.userState === 'PLAYING') ||
-                        //If the user is betting ((a bet is queued and not playing) or (the user already bet and the game has not started yet))
-                        engine.nextBetAmount && !(engine.gameState === 'IN_PROGRESS' && engine.userState === 'PLAYING')
-                    );
-                }
+                // Able to bet, or is already betting
+                var ableToBetOrBetting = ableToBet || this.props.engine.isBetting();
 
                 var button;
-                if (ableToBetOrBetting(this.props.engine)) {
+                if (ableToBetOrBetting) {
                     button = BetButton({
                         engine: this.props.engine,
                         invalidBet: this.invalidBet,
@@ -243,7 +231,7 @@ define(['lib/react',
 
                 var buttonClass;
                 var buttonCol, controlInputs;
-                if(ableTobet(this.props.engine)) {
+                if (ableToBet) {
                     buttonClass = 'col-1-2 mobile-col-1-1';
                     controlInputs = D.div({ className: 'col-1-2 mobile-col-1-1' },
                         this.getControlInputs()
@@ -265,19 +253,6 @@ define(['lib/react',
                         D.div({ className: 'controls-grid grid grid-pad' },
                             controlInputs,
                             buttonCol
-                        ),
-
-                        D.div({ className: 'auto-bet-cont'  },
-                            D.label(null,
-                                D.input({
-                                    type: 'checkbox',
-                                    name: 'autoplay',
-                                    onChange: this.toggleAutoPlay,
-                                    checked: this.state.auto_play,
-                                    disabled: this.invalidBet()
-                                }),
-                                'auto bet'
-                            )
                         )
                     ),
 
