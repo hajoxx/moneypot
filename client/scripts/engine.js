@@ -1,7 +1,7 @@
 define(['lib/socket.io-1.2.0', 'lib/events', 'lib/lodash', 'lib/clib'], function(io, Events, _, Clib) {
 
     var defaultHost = window.document.location.host === 'www.moneypot.com' ?
-        'https://game.moneypot.com' :
+        'https://g2.moneypot.com' :
         window.document.location.host.replace(/:3841$/, ':3842');
 
     var STOP_PREDICTING_LAPSE = 300;
