@@ -862,7 +862,7 @@ exports.getSiteStats = function(callback) {
                 'SUM(plays.bet)::bigint total_bet, ' +
                 'SUM(plays.cash_out)::bigint cashed_out, ' +
                 'SUM(plays.bonus)::bigint bonused ' +
-                'FROM plays INNER JOIN games ON games.id = plays.game_id', as('plays', callback));
+                'FROM plays', as('plays', callback));
         }
     ];
 
