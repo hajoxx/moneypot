@@ -7,21 +7,11 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
     function renderMessage(message, index) {
         var self = this;
 
-        var pri;
+        var pri = 'msg-chat-message';
         switch(message.type) {
         case 'say':
-            switch(message.role) {
-                case 'admin':
-                    pri = 'msg-admin-message';
-                    break;
-                case 'moderator':
-                    pri = 'msg-moderator-message';
-                    break;
-                case 'user':
-                default:
-                    pri = 'msg-chat-message';
-                    break;
-            }
+            if (message.role === 'admin') pri += ' msg-admin-message';
+
             var username = self.props.engine.username;
             if (username && message.username != username && message.message.toLowerCase().indexOf(username.toLowerCase()) != -1) {
                 pri += ' msg-highlight-message';

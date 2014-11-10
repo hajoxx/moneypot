@@ -22,54 +22,20 @@
 }
 
 .msg-chat-message {
+    color: #000000;
     line-height: 17px;
-}
-
-.msg-chat-message a{
-    color: #1e1e1e;
-    font-size: 13px;
-    font-weight: 600;
-    background-color: #EEEEEE;
-    font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
-}
-
-.msg-chat-message span {
-    color: #1e1e1e;
     font-size: 14px;
 }
 
-.msg-admin-message {
-    line-height: 17px;
+.msg-chat-message a {
+    color: #000000;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
 }
 
-.msg-admin-message a{
+.msg-chat-message.msg-admin-message a {
     color: #ce1e1e;
-    font-size: 13px;
-    font-weight: 600;
-    background-color: #FFE0EB;
-    font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
-}
-
-.msg-admin-message span {
-    color: #5e1e1e;
-    font-size: 14px;
-}
-
-.msg-moderator-message {
-    line-height: 17px;
-}
-
-.msg-moderator-message a{
-    font-size: 13px;
-    color: #E6E6FF;
-    font-weight: 600;
-    background-color: #BDEDFF;
-    font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
-}
-
-.msg-moderator-message span {
-    color: #1e1e1e;
-    font-size: 14px;
 }
 
 .msg-info-message {
