@@ -67,7 +67,7 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
             /* Avoid scrolls down if a render is about to occur and it is not caused by the chat */
             this.listLength = this.props.engine.chat.length;
 
-            return {}
+            return {};
         },
 
         copyGameInfo: function(message) {
@@ -81,7 +81,7 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
             var messages = this.props.engine.chat.map(renderMessage, self);
             var chatInput;
 
-            if(this.props.engine.username) //TODO: Engine should have a variable loggedIn or similar.
+            if (this.props.engine.username)
                 chatInput = D.input(
                     { className: 'chat-input',
                       onKeyDown: this.sendMessage,

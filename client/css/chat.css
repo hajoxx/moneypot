@@ -5,6 +5,7 @@
 }
 
 .messages {
+    overflow-wrap: break-word;
     overflow-y: scroll;
     width: 100%;
     font-size: 1rem;
@@ -62,6 +63,7 @@
     font-size: 13px;
     color: #E6E6FF;
     font-weight: 600;
+    background-color: #BDEDFF;
     font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
 }
 
