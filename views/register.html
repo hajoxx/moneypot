@@ -40,8 +40,8 @@
                                 <label for="email">*Recovery Email</label>
                             </div>
                             <div class="large-9 columns">
-                                <input type="email" id="email" value="{{?it.values}}{{!it.values.email}}{{?}}" name="user[email]" autocomplete="off"/>
-                                <small><b>*Optional:</b> We strongly advise you to use one, otherwise it is not possible to reset an account</small>
+                                <input type="email" id="email" value="{{?it.values}}{{!it.values.email}}{{?}}" placeholder="you@email.com" name="user[email]" autocomplete="off"/>
+                                <small><b>* Optional</b> although we <b>strongly advise you to use one</b>, otherwise it is <b>not possible</b> to password reset!</small>
                             </div>
                         </div>
 
@@ -52,7 +52,7 @@
                                 <label>Password</label>
                             </div>
                             <div class="large-9 columns">
-                                <input id="password" type="password" value="{{?it.values}}{{!it.values.password}}{{?}}" name="user[password]" autocomplete="off" pattern=".{7,200}" title="Password should be at least 7 characters"/>
+                                <input id="password" type="password" value="{{?it.values}}{{!it.values.password}}{{?}}" name="user[password]" autocomplete="off" pattern=".{7,200}" title="Password should be at least 7 characters" required/>
                                 <small>Pick something secure, at least 7 characters</small>
                             </div>
                         </div>
@@ -63,7 +63,7 @@
                                 <label>Confirm Password</label>
                             </div>
                             <div class="large-9 columns">
-                                <input id="confirmation" type="password" value="{{?it.values}}{{!it.values.confirm}}{{?}}" name="user[confirm]" autocomplete="off" pattern=".{7,200}" data-equal-id="password" required=""/>
+                                <input id="confirmation" type="password" value="{{?it.values}}{{!it.values.confirm}}{{?}}" name="user[confirm]" autocomplete="off" pattern=".{7,200}" data-equal-id="password" required/>
                             </div>
                         </div>
                     </div>

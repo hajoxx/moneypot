@@ -40,7 +40,7 @@ exports.register  = function(req, res, next) {
 
     database.createUser(username, password, email, function(err, sessionId) {
         if (err) {
-            if (err.code === '23505') {
+            if (err === 'USERNAME_TAKEN') {
                 values.user.name = null;
                 return res.render('register', { warning: 'User name taken...', values: values.user});
             }

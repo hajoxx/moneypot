@@ -103,21 +103,38 @@ function getClient(runner, callback) {
 // returns a sessionId
 exports.createUser = function(username, password, email, callback) {
     assert(username && password);
+
+
+
     getClient(
         function(client, callback) {
             var hashedPassword = passwordHash.generate(password);
 
-            client.query('INSERT INTO users(username, email, password) VALUES($1, $2, $3) RETURNING id',
-                [username, email, hashedPassword],
+            client.query('SELECT COUNT(*) count FROM users WHERE lower(username) = lower($1)', [username],
                 function(err, data) {
                     if (err) return callback(err);
-
                     assert(data.rows.length === 1);
-                    var user = data.rows[0];
+                    if (data.rows[0].count > 0)
+                        return callback('USERNAME_TAKEN');
 
-                    createSession(client, user.id, callback);
-                }
-            );
+                    client.query('INSERT INTO users(username, email, password) VALUES($1, $2, $3) RETURNING id',
+                            [username, email, hashedPassword],
+                            function(err, data) {
+                                if (err)  {
+                                    if (err.code === '23505')
+                                        return callback('USERNAME_TAKEN');
+                                    else
+                                        return callback(err);
+                                }
+
+                                assert(data.rows.length === 1);
+                                var user = data.rows[0];
+
+                                createSession(client, user.id, callback);
+                            }
+                        );
+
+                    });
         }
     , callback);
 };
