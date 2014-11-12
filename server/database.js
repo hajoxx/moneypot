@@ -104,8 +104,6 @@ function getClient(runner, callback) {
 exports.createUser = function(username, password, email, callback) {
     assert(username && password);
 
-
-
     getClient(
         function(client, callback) {
             var hashedPassword = passwordHash.generate(password);
@@ -163,7 +161,6 @@ exports.getUserAndGamesPlayedByName = function(username, callback) {
         callback(null, result.rows[0]);
     });
 };
-
 
 
 exports.getUserById = function(userId, callback) {
@@ -443,7 +440,7 @@ exports.getGame = function(gameId, callback) {
 
 exports.getGamesPlays = function(gameId, callback) {
     query('SELECT u.username, p.bet, p.cash_out, p.bonus FROM plays p, users u ' +
-        ' WHERE game_id = $1 AND p.user_id = u.id ORDER by p.cash_out/p.bet DESC NULLS LAST, p.bet DESC', [gameId],
+        ' WHERE game_id = $1 AND p.user_id = u.id ORDER by p.cash_out/p.bet::float DESC NULLS LAST, p.bet DESC', [gameId],
         function(err, result) {
             if (err) return callback(err);
             return callback(null, result.rows);

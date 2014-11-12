@@ -17,6 +17,7 @@
                 <td>Player</td>
                 <td>Bet</td>
                 <td>Cashed Out</td>
+                <td>Bonus</td>
                 <td>Profit</td>
             </tr>
           </thead>
@@ -37,8 +38,12 @@
                         {{??}}
                         Lose
                         {{?}}
+                    </td>
+                    <td>
                         {{? play.bonus }}
-                        <small class="bonus" >+ bonus {{#def.format: {n: play.bonus, decimals: 2} }}</small>
+                           {{#def.format: {n: play.bonus/play.bet* 100 * 100, decimals: 2} }}%
+                        {{??}}
+                          -
                         {{?}}
                     </td>
                     <td>
