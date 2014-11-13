@@ -1,4 +1,4 @@
-define(['lib/react', 'components2/chart', 'components2/controls', 'components2/log_chat_selector', 'components2/players', 'components2/payout'],
+define(['lib/react', 'components/chart', 'components/controls', 'components/log_chat_selector', 'components/players', 'components/payout'],
     function(React, Chart, Controls, LogChatSelector, Players, Payout) {
         var D = React.DOM;
 

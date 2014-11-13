@@ -1,4 +1,4 @@
-define(['lib/react', 'components2/chat', 'components2/games_log', 'components2/strategy_editor', '../strategy-controller'], function(React, Chat, GamesLog, StrategyEditor, StrategyController) {
+define(['lib/react', 'components/chat', 'components/games_log', 'components/strategy_editor', '../strategy-controller'], function(React, Chat, GamesLog, StrategyEditor, StrategyController) {
     var D = React.DOM;
 
     return React.createClass({
@@ -10,7 +10,7 @@ define(['lib/react', 'components2/chat', 'components2/games_log', 'components2/s
 
         componentWillMount: function() {
             //Instantiate the strategy controller
-            this.strategyController = new StrategyController(this.props.engine);
+            this.strategyController = new StrategyController(this.props.engine); //This could change!
         },
 
         getInitialState: function() {

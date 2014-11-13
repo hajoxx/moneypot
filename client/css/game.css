@@ -918,18 +918,98 @@ i {
 /* ==========================================================================
    Strategy Editor
    ========================================================================== */
+
 .strategy-container {
     height: 100%;
+    font-size: 0.9em;
+    color: black;
+    margin-bottom: 1em;
 }
+
+/* Custom Strategy
+   ========================================================================== */
 
     .strategy-input {
         height: 253px;
         width: 100%;
+        border: 1px solid rgba(94, 94, 94, 0.2);
+        display: block;
     }
 
     .strategy-start {
 
     }
+
+/* Widget Strategy
+   ========================================================================== */
+
+    .widget-container {
+        height: 253px;
+        width: 100%;
+        border: 1px solid rgba(94, 94, 94, 0.2);
+        background-color: #f9f9f9;
+    }
+
+    .widget-title {
+        font-weight: 500;
+    }
+
+    .widget-container input[type="text"] {
+        background-color: transparent;
+        border: 0;
+        -webkit-appearance: none;
+        padding: 0;
+        resize: none;
+        border-bottom: 1px solid #bdbdbd !important;
+        text-align: center;
+        width: 5em;
+        font-size: .8em;
+        font-weight: 500 !important;
+    }
+
+    .stra-base-bet {
+        background-color: #ffffff;
+    }
+
+    .stra-cash-out-at {
+    }
+
+    .stra-base-bet, .stra-cash-out-at {
+        line-height: 2em;
+        padding-left: 1em;
+    }
+
+    .stra-on-loss {
+        padding-left: 1em;
+        padding-top: .3em;
+        padding-bottom: .3em;
+        background-color: #ffffff;
+    }
+
+        .stra-on-loss:first-child {
+            line-height: 1em;
+        }
+
+    .stra-on-win {
+        padding-left: 1em;
+        padding-top: .3em;
+        padding-bottom: .3em;
+    }
+
+        .stra-on-win:first-child {
+            line-height: 1em;
+        }
+
+    .strategy-invalid-data {
+        font-size: .6em;
+        color: #B81717;
+        padding-left: .6em;
+    }
+
+    .stra-on-loss-return-to-base-radio, .stra-on-loss-increase-bet-by, .stra-on-win-return-to-base-radio, .stra-on-win-increase_bet_by {
+        margin-left: 1.2em;
+    }
+
 
 /* FOUNDATION MEDIA QUERIES */
 

@@ -1,20 +1,16 @@
 define(['engine-proxy'], function(EngineProxy) {
 
-    function EngineController(engine, script, stopProxy) {
-        this.stopProxy = stopProxy;
+    function EngineController(engine, logicFn, stopProxy) {
 
         //Create Engine Proxy
         this.engineProxy = new EngineProxy(engine, stopProxy);
 
-        //Create Script from Source
-        var scriptBot = new Function('engine', script);
+        //TODO: Print a decent error, maybe using try catch
+        //Run the script code that contains the subscription methods for the engine proxy
+        logicFn(this.engineProxy);
 
-        //Run the script and replace the Engine Proxy methods
-        scriptBot(this.engineProxy);
-
-        //startEngine (Subscribe the Engine Proxy to all the engine events)
+        //Subscribe the Engine Proxy to all the real engine events
         startEngine(this.engineProxy);
-
     }
 
     EngineController.prototype.stop = function() {
@@ -23,38 +19,34 @@ define(['engine-proxy'], function(EngineProxy) {
 
     function startEngine(engineProxy) {
 
-        var events = {
+        var eventNames = [
 
             /* Game State Events */
-            game_starting: engineProxy.onGameStarting.bind(engineProxy),
-            game_started: engineProxy.onGameStarted.bind(engineProxy),
-            game_crash: engineProxy.onGameCrash.bind(engineProxy),
-
-            /* User Events */
-            user_bet: engineProxy.onUserBet.bind(engineProxy),
-            user_cashed_out: engineProxy.onUserCashedOut.bind(engineProxy),
-            bet_queued: engineProxy.onBetQueued.bind(engineProxy),
-            cancel_bet: engineProxy.onCancelBet.bind(engineProxy),
-            bet_placed: engineProxy.onBetPlaced.bind(engineProxy),
+            'game_starting', 'game_started', 'game_crash',
 
             /* Players Events */
-            player_bet: engineProxy.onPlayerBet.bind(engineProxy),
-            cashed_out: engineProxy.onCashedOut.bind(engineProxy),
+            'player_bet', 'cashed_out',
 
             /* Chat Events */
-            msg: engineProxy.onChatMsg.bind(engineProxy),
+            'msg',
 
             /* Connection Events */
-            connected: engineProxy.onConnected.bind(engineProxy),
-            disconnected: engineProxy.onDisconnected.bind(engineProxy)
+            'connected', 'disconnected'];
 
-        };
-
-        Object.keys(events).forEach(function(key) {
-            engineProxy.engine.on(key, events[key]);
+        //Array of pairs, where each pair is eventName and the function
+        var eventFunctions = eventNames.map(function(eventName) {
+            var fn = engineProxy.trigger.bind(engineProxy, eventName);
+            return [eventName, fn];
         });
 
-        engineProxy.events = events;
+        eventFunctions.forEach(function(pair) {
+            var eventName = pair[0];
+            var fn = pair[1];
+
+            engineProxy.engine.on(eventName, fn);
+        });
+
+        engineProxy.events = eventFunctions;
     }
 
     return EngineController;

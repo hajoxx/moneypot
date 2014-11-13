@@ -1,4 +1,4 @@
-define(['lib/react', 'lib/clib', 'components2/payout'], function(React, Clib, Payout) {
+define(['lib/react', 'lib/clib', 'components/payout'], function(React, Clib, Payout) {
 
     var D = React.DOM;
 

@@ -1,9 +1,9 @@
 define(['lib/react',
         'lib/clib',
         'lib/lodash',
-        'components2/countdown',
-        'components2/bet_button',
-        'components2/cashout_button'],
+        'components/countdown',
+        'components/bet_button',
+        'components/cashout_button'],
     function (React, Clib, _, Countdown, BetButton, CashoutButton) {
 
         var D = React.DOM;
@@ -29,27 +29,13 @@ define(['lib/react',
                 if (self.props.engine.balanceSatoshis < 100)
                     return 'Not enough bits to play';
 
-                if (!/^\d+k*$/.test(self.state.bet_size))
-                    return 'Bet may only contain digits, and k (to mean 1000)';
+                var bet = Clib.parseBet(self.state.bet_size);
+                if(bet instanceof Error)
+                    return bet.message;
 
-                var bet = parseInt(self.state.bet_size.replace(/k/g, '000'));
-
-                if (bet < 1)
-                    return 'The bet should be at least 1 bit';
-
-                if (bet > 1e5)
-                    return 'The bet must be less no more than 100,000 bits';
-
-                var co = self.state.cash_out;
-
-                if (!/^\d+(\.\d{1,2})?$/.test(co))
-                    return 'Invalid auto cash out amount';
-
-                co = parseFloat(co);
-                console.assert(!_.isNaN(co));
-
-                if (_.isNaN(bet) || co < 1 || Math.floor(bet) !== bet)
-                    return 'The bet should be an integer greater than or equal to one';
+                var co = Clib.parseAutoCash(self.state.cash_out);
+                if(co instanceof Error)
+                    return bet.message;
 
                 if (self.props.engine.balanceSatoshis < bet * 100)
                     return 'Not enough bits';
