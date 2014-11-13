@@ -1,6 +1,6 @@
 define(function() {
 
-    var strategies = {
+    return {
 
         custom: "// This strategy editor is in BETA mode, please\n\
 // exercise extreme caution and use exclusively at\n\
@@ -127,7 +127,6 @@ engine.onGameStarting = function() {\n\
         blank: ''
     };
 
-    return strategies;
 });
 
 

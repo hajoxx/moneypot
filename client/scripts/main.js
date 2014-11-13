@@ -1,9 +1,11 @@
 define([
     'lib/react',
-    'components2/game',
+    'components/game',
     'lib/clib',
     'engine'
 ], function(React, Game, Clib, Engine) {
+
+    //TODO: create the strategy controller here
 
     var engine = new Engine();
 

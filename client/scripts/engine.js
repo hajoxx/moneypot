@@ -54,6 +54,8 @@ define(['lib/socket.io-1.2.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
         /// if the game is ended, startTime is how long since the game started
         self.startTime = null;
 
+        /** Max bet per game, this will be calculated dynamically in the future, based on the invested amount in the casino **/
+        self.maxBet = 10000000; //100,000 Bits
 
         /** If you are currently placing a bet. This is cleared on game_started */
         self.placingBet = false;
@@ -202,10 +204,10 @@ define(['lib/socket.io-1.2.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
          * with our name.
          * @param {object} resp - JSON payload
          * @param {string} resp.username - The player username
-         * @param {number} resp.stopped_at -The percentaje at wich the user cashed out
+         * @param {number} resp.stopped_at -The percentage at which the user cashed out
          */
         self.ws.on('cashed_out', function(resp) {
-            //Add the cashout percetage of each user at cash out
+            //Add the cashout percentage of each user at cash out
             if (!self.playerInfo[resp.username])
                 return console.warn('Username not found in playerInfo at cashed_out: ', resp.username);
 
@@ -214,7 +216,6 @@ define(['lib/socket.io-1.2.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
             if (self.username === resp.username) {
                 self.cashingOut = false;
                 self.balanceSatoshis += self.playerInfo[resp.username].bet * resp.stopped_at / 100;
-                self.trigger('user_cashed_out', resp);
             }
 
             self.trigger('cashed_out', resp);
@@ -331,6 +332,9 @@ define(['lib/socket.io-1.2.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
         console.assert(Clib.isInteger(amount));
         console.assert(!autoCashOut || (typeof autoCashOut === 'number' && autoCashOut >= 100));
 
+        if(!Clib.isInteger(amount) || !((amount%100) == 0))
+            return console.error('The bet amount should be integer and divisible by 100');
+
         this.nextBetAmount = amount;
         this.nextAutoCashout = autoCashOut;
 
@@ -344,7 +348,6 @@ define(['lib/socket.io-1.2.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
     };
 
     // Actually bet. Throw the bet at the server.
-    // autoC
     Engine.prototype.doBet =  function(amount, autoCashOut, callback) {
         var self = this;
 

@@ -1,6 +1,6 @@
 define([
     'lib/react',
-    'components2/calculator'
+    'components/calculator'
 ], function(React, Calculator) {
 
     React.renderComponent(

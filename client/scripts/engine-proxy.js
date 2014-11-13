@@ -1,141 +1,95 @@
-define(['lib/events', 'lib/clib', 'lib/lodash'], function(Events, Clib, _) {
+define(['lib/events', 'lib/lodash'], function(Events, _) {
 
     var EngineProxy = function (engine, stopEngine) {
-        var self = this;
+        _.extend(this, Events);
 
-        self.engine = engine;
-        self.stopEngine = stopEngine;
+        this.engine = engine;
+        this.stopEngine = stopEngine;
     };
 
     EngineProxy.prototype.localStop = function() {
         var self = this;
-        Object.keys(this.events).forEach(function(key) {
-            self.engine.off(key, self.events[key]);
+
+        this.events.forEach(function(pair) {
+            var eventName = pair[0];
+            var fn = pair[1];
+
+            self.engine.off(eventName, fn);
         });
     };
-
-    //EngineProxy.prototype.stopEngine = function() {
-    //    this.localStop(this);
-    //};
 
     /* ==========================================================================
      Game State Events
      ========================================================================== */
 
     /**
-     * Event called before starting the game to let the client know when the game is going to start
+     * 'game_starting': Event called before starting the game to let the client know when the game is going to start
      * @param {object} info - JSON payload
      * @param {number} info.game_id - The next game id
      * @param {number} info.hash - Provably predetermined hash
      * @param {number} info.time_till_start - Time lapse for the next game to begin
      */
-    EngineProxy.prototype.onGameStarting = function(info) { };
 
     /**
-     * Event called at the moment when the game starts
+     * 'game_started': Event called at the moment when the game starts
      */
-    EngineProxy.prototype.onGameStarted = function() { };
 
     /**
-     * Event called at game crash
+     * 'game_crash': Event called at game crash
      * @param {object} data - JSON payload
      * @param {number} data.elapsed - Total game elapsed time
      * @param {number} data.game_crash - Crash payout quantity in percent eg. 200 = 2x. Use this to calculate payout!
      * @param {object} data.bonuses - List of bonuses of each user, in satoshis
      * @param {string} data.seed - Revealed seed of the game
      */
-    EngineProxy.prototype.onGameCrash = function(data) { };
-
-    /* ==========================================================================
-     User Events
-     ========================================================================== */
-
-    /**
-     * Event called every time we place a bet
-     * @param {object} resp - JSON payload
-     * @param {string} resp.username - The player username
-     * @param {number} resp.bet - The player bet in satoshis
-     */
-    EngineProxy.prototype.onUserBet = function(data) { };
-
-    /**
-     * Event called every time the server cashes us out
-     * if we call cash out the server is going to call this event
-     * @param {object} resp - JSON payload
-     * @param {string} resp.username - The player username
-     * @param {number} resp.amount - The amount the user cashed out
-     * @param {number} resp.stopped_at -The percentaje at wich the user cashed out
-     */
-    EngineProxy.prototype.onUserCashedOut = function(resp) { };
-
-    /**
-     * The cant be place right now so we queue it for
-     * when the game_starting event happens
-     */
-    EngineProxy.prototype.onBetQueued = function() { };
-
-    /**
-     * A queued bet was canceles
-     */
-    EngineProxy.prototype.onCancelBet = function() { };
-
-    /**
-     * A bet was placed
-     */
-    EngineProxy.prototype.onBetPlaced = function() { };
 
     /* ==========================================================================
      Player Events
      ========================================================================== */
 
     /**
-     * Event called every time a user places a bet
+     * 'player_bet': Event called every time a user places a bet
      * the user that placed the bet could be me so we check for that
      * @param {object} resp - JSON payload
      * @param {string} resp.username - The player username
      * @param {number} resp.bet - The player bet in satoshis
      */
-    EngineProxy.prototype.onPlayerBet = function(data) { };
 
     /**
-     * Event called every time the server cash out a user
+     * 'cashed_out': Event called every time the server cash out a user
      * if we call cash out the server is going to call this event
      * with our name.
      * @param {object} resp - JSON payload
      * @param {string} resp.username - The player username
      * @param {number} resp.amount - The amount the user cashed out
-     * @param {number} resp.stopped_at -The percentaje at wich the user cashed out
+     * @param {number} resp.stopped_at -The percentage at which the user cashed out
      */
-    EngineProxy.prototype.onCashedOut = function(resp) { };
 
     /* ==========================================================================
      Chat Events
      ========================================================================== */
 
     /**
-     * Event called every time we receive a chat message
+     * 'msg': Event called every time we receive a chat message
      * @param {object} resp - JSON payload
-     * @param {string} time - Time when the message was sended
+     * @param {string} time - Time when the message was sent
      * @param {string} type - The 'command': say, mute, error, info
      * @param {username} string - The username of who sent it
      * @param {role} string - admin, moderator, user
      * @param {message} string - Da message
      */
-    EngineProxy.prototype.onChatMsg = function(data) { };
 
     /* ==========================================================================
      Connection Events
      ========================================================================== */
 
     /**
-     * The engine is connected to the server
+     * 'connected': The engine is connected to the server
      */
-    EngineProxy.prototype.onConnected = function() { };
 
     /**
-     * The engine is disconnected to the server
+     * 'disconnected': The engine is disconnected to the server
      */
-    EngineProxy.prototype.onDisconnected = function() { };
 
 
     /* ==========================================================================
@@ -150,15 +104,22 @@ define(['lib/events', 'lib/clib', 'lib/lodash'], function(Events, Clib, _) {
     };
 
     /**
+     * Gets the maximum amount you can bet per game
+     */
+    EngineProxy.prototype.getMaxBet = function() {
+        return this.engine.maxBet;
+    };
+
+    /**
      * Gets the current game payout if playing,
      * if the game is not in progress returns null
      */
-    EngineProxy.prototype.getCurrentGamePayout = function() {
+    EngineProxy.prototype.getCurrentPayout = function() {
         return this.engine.getGamePayout();
     };
 
     /**
-     * Returns the username if the user or null
+     * Returns the username of the user or null
      */
     EngineProxy.prototype.getUsername = function() {
         return this.engine.username;
@@ -170,13 +131,16 @@ define(['lib/events', 'lib/clib', 'lib/lodash'], function(Events, Clib, _) {
      ========================================================================== */
 
     /**
-     * Returns true if the last game was played and lost, false other way
+     * Returns 'WON', 'LOST', 'NOT_PLAYED' based on your game history
      */
-    EngineProxy.prototype.lastGameWasLost = function() { //null means not last winnings(lost) and
+    EngineProxy.prototype.lastGamePlay = function() {
         if(this.lastGamePlayed())
-            return !this.engine.tableHistory[0].player_info[this.engine.username].stopped_at;
+            if(this.engine.tableHistory[0].player_info[this.engine.username].stopped_at)
+                return 'WON';
+            else
+                return 'LOST';
 
-        return false; //Cant lose if not played
+        return 'NOT_PLAYED';
     };
 
     /**

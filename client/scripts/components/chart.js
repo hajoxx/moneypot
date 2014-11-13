@@ -1,4 +1,4 @@
-define(['lib/react', 'lib/clib', 'components2/graph'],
+define(['lib/react', 'lib/clib', 'components/graph'],
 
     function(React, Clib, Graph) {
         var D = React.DOM;

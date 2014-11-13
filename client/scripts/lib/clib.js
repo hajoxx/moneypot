@@ -3,7 +3,7 @@ define(['lib/seedrandom', 'lib/lodash'], function(Seedrandom, _) {
     var rng;
     var currentTime;
 
-    function formatDecimals(n, decimals) {
+    function formatDecimals (n, decimals) {
         if (typeof decimals === 'undefined') {
             if (n % 100 === 0)
                 decimals = 0;
@@ -14,7 +14,7 @@ define(['lib/seedrandom', 'lib/lodash'], function(Seedrandom, _) {
     }
 
     return {
-        formatSatoshis: function(n, decimals) {
+        formatSatoshis: function (n, decimals) {
             return formatDecimals(n/100, decimals);
         },
 
@@ -24,16 +24,16 @@ define(['lib/seedrandom', 'lib/lodash'], function(Seedrandom, _) {
             return betSize * Math.pow(Math.E, (0.00006*ms));
         },
 
-        payoutTime: function(betSize, payout) {
+        payoutTime: function (betSize, payout) {
             return Math.log(payout/betSize)/0.00006;
         },
 
-        seed: function(newSeed) {
+        seed: function (newSeed) {
             rng = Seedrandom(newSeed);
             currentTime = 0;
         },
 
-        payoutNoise: function(betSize, ms, type) {
+        payoutNoise: function (betSize, ms, type) {
             var c1 = 0.00006;
             var c2 = 1;
             var c3 = 1;
@@ -49,7 +49,42 @@ define(['lib/seedrandom', 'lib/lodash'], function(Seedrandom, _) {
             }
         },
 
-        winProb: function(amount, cashOut) {
+        parseBet: function (betString) {
+            betString = String(betString);
+
+            if (!/^\d+k*$/.test(betString))
+                return new Error('Bet may only contain digits, and k (to mean 1000)');
+
+            var bet = parseInt(betString.replace(/k/g, '000'));
+
+            if (bet < 1)
+                return new Error('The bet should be at least 1 bit');
+
+            if (bet > 1e5)
+                return new Error('The bet must be less no more than 100,000 bits');
+
+            if (_.isNaN(bet) || Math.floor(bet) !== bet)
+                return new Error('The bet should be an integer greater than or equal to one');
+
+            return bet;
+        },
+
+        parseAutoCash: function (autoCashString) {
+            var co = autoCashString;
+
+            if (!/^\d+(\.\d{1,2})?$/.test(co))
+                return new Error('Invalid auto cash out amount');
+
+            co = parseFloat(co);
+            console.assert(!_.isNaN(co));
+
+            if(co < 1)
+                return new Error('The auto cash out amount should be bigger than 1');
+
+            return co;
+        },
+
+        winProb: function (amount, cashOut) {
 
             // The cashout factor that we need to get the cashOut with our wager.
             var factor = Math.ceil(100 * cashOut / amount);
@@ -81,7 +116,7 @@ define(['lib/seedrandom', 'lib/lodash'], function(Seedrandom, _) {
             return 9900 / (101*(factor-1));
         },
 
-        profit: function(amount, cashOut) {
+        profit: function (amount, cashOut) {
 
              // The factor that we need to get the cash out with our wager.
              var factor = Math.ceil(100 * cashOut / amount);
@@ -91,7 +126,7 @@ define(['lib/seedrandom', 'lib/lodash'], function(Seedrandom, _) {
              return amount * (factor-100) / 100;
         },
 
-        houseExpectedReturn: function(amount, cashOut) {
+        houseExpectedReturn: function (amount, cashOut) {
 
              var p1,p2,p3;
              var v1,v2,v3;
@@ -112,23 +147,27 @@ define(['lib/seedrandom', 'lib/lodash'], function(Seedrandom, _) {
              return p1 * v1 + p2 * v2 + p3 * v3;
         },
 
-        camelCase: function(input) {
-            return input.toLowerCase().replace(/_(.)/g, function(match, group1) {
+        camelCase: function (input) {
+            return input.toLowerCase().replace(/_(.)/g, function (match, group1) {
                 return group1.toUpperCase();
             });
         },
 
-        capitaliseFirstLetter: function(string)
+        capitaliseFirstLetter: function (string)
         {
             return string.charAt(0).toUpperCase() + string.slice(1);
         },
 
-        isInteger: function(nVal) {
+        isInteger: function (nVal) {
             return typeof nVal === "number" && isFinite(nVal) && nVal > -9007199254740992 && nVal < 9007199254740992 && Math.floor(nVal) === nVal;
         },
 
+        isNumber: function (nVal) {
+            return typeof nVal === "number" && isFinite(nVal) && nVal > -9007199254740992 && nVal < 9007199254740992;
+        },
+
         //Returns plural or singular, for a given amount of bits.
-        grammarBits: function(bits) {
+        grammarBits: function (bits) {
             return bits <= 100 ? 'bit' : 'bits';
         }
     };
