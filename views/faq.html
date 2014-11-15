@@ -21,6 +21,7 @@
                 <li><a href="#limit"></a>What is the most I can bet?</a></li>
                 <li><a href="#last">What is the bonus?</a></li>
                 <li><a href="#odds">What are the game odds?</a></li>
+                <li><a href="#crash-point">How is the game crash calculated?</a></li>
                 <li><a href="#fair">Is the game fair?</a></li>
                 <li><a href="#force">What happens when the server forces people to cash out?</a></li>
                 <li><a href="#addiction">Gambling Addiction</a></li>
@@ -184,6 +185,68 @@
                     The other important thing to keep in mind is that every game has a 1 % chance of instantly crashing. We do not make
                     <strong>any</strong> money on it, but rather use this to fund the bonus scheme. This is an important consideration to make if you
                     are playing in such a way that you never win the bonus.
+                </p>
+                <img src="/img/house-edge.png">
+            </dd>
+            <dd>
+                <b><a name="crash-point"></a>How is the game crash calculated?</b>
+                <p>
+                    The code that decides the multiplier for each round is here:
+                </p>
+                <p>
+                    <a href="https://github.com/moneypot/gameserver/blob/master/server/game.js#L626">https://github.com/moneypot/gameserver/blob/master/server/game.js#L626</a>
+                </p>
+                <p>
+                    It basically does three things.
+                </p>
+                <p>
+                    First, it picks a random integer between 0 and 100 inclusive. If it's
+                    0 (a 1 in 101 chance), the game crashes at 0x and nobody gets a bonus:
+                </p>
+                <p>
+                    <code>if (cryptoRand.randInt(0, 100) === 0)
+                    return 0;</code>
+                </p>
+                <p>
+                    Second, it works out what the multiplier would be if there was no
+                    house edge.  cryptoRand.rand() gives a random number between 0
+                    (inclusive) and 1 (exclusive):
+                </p>
+                <p>
+                    <code>perfect = (1 / (1 - cryptoRand.rand()));</code>
+                </p>
+                <p>
+                    Third, it takes 1% off the multiplier and adds on 0.01x:
+                </p>
+                <p>
+                    <code>multiplier = perfect*0.99 + 0.01;</code>
+                </p>
+                <p>
+                    For example, if the rand() returns 0.5 (right in the middle of its
+                    range):
+                </p>
+                <p>
+                    <code>perfect = 1 / (1-0.5) = 1 / 0.5 = 2
+                    multiplier = 2*0.99 + 0.01 = 1.98 + 0.01 = 1.99x</code>
+                </p>
+                <p>
+                    So half the time (other than 0x crashes which we can ignore because
+                    they pay for themselves with the bonus) the multiplier will be 1.99x
+                    or more.
+                </p>
+                <p>
+                    That means if we bet 1.99x we have a 50% chance of winning (again,
+                    ignoring 0x crashes), and so the house edge is:
+                </p>
+                <p>
+                    <code>100 - (1.99 * 50) = 100 - 99.5 = 0.5%</code>
+                </p>
+                <p>
+                    The extra 0.01 that gets added on to the multiplier is half of the 1%
+                    that was taken off in this case, leaving the house edge at 0.5%. As
+                    the multiplier gets bigger, the 1% that is taken off gets bigger, and
+                    the 0.01x that gets added on becomes less and less significant,
+                    causing the house edge to tend to 1%
                 </p>
             </dd>
             <dd>

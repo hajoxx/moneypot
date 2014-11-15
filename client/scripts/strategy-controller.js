@@ -72,7 +72,6 @@ define([
 
     StrategyController.prototype.selectStrategy = function(strategyName) {
         console.assert(Strategies.hasOwnProperty(strategyName));
-
         this.selectedStrategy = strategyName;
         this.strategy = Strategies[strategyName];
         this.trigger('change');
@@ -81,7 +80,8 @@ define([
     StrategyController.prototype.getState = function() {
         return {
             active: this.active,
-            strategy: this.strategy
+            strategy: this.strategy,
+            selectedStrategy: this.selectedStrategy
         }
     };
 
