@@ -43,7 +43,7 @@ define(['lib/clib'], function(Clib) {
                 var fixedCurrentBet = Math.round(currentBet / 100) * 100;
 
                 if(fixedCurrentBet > 0 && fixedCurrentBet <= engine.getBalance() && fixedCurrentBet <= engine.getMaxBet()) {
-                    engine.placeBet(fixedCurrentBet, autoCashAt * 100, false);
+                    engine.placeBet(fixedCurrentBet, Math.round(autoCashAt * 100), false);
                 } else {
                     engine.stop();
                     console.log('You ran out of bits or exceeded the max bet or betting nothing :(');
