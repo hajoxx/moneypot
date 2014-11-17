@@ -22,8 +22,8 @@ engine.on('game_starting', function(info) {\n\
     console.log('Game Starting in ' + info.time_till_start);\n\
 });\n\
 \n\
-engine.on('game_started', function() {\n\
-    console.log('Game Started');\n\
+engine.on('game_started', function(data) {\n\
+    console.log('Game Started', data);\n\
 });\n\
 \n\
 engine.on('game_crash', function(data) {\n\

@@ -32,6 +32,9 @@ define(['lib/events', 'lib/lodash'], function(Events, _) {
 
     /**
      * 'game_started': Event called at the moment when the game starts
+     * @param {object} data - JSON payload
+     * @param {object} data['username'] - Contains each user bet
+     * @param {number} data['username].bet - The bet of the user this game
      */
 
     /**

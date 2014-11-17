@@ -33,22 +33,6 @@ define(['lib/seedrandom', 'lib/lodash'], function(Seedrandom, _) {
             currentTime = 0;
         },
 
-        payoutNoise: function (betSize, ms, type) {
-            var c1 = 0.00006;
-            var c2 = 1;
-            var c3 = 1;
-            switch(type) {
-                case 1:
-                    return betSize * Math.pow(Math.E, (c1*ms)) + (Math.sin(ms * c2) * c3);
-                case 2:
-                    return betSize * Math.pow(Math.E, (c1*ms)) + (Math.sin(Math.random() * c2) * c3);
-                case 3:
-                    var rand = rng();
-                    var payout = betSize * Math.pow(Math.E, (c1*ms) + (rand * c2) * c3);
-                    return betSize * Math.pow(Math.E, (c1*ms)) + ((rand * c2) * c3);
-            }
-        },
-
         parseBet: function (betString) {
             betString = String(betString);
 
