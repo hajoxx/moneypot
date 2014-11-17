@@ -2,7 +2,7 @@
 @import url("header.css");
 @import url("../lib/simplegrid/simplegrid.css");
 @import url("chat.css");
-@import url("../lib/font-awesome/css/font-awesome.min.css");
+@import url("../lib/font-awesome/css/font-awesome.css");
 
 @font-face {
     font-family: tale;
