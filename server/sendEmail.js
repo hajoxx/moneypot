@@ -21,8 +21,8 @@ function send(details, callback) {
 exports.contact = function(from, content, user, callback) {
 
     var details = {
-        to: 'ericwspringer@gmail.com',
-        from: 'contact@moneypot.com',
+        to: 'ryan@moneypot.com',
+        from: from,
         subject: 'Moneypot Contact (' + from + ')',
         html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' +
             '<html xmlns="http://www.w3.org/1999/xhtml">' +

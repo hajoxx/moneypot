@@ -1,0 +1,22 @@
+{{##def.page_title = 'Login' #}}
+
+{{##def.content:
+<div class="login">
+    <form action="/login" method="post">
+        <div class="row">
+            <input type="hidden" name="username" value="{{!it.username}}" />
+            <input type="hidden" name="password" value="{{!it.password}}" />
+            <div class="large-12 columns">
+                <label>Please enter your 2FA token:
+                    <input type="text" pattern="[0-9]{6}" name="otp" required />
+                </label>
+            </div>
+            <div class="large-12 columns">
+                <input class="border-button right blue" type="submit" value="Submit"/>
+            </div>
+        </div>
+    </form>
+</div>
+
+#}}
+{{#def.include('./template/main')}}

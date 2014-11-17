@@ -20,6 +20,9 @@
                     <a href="/account">Account</a>
                 </li>
                 <li>
+                    <a href="/security">Security</a>
+                </li>
+                <li>
                     <a href="/deposit">Deposit</a>
                 </li>
                 <li >
@@ -51,6 +54,10 @@
                 <input type="text" id="destination" name="destination" required/>
                 <label for="password">Your password</label>
                 <input type="password" id="password" name="password" autocomplete="off"/>
+                {{?it.user.mfa_secret}}
+                    <label for="otp">2FA Code</label>
+                    <input type="text" id="otp" name="otp" autocomplete="off" pattern="[0-9]{6}" required />
+                {{?}}
                 <a href="/withdraw" class="border-button ">Back</a>
                 <input class="border-button right blue" type="submit"/>
             </form>

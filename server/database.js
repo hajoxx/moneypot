@@ -5,6 +5,7 @@ var async = require('async');
 var lib = require('./lib');
 var pg = require('pg');
 var passwordHash = require('password-hash');
+var speakeasy = require('speakeasy');
 
 var databaseUrl = process.env.DATABASE_URL;
 
@@ -197,22 +198,35 @@ exports.changeUserPassword = function(userId, password, callback) {
     });
 };
 
-exports.validateUser = function(username, password, callback) {
+exports.updateMfa = function(userId, secret, callback) {
+    assert(userId);
+    query('UPDATE users SET mfa_secret = $1 WHERE id = $2', [secret, userId], callback);
+};
+
+// Possible errors:
+//   NO_USER, WRONG_PASSWORD, INVALID_OTP
+exports.validateUser = function(username, password, otp, callback) {
     assert(username && password);
 
-    query('SELECT id, password FROM users WHERE lower(username) = lower($1)', [username], function (err, data) {
+    query('SELECT id, password, mfa_secret FROM users WHERE lower(username) = lower($1)', [username], function (err, data) {
         if (err) return callback(err);
 
-        if (data.rows.length === 0) {
-            console.log('username ', username, ' not found...');
+        if (data.rows.length === 0)
             return callback('NO_USER');
-        }
 
         var user = data.rows[0];
 
         var verified = passwordHash.verify(password, user.password);
-        if (!verified) {
+        if (!verified)
             return callback('WRONG_PASSWORD');
+
+        if (user.mfa_secret) {
+            if (!otp) return callback('INVALID_OTP'); // really, just needs one
+
+            var expected = speakeasy.totp({key: user.mfa_secret, encoding: 'base32'});
+
+            if (otp !== expected)
+                return callback('INVALID_OTP');
         }
 
         callback(null, user.id);

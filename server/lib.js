@@ -119,7 +119,7 @@ exports.parseTimeString = function(str) {
 
     assert(num > 0);
     return num;
-}
+};
 
 exports.printTimeString = function(ms) {
     var days = Math.ceil(ms / (24*60*60*1000));
@@ -133,4 +133,18 @@ exports.printTimeString = function(ms) {
 
     var seconds = Math.ceil(ms / 1000);
     return '' + seconds + 's';
-}
+};
+
+var secret = process.env.SIGNING_SECRET || 'secret';
+
+exports.sign = function(str){
+    return crypto
+        .createHmac('sha256', secret)
+        .update(str)
+        .digest('base64');
+};
+
+exports.validateSignature = function(str, sig){
+    return exports.sign(str) == sig;
+};
+

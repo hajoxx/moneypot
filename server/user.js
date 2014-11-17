@@ -7,6 +7,8 @@ var lib = require('./lib');
 var database = require('./database');
 var withdraw = require('./withdraw');
 var sendEmail = require('./sendEmail');
+var speakeasy = require('speakeasy');
+var qr = require('qr-image');
 
 var sessionOptions = {
         httpOnly: true,
@@ -52,17 +54,24 @@ exports.register  = function(req, res, next) {
 };
 
 exports.login = function(req, res, next) {
-    var username = req.body.user.name;
-    var password = req.body.user.password;
+    var username = req.body.username;
+    var password = req.body.password;
+    var otp = req.body.otp;
 
-    if (username === '' || password === '') {
+    if (!username || !password)
         return res.render('login', { warning: 'no username or password' });
-    }
 
-    database.validateUser(username, password, function(err, userId) {
+
+    database.validateUser(username, password, otp, function(err, userId) {
         if (err) {
-            if (err == 'NO_USER') return res.render('login',{ warning: 'Username does not exist' });
-            if (err = 'WRONG_PASSWORD') return res.render('login', { warning: 'Invalid password' });
+            if (err === 'NO_USER')
+                return res.render('login',{ warning: 'Username does not exist' });
+            if (err === 'WRONG_PASSWORD')
+                return res.render('login', { warning: 'Invalid password' });
+            if (err === 'INVALID_OTP') {
+                var warning = otp ? 'Invalid one-time password' : undefined;
+                return res.render('login-mfa', { username: username, password: password, warning: warning });
+            }
             return next(new Error('Unable to validate user, got: ' + err));
         }
         assert(userId);
@@ -312,27 +321,29 @@ exports.resetPassword = function(req, res, next) {
     assert(user);
     var password = req.body.old_password;
     var newPassword = req.body.password;
+    var otp = req.body.otp;
     var confirm = req.body.confirmation;
 
-    if (!password) return  res.redirect('/account?err=enter your password');
+    if (!password) return  res.redirect('/security?err=enter your password');
 
     var notValid = lib.isInvalidPassword(newPassword);
-    if (notValid) return res.redirect('/account?err=new password not valid:' + notValid);
+    if (notValid) return res.redirect('/security?err=new password not valid:' + notValid);
 
-    if (newPassword !== confirm) return  res.redirect('/account?err=new password and confirmation should be the same.');
+    if (newPassword !== confirm) return  res.redirect('/security?err=new password and confirmation should be the same.');
 
-    database.validateUser(user.username, password, function(err, userId) {
+    database.validateUser(user.username, password, otp, function(err, userId) {
         if (err) {
-            if (err  === 'WRONG_PASSWORD') return  res.redirect('/account?err=wrong password.');
+            if (err  === 'WRONG_PASSWORD') return  res.redirect('/security?err=wrong password.');
+            if (err === 'INVALID_OTP') return res.redirect('/security?err=invalid one-time password.');
             return next(new Error('Unable to reset password got ' + err));
         }
         assert(userId === user.id);
         database.changeUserPassword(user.id, newPassword, function(err) {
-            if (err) {
+            if (err)
                 return next(new Error('Unable to change user password got ' +  err));
-            }
 
-           res.redirect('/account');
+
+           res.redirect('/security');
         });
     });
 };
@@ -340,13 +351,13 @@ exports.resetPassword = function(req, res, next) {
 exports.deleteEmail = function(req, res, next) {
     var user = req.user;
     assert(user);
-    if (user.email === null) res.redirect('/account');
+    if (user.email === null) return res.redirect('/security');
 
     database.updateEmail(user.id, null, function(err) {
-        if (err) {
+        if (err)
             return next(new Error('Unable to delete email got ' + err));
-        }
-        res.redirect('account');
+
+        res.redirect('security');
     });
 };
 
@@ -356,17 +367,20 @@ exports.addEmail = function(req, res, next) {
     user.deposit_address = lib.deriveAddress(user.id);
     var email = req.body.email;
     var password = req.body.password;
+    var otp = req.body.otp;
 
     var notValid = lib.isInvalidEmail(email);
-    if (notValid) return res.redirect('/account?err=email invalid because: ' + notValid);
+    if (notValid) return res.redirect('/security?err=email invalid because: ' + notValid);
 
     notValid = lib.isInvalidPassword(password);
-    if (notValid) return res.render('account?err=password not valid because: ' + notValid);
+    if (notValid) return res.render('security?err=password not valid because: ' + notValid);
 
-    database.validateUser(user.username, password, function(err, userId) {
+    database.validateUser(user.username, password, otp, function(err, userId) {
         if (err) {
             if (err === 'WRONG_PASSWORD')
-                return res.redirect('/account?err=wrong%20password');
+                return res.redirect('/security?err=wrong%20password');
+            if (err === 'INVALID_OTP')
+                return res.redirect('/security?err=invalid%20one-time%20password');
             return next(new Error('Unable to validate user got ' + err));
         }
 
@@ -375,8 +389,82 @@ exports.addEmail = function(req, res, next) {
                 console.error('[INTERNAL_ERROR] unable to update user email -> got error: ', err);
                 return next(new Error('Could not update email: ' + err));
             }
-            res.redirect('account');
+            res.redirect('security');
         });
+    });
+};
+
+exports.security = function(req, res) {
+    var user = req.user;
+    assert(user);
+
+    if (!user.mfa_secret) {
+        user.mfa_potential_secret = speakeasy.generate_key({length: 32}).base32;
+        var qrUri = 'otpauth://totp/MoneyPot:' + user.username + '?secret=' + user.mfa_potential_secret + '&issuer=MoneyPot';
+        user.qr_svg = qr.imageSync(qrUri, {type: 'svg'});
+        user.sig = lib.sign(user.username + '|' + user.mfa_potential_secret);
+
+    }
+
+
+    res.render('security', {user: user });
+};
+
+exports.enableMfa = function(req, res, next) {
+    var user = req.user;
+    assert(user);
+
+    if (user.mfa_secret) return res.redirect('/security?err=2FA%20is%20already%20enabled');
+
+    var otp = req.body.otp;
+    if (!otp) return next(new Error('Missing otp in enabling mfa'));
+    var sig = req.body.sig;
+    if (!sig) return next(new Error('Missing sig in enabling mfa'));
+    var secret = req.body.mfa_potential_secret;
+    if (!secret) return next(new Error('Missing secret in enabling mfa'));
+
+    if (!lib.validateSignature(user.username + '|' + secret, sig))
+        return next(new Error('Could not validate sig'));
+
+    var expected = speakeasy.totp({key: secret, encoding: 'base32' });
+
+    if (otp !== expected) {
+        user.mfa_potential_secret = secret;
+        var qrUri = 'otpauth://totp/MoneyPot:' + user.username + '?secret=' + secret + '&issuer=MoneyPot';
+        user.qr_svg = qr.imageSync(qrUri, {type: 'svg'});
+        user.sig = sig;
+
+        return res.render('security', { user: user, warning: 'Invalid 2FA token' });
+    }
+
+    database.updateMfa(user.id, secret, function(err) {
+        if (err) return next(new Error('Unable to update 2FA status got ' + err));
+        res.redirect('/security');
+    });
+};
+
+exports.disableMfa = function(req, res, next) {
+    var user = req.user;
+    assert(user);
+    var secret = user.mfa_secret;
+    if (!secret)
+        return next(new Error('Did not sent mfa secret'));
+
+    if (!user.mfa_secret) return res.redirect('/security?err=2FA%20is%20not%20enabled');
+
+    var otp = req.body.otp;
+    if (!otp)
+        return next(new Error('No otp'));
+
+    var expected = speakeasy.totp({key: secret, encoding: 'base32'});
+
+    if (otp !== expected)
+        return res.redirect('/security?err=invalid%20one-time%20password');
+
+    database.updateMfa(user.id, null, function(err) {
+        if (err) return next(err);
+
+        res.redirect('/security');
     });
 };
 
@@ -396,14 +484,14 @@ exports.sendPasswordRecover = function(req, res, next) {
             return res.render('forgot-password',  message);
 
         database.addRecoverId(user.id, function(err, recoveryId) { 
-            if (err) 
+            if (err)
                 return next(new Error('Unable to add recovery id got ' + err));
 
             assert(recoveryId);
 
             sendEmail.passwordReset(user.email, recoveryId, function(err) {
                 if (err)
-                    return next(new Error('[Unable to send password email got ' + err));
+                    return next(new Error('Unable to send password email got ' + err));
                 return res.render('forgot-password',  message);
             });
         });
@@ -421,7 +509,7 @@ exports.resetForm = function(req, res, next) {
                 return res.render('404');
             return next(new Error('resetForm: Unable to get user recover id got ' + err));
         }
-        res.render('reset-password', { username: user.username, recoverId: recoverId });
+        res.render('reset-password', { user: user, recoverId: recoverId });
     });
 };
 
@@ -485,6 +573,7 @@ exports.handleWithdrawRequest = function(req, res, next) {
     var amount = req.body.amount;
     var destination = req.body.destination;
     var password = req.body.password;
+    var otp = req.body.otp;
 
     var r =  /^[1-9]\d*$/;
     if (!r.test(amount)) {
@@ -512,11 +601,13 @@ exports.handleWithdrawRequest = function(req, res, next) {
         return res.render('withdraw_request', { user: user, warning: 'Must enter a password' });
     }
 
-    database.validateUser(user.username, password, function(err) {
+    database.validateUser(user.username, password, otp, function(err) {
 
         if (err) {
             if (err === 'WRONG_PASSWORD')
                 return res.render('withdraw_request', { user: user, warning: 'wrong password, try it again...' });
+            if (err === 'INVALID_OTP')
+                return res.render('withdraw_request', { user: user, warning: 'invalid one-time password' });
             return next(new Error('Unable to validate user got ' + err));
         }
 
