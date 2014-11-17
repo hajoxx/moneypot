@@ -91,11 +91,10 @@ define(['lib/socket.io-1.2.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
                 if (self.username === username)
                    self.balanceSatoshis -= bets[username];
 
-
                 self.playerInfo[username] = { bet: bets[username] };
             });
 
-            self.trigger('game_started');
+            self.trigger('game_started', self.playerInfo);
         });
 
         /**
@@ -194,7 +193,7 @@ define(['lib/socket.io-1.2.0', 'lib/events', 'lib/lodash', 'lib/clib'], function
 
             self.joined.splice(data.index, 0, data.username);
 
-            // self.playerInfo[data.username] = { bet: data.bet }
+            // self.playerInfo[data.username] = { bet: data.bet } //TODO: DELETE?
             self.trigger('player_bet', data);
         });
 
