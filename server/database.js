@@ -709,8 +709,8 @@ exports.makeWithdrawal = function(userId, satoshis, withdrawalAddress, callback)
                 return callback(new Error('Unexpected withdrawal row count'));
             }
 
-            client.query('INSERT INTO fundings(user_id, amount, bitcoin_withdrawal_address, description) ' +
-                "VALUES($1, $2, $3, 'Manual withdraw') RETURNING id",
+            client.query('INSERT INTO fundings(user_id, amount, bitcoin_withdrawal_address) ' +
+                "VALUES($1, $2, $3) RETURNING id",
                 [userId, -1 * satoshis, withdrawalAddress],
                 function(err, response) {
                     if (err) return callback(err);
@@ -780,21 +780,6 @@ exports.getWithdrawalsAmount = function(userId, callback) {
     });
 };
 
-exports.setFundingsCoinbaseWithdrawalTxid = function(coinbaseId, txid, callback) {
-    assert(typeof coinbaseId === 'number');
-    assert(typeof txid === 'string');
-
-    query('UPDATE fundings SET coinbase_withdrawal_txid = $1 WHERE id = $2', [txid, coinbaseId],
-        function(err, result) {
-            if (err) return callback(err);
-
-            assert(result.rowCount === 1);
-
-            callback(null);
-        }
-    );
-};
-
 exports.setFundingsWithdrawalTxid = function(fundingId, txid, callback) {
     assert(typeof fundingId === 'number');
     assert(typeof txid === 'string');
@@ -809,7 +794,6 @@ exports.setFundingsWithdrawalTxid = function(fundingId, txid, callback) {
         }
     );
 };
-
 
 exports.getGameHistory = function(callback) {
     query('SELECT games.id game_id, games.game_crash, games.created, json_agg(pv) plays ' +

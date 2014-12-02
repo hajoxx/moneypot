@@ -1,11 +1,5 @@
 var assert = require('assert');
-
-var Coinbase = require('./coinbase');
-var coinbase = new Coinbase({
-    APIKey: process.env.COINBASE_API_KEY,
-    APISecret: process.env.COINBASE_SECRET
-});
-
+var bc = require('./bitcoin_client');
 var db = require('./database');
 var request = require('request');
 
@@ -17,7 +11,7 @@ module.exports = function(userId, satoshis, withdrawalAddress, callback) {
     assert(typeof callback === 'function');
 
 
-    db.makeWithdrawal(userId, satoshis, withdrawalAddress, function(err, fundingId) {
+    db.makeWithdrawal(userId, satoshis, withdrawalAddress, function (err, fundingId) {
         if (err) {
             if (err.code === '23514')
                 callback('NOT_ENOUGH_MONEY');
@@ -28,29 +22,17 @@ module.exports = function(userId, satoshis, withdrawalAddress, callback) {
 
         assert(fundingId);
 
-        coinbase.sendMoney(withdrawalAddress, satoshis - 10000, function(err, coinbaseId) {
-           if (err) {
-               console.error('[INTERNAL_ERROR] Could not make transfer for funding: ', fundingId, err);
-               return callback('PENDING');
-           }
+        var amountToSend = (satoshis - 10000) / 1e8;
+        bc.sendToAddress(withdrawalAddress, amountToSend, function (err, hash) {
+            if (err) {
+                console.error('[INTERNAL_ERROR] COULD NOT SEND TO ADDRESS: ', err, fundingId, withdrawalAddress);
+                return callback(err);
+            }
 
-            assert(coinbaseId);
-
-            coinbase.getTransactionHash(coinbaseId, function(err, hash) {
+            db.setFundingsWithdrawalTxid(fundingId, hash, function (err) {
                 if (err) {
-                    return console.error('[INTERNAL_ERROR] COULD NOT GET COINBASE TXHASH FOR: ', coinbaseId, err);
-                }
-
-                db.setFundingsWithdrawalTxid(fundingId, hash, function(err) {
-                    if (err)
-                        return console.error('[INTERNAL_ERROR] Could not set fundingId ', fundingId, ' to ', hash, ' because: ', err);
-                });
-            });
-
-            db.setFundingsCoinbaseWithdrawalTxid(fundingId, coinbaseId, function(err) {
-                if (err) {
-                    console.error('[INTERNAL_ERROR] Could not set funding id ', fundingId, ' to txid: ', coinbaseId, ' got error: ', err);
-                    return callback('PENDING');
+                    console.error('[INTERNAL_ERROR] Could not set fundingId ', fundingId, ' to ', hash, ' because: ', err);
+                    return callback(err);
                 }
 
                 callback(null);

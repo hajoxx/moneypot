@@ -79,12 +79,6 @@ You will need to create a BIP32 key pair. You can do at your own risk online at 
 
     export BIP32_DERIVED_KEY=xpub6AH.....
 
-### Coinbase
-
-TODO
-
-    export COINBASE_API_KEY
-    export COINBASE_SECRET
 
 Running
 =======
