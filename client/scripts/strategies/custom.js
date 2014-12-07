@@ -69,5 +69,5 @@ console.log('Last game status: ', engine.lastGamePlay());\n\
 \n\
 //engine.cashOut(); //Do this when playing\n\
 //engine.stop(); //Stops the strategy\n\
-engine.chat('Hello Spam');\n";
+//engine.chat('Hello Spam');\n";
 });
