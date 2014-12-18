@@ -1,31 +1,26 @@
 define([
     'lib/react',
-    'components/game',
+    'components/Game',
     'lib/clib',
-    'engine'
-], function(React, Game, Clib, Engine) {
+    'game-logic/engine'
+], function(
+    React,
+    GameClass,
+    Clib,
+    Engine
+) {
 
-    //TODO: create the strategy controller here
+    var Game = React.createFactory(GameClass);
 
-    var engine = new Engine();
+    React.render(
+        Game(),
+        document.getElementById('game')
+    );
 
-    engine.on('all', function(eventName) {
-        render();
-    });
-
-    render();
-
-    var elem = document.getElementById('balance_bits');
-
-    function render() {
-        React.renderComponent(
-            Game({ engine: engine }),
-            document.getElementById('game')
-        );
-
+    //Update the balance in an ugly way TODO: Improve
+    Engine.on('all', function() {
+        var elem = document.getElementById('balance_bits');
         if (elem)
-            elem.innerHTML = Clib.formatSatoshis(engine.balanceSatoshis, 2);
-    }
-
+            elem.innerHTML = Clib.formatSatoshis(Engine.balanceSatoshis, 2);
+    });
 });
-

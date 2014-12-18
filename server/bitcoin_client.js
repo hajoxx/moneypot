@@ -10,7 +10,7 @@ var client = new bitcoin.Client({
     pass: process.env.BITCOIND_PASS,
     ssl: true,
     sslStrict: true,
-    sslCa: new Buffer(process.env.BITCOIND_CERT)
+    sslCa: new Buffer(process.env.BITCOIND_CERT || '')
 });
 
 module.exports = client;

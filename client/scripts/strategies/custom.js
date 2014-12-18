@@ -1,4 +1,4 @@
-define(function() {
+define(function(){
     return "// This strategy editor is in BETA mode, please\n\
 // exercise extreme caution and use exclusively at\n\
 // your own risk. No bets can or will be refunded in\n\
@@ -11,7 +11,7 @@ define(function() {
 // intentional exploitable weaknesses etc.\n\
 \n\
 // To see the full engine API go to:\n\
-///https://github.com/moneypot/webserver/blob/master/client/scripts/engine-proxy.js\n\
+///https://github.com/moneypot/webserver/blob/master/client/scripts/game-logic/script-controller.js\n\
 \n\
 // To discuss, request or post a strategy checkout:\n\
 ///http://www.reddit.com/r/moneypot/\n\

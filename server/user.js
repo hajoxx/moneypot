@@ -99,6 +99,9 @@ exports.logout = function(req, res, next) {
 };
 
 exports.profile = function(req, res, next) {
+
+    console.log('Profile!');
+
     var user = req.user;
 
     var username = req.params.name;
@@ -113,10 +116,9 @@ exports.profile = function(req, res, next) {
     if (!username)
         return next(new Error('No username in profile'));
 
-
-
     database.getPublicStats(username, function(err, stats) {
         if (err) {
+            console.log(err);
             if (err === 'USER_DOES_NOT_EXIST')
                next();
             else {
@@ -136,6 +138,7 @@ exports.profile = function(req, res, next) {
             console.warn('User ', username, ' does not have page ', page);
             return next();
         }
+
 
         // first page aborbs all overflow
         var firstPageResultCount = stats.games_played - ((pages-1) * resultsPerPage);
@@ -187,6 +190,7 @@ exports.profile = function(req, res, next) {
                     nextPage = stats.username;
             }
 
+            console.log('render user profile');
 
             res.render('user', {
                 user: user,
@@ -204,12 +208,6 @@ exports.profile = function(req, res, next) {
                 }
             });
         });
-
-
-
-
-
-
 
     });
 

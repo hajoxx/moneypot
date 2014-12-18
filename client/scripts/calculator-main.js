@@ -1,12 +1,16 @@
 define([
     'lib/react',
-    'components/calculator'
-], function(React, Calculator) {
+    'components/Calculator'
+], function(
+    React,
+    CalculatorClass
+){
 
-    React.renderComponent(
+    var Calculator = React.createFactory(CalculatorClass);
+
+    React.render(
         Calculator(null),
         document.getElementById('calculator')
     );
 
 });
-

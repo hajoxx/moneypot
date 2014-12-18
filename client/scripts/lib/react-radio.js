@@ -1,7 +1,13 @@
-/** Abstraction for using radio buttons as components in react **/
-define(['lib/react'], function(React) {
+define([
+    'lib/react',
+    'lib/lodash'
+], function(
+    React, _
+){
+
     var D = React.DOM;
 
+    /** Abstraction for using radio buttons as components in react **/
     return React.createClass({
         displayName: 'reactRadio',
 
