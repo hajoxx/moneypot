@@ -12,7 +12,7 @@ define([
     'lib/events',
     'dispatcher/AppDispatcher',
     'constants/AppConstants',
-    'lib/Clib'
+    'lib/clib'
 ], function(
     Engine,
     Events,

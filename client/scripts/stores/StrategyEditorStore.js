@@ -6,7 +6,7 @@
 define([
     'strategies/strategies',
     'game-logic/script-controller',
-    'lib/Events',
+    'lib/events',
     'lib/lodash',
     'dispatcher/AppDispatcher',
     'constants/AppConstants'
