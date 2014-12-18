@@ -104,7 +104,8 @@ define([
                 nextAutoCashout: Engine.nextAutoCashout,
                 joined: Engine.joined,
                 chat: Engine.chat,
-                balanceSatoshis: Engine.balanceSatoshis
+                balanceSatoshis: Engine.balanceSatoshis,
+                gameId: Engine.gameId
 
                 //Helper States
             }
