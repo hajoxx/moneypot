@@ -30,12 +30,12 @@ define([
             this.trigger(CHANGE_EVENT);
         },
 
-        addChangeListener: function(callback) {
-            this.on(CHANGE_EVENT, callback);
+        addChangeListener: function(fn) {
+            this.on(CHANGE_EVENT, fn);
         },
 
-        removeChangeListener: function(callback) {
-            this.off(CHANGE_EVENT, callback);
+        removeChangeListener: function(fn) {
+            this.off(CHANGE_EVENT, fn);
         },
 
         _placeBet: function(bet, cashOut) {
@@ -72,21 +72,6 @@ define([
                 return Engine.playerInfo[Engine.username];
             }
 
-            function gamePayout() {
-                if(!(Engine.gameState === 'IN_PROGRESS'))
-                    return null;
-
-                var elapsed;
-                if((Date.now() - Engine.lastGameTick) < AppConstants.Engine.STOP_PREDICTING_LAPSE)
-                    elapsed = Date.now() - Engine.startTime;
-                else
-                    elapsed = Engine.lastGameTick - Engine.startTime + AppConstants.Engine.STOP_PREDICTING_LAPSE;
-
-                var gamePayout = Clib.growthFunc(elapsed);
-                console.assert(isFinite(gamePayout));
-                return gamePayout;
-            }
-
             return {
                 //Raw states
                 gameState: Engine.gameState,
@@ -99,12 +84,15 @@ define([
                 isBetting: isBetting(),
                 hash: Engine.hash,
                 currentPlay: currentPlay(),
-                gamePayout: gamePayout(),
                 nextBetAmount: Engine.nextBetAmount,
                 nextAutoCashout: Engine.nextAutoCashout,
                 joined: Engine.joined,
                 chat: Engine.chat,
-                balanceSatoshis: Engine.balanceSatoshis
+                balanceSatoshis: Engine.balanceSatoshis,
+                gameId: Engine.gameId,
+                lag: Engine.lag,
+
+                lastGameTick: Engine.lastGameTick
 
                 //Helper States
             }

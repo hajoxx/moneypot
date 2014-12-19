@@ -1,9 +1,11 @@
 define([
     'lib/seedrandom',
-    'lib/lodash'
+    'lib/lodash',
+    'constants/AppConstants'
 ], function(
     Seedrandom,
-    _
+    _,
+    AppConstants
 ){
 
     var rng;
@@ -166,6 +168,22 @@ define([
         currentGamePayout: function(startTime) {
             var currentTime = Date.now() - startTime;
             return this.growthFunc(currentTime); //Payout in percentage
+        },
+
+        getGamePayout: function(lastGameTick, startTime) {
+            var elapsed;
+            if((Date.now() - this.lastGameTick) < AppConstants.Engine.STOP_PREDICTING_LAPSE) {
+                elapsed = Date.now() - this.startTime;
+            } else {
+                elapsed = this.lastGameTick - this.startTime + AppConstants.Engine.STOP_PREDICTING_LAPSE;
+            }
+            var gamePayout = this.growthFunc(elapsed);
+            console.assert(isFinite(gamePayout));
+            return gamePayout;
+        },
+
+        getElapsedTime: function(startTime) {
+            return Date.now() - startTime;
         }
 
     };
