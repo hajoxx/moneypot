@@ -43,7 +43,6 @@ define([
         //this.lostConnection = lostConnection; //Changed to lag
 
         this.lag = engine.lag;
-        //console.log(this.lag);
 
         //this.crashedAt = crashedAt; //Text displaying the crashed amount
         //this.currentCash = currentCash; // Text displaying the current payout
@@ -54,10 +53,8 @@ define([
 
         if(this.gameState == 'IN_PROGRESS') { //TODO: Send This functions to a library helper or something
             if(this.lag) {
-                this.currentTime = Clib.getElapsedTime(this.startTime);
-
-                var timeAtLastTickSeen = engine.lastGameTick - this.startTime + AppConstants.Engine.STOP_PREDICTING_LAPSE; //+ STOP_PREDICTING_LAPSE because it looks better
-                this.lastBalance = Clib.growthFunc(timeAtLastTickSeen);
+                this.currentTime = engine.lastGameTick - this.startTime + AppConstants.Engine.STOP_PREDICTING_LAPSE; //+ STOP_PREDICTING_LAPSE because it looks better
+                this.lastBalance = Clib.growthFunc(this.currentTime);
             } else {
                 this.currentTime = Clib.getElapsedTime(this.startTime);
                 this.lastBalance = Clib.growthFunc(this.currentTime); //Payout in percentage
@@ -101,9 +98,6 @@ define([
     };
 
     Graph.prototype.drawGraph = function() {
-
-        if(this.lag)
-            return;
 
         var pi = (this.engine.username)? this.engine.playerInfo[this.engine.username]: null; //TODO: Abstract this on engine virtual store?
 
@@ -246,11 +240,11 @@ define([
             this.ctx.fillText('@ ' + Clib.formatDecimals(this.engine.tableHistory[0].game_crash/100, 2) + 'x', this.canvasWidth/5, 180);
         }
 
-        if(this.lag) {
-            this.ctx.fillStyle = "black";
-            this.ctx.font="20px Verdana";
-            this.ctx.fillText('Network Lag', 250, 250);
-        }
+        //if(this.lag) {
+        //    this.ctx.fillStyle = "black";
+        //    this.ctx.font="20px Verdana";
+        //    this.ctx.fillText('Network Lag', 250, 250);
+        //}
 
     };
 

@@ -87,8 +87,8 @@ define([
         /** Complements nextBetAmount queued bet with the queued autoCashOut */
         self.nextAutoCashout = null;
 
-        /** This will run forever to check if there is lag **/
-        self.animRequest =  window.requestAnimationFrame(self.checkForLag.bind(self));
+        /** Store the id of the timer to check for lag **/
+        self.tickTimer = null;
 
         /** Tell if the game is lagging but only  when the game is in progress **/
         self.lag = false;
@@ -126,7 +126,15 @@ define([
         self.ws.on('game_tick', function(data) {
             /** Time of the last tick received */
             self.lastGameTick = Date.now();
+            if(self.lag === true){
+                self.lag = false;
+                self.trigger('lag_change');
+            }
 
+            if(self.tickTimer)
+                clearTimeout(self.tickTimer);
+
+            self.tickTimer = setTimeout(self.checkForLag.bind(self), AppConstants.Engine.STOP_PREDICTING_LAPSE);
         });
 
         /** Socket io errors */
@@ -149,6 +157,9 @@ define([
          * @param {string} data.seed - Revealed seed of the game
          */
         self.ws.on('game_crash', function(data) {
+
+            if(self.tickTimer)
+                clearTimeout(self.tickTimer);
 
             //Add the bonus to each user that wins it
             for (var user in data.bonuses) {
@@ -333,24 +344,12 @@ define([
         });
     }
 
+    /**
+     * STOP_PREDICTING_LAPSE milliseconds after game_tick we put the game in lag state
+     */
     Engine.prototype.checkForLag = function() {
-
-        var self = this;
-        if(this.gameState === 'IN_PROGRESS') {
-            var newLagStatus;
-            if((Date.now() - this.lastGameTick) > AppConstants.Engine.STOP_PREDICTING_LAPSE ) {
-                newLagStatus = true;
-            } else {
-                newLagStatus = false;
-            }
-
-            if(newLagStatus != this.lag){
-                this.lag = newLagStatus;
-                this.trigger('lag_change');
-            }
-        }
-
-        window.requestAnimationFrame(self.checkForLag.bind(self));
+        this.lag = true;
+        this.trigger('lag_change');
     };
 
     /**
