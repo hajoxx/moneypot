@@ -1,9 +1,11 @@
 define([
     'lib/clib',
-    'lib/lodash'
+    'lib/lodash',
+    'constants/AppConstants'
 ], function(
     Clib,
-    _
+    _,
+    AppConstants
 ){
     //TODO: Clean this file
 
@@ -39,7 +41,9 @@ define([
         //this.lastWinnings = lastWinnings; //The payout of the last game
 
         //this.lostConnection = lostConnection; //Changed to lag
-        //this.lag = engine.lag; //TODO: This does not exist anymore
+
+        this.lag = engine.lag;
+        //console.log(this.lag);
 
         //this.crashedAt = crashedAt; //Text displaying the crashed amount
         //this.currentCash = currentCash; // Text displaying the current payout
@@ -49,12 +53,21 @@ define([
         this.startTime = engine.startTime;
 
         if(this.gameState == 'IN_PROGRESS') { //TODO: Send This functions to a library helper or something
-            this.currentTime = Date.now() - this.startTime;
-            this.lastBalance = Clib.growthFunc(this.currentTime); //Payout in percentage
+            if(this.lag) {
+                this.currentTime = Clib.getElapsedTime(this.startTime);
+
+                var timeAtLastTickSeen = engine.lastGameTick - this.startTime + AppConstants.Engine.STOP_PREDICTING_LAPSE; //+ STOP_PREDICTING_LAPSE because it looks better
+                this.lastBalance = Clib.growthFunc(timeAtLastTickSeen);
+            } else {
+                this.currentTime = Clib.getElapsedTime(this.startTime);
+                this.lastBalance = Clib.growthFunc(this.currentTime); //Payout in percentage
+            }
         } else {
             this.lastBalance = 0;
             this.currentTime = 0;
         }
+
+
 
     };
 
@@ -88,6 +101,10 @@ define([
     };
 
     Graph.prototype.drawGraph = function() {
+
+        if(this.lag)
+            return;
+
         var pi = (this.engine.username)? this.engine.playerInfo[this.engine.username]: null; //TODO: Abstract this on engine virtual store?
 
         /* Style the line depending on the game states */
@@ -229,11 +246,11 @@ define([
             this.ctx.fillText('@ ' + Clib.formatDecimals(this.engine.tableHistory[0].game_crash/100, 2) + 'x', this.canvasWidth/5, 180);
         }
 
-        /*if(this.lostConnection) {
-         this.ctx.fillStyle = "black";
-         this.ctx.font="20px Verdana";
-         this.ctx.fillText(this.lostConnection, 250, 250);
-         }*/
+        if(this.lag) {
+            this.ctx.fillStyle = "black";
+            this.ctx.font="20px Verdana";
+            this.ctx.fillText('Network Lag', 250, 250);
+        }
 
     };
 

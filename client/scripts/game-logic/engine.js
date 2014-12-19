@@ -87,6 +87,12 @@ define([
         /** Complements nextBetAmount queued bet with the queued autoCashOut */
         self.nextAutoCashout = null;
 
+        /** This will run forever to check if there is lag **/
+        self.animRequest =  window.requestAnimationFrame(self.checkForLag.bind(self));
+
+        /** Tell if the game is lagging but only  when the game is in progress **/
+        self.lag = false;
+
         /**
          * Event called at the moment when the game starts
          */
@@ -117,9 +123,9 @@ define([
          * @param {object} data - JSON payload
          * @param {number} data.elapsed - Time elapsed since game_started
          */
-        self.ws.on('game_tick', function(data) { //TODO: Compare if we should put the game in lag state
+        self.ws.on('game_tick', function(data) {
             /** Time of the last tick received */
-            self.lastGameTick = Date.now(); //TODO: To use self.startTime + data.elapsed we need to have the startTime from the server
+            self.lastGameTick = Date.now();
 
         });
 
@@ -171,6 +177,7 @@ define([
             //Clear current game properties
             self.gameState = 'ENDED';
             self.cashingOut = false;
+            self.lag = false;
 
             self.trigger('game_crash', data);
         });
@@ -326,6 +333,26 @@ define([
         });
     }
 
+    Engine.prototype.checkForLag = function() {
+
+        var self = this;
+        if(this.gameState === 'IN_PROGRESS') {
+            var newLagStatus;
+            if((Date.now() - this.lastGameTick) > AppConstants.Engine.STOP_PREDICTING_LAPSE ) {
+                newLagStatus = true;
+            } else {
+                newLagStatus = false;
+            }
+
+            if(newLagStatus != this.lag){
+                this.lag = newLagStatus;
+                this.trigger('lag_change');
+            }
+        }
+
+        window.requestAnimationFrame(self.checkForLag.bind(self));
+    };
+
     /**
      * Sends chat message
      * @param {string} msg - String containing the message, should be longer than 1 and shorter than 500.
@@ -440,7 +467,7 @@ define([
         if((Date.now() - this.lastGameTick) < AppConstants.Engine.STOP_PREDICTING_LAPSE) {
             var elapsed = Date.now() - this.startTime;
         } else {
-            var elapsed = this.lastGameTick - this.startTime + AppConstants.Engine.STOP_PREDICTING_LAPSE;
+            var elapsed = this.lastGameTick - this.startTime + AppConstants.Engine.STOP_PREDICTING_LAPSE; //+ STOP_PREDICTING_LAPSE because it looks better
         }
         var gamePayout = Clib.growthFunc(elapsed);
         console.assert(isFinite(gamePayout));
