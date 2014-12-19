@@ -2,11 +2,13 @@ define([
     'lib/react',
     'lib/clib',
     'stores/EngineVirtualStore',
+    'stores/ChatStore',
     'actions/ChatActions'
 ], function(
     React,
     Clib,
     EngineVirtualStore,
+    ChatStore,
     ChatActions
 ){
 
@@ -58,9 +60,9 @@ define([
     }
 
     function getState(){
-        return {
-            engine: EngineVirtualStore.getState()
-        }
+        var state = ChatStore.getState();
+        state.engine = EngineVirtualStore.getState();
+        return state;
     }
 
     return React.createClass({
@@ -69,7 +71,7 @@ define([
         getInitialState: function () {
             var state = getState();
 
-            /* Avoid scrolls down if a render is about to occur and it is not caused by the chat */
+            /* Avoid scrolls down if a render is not caused by length chat change */
             this.listLength = state.engine.chat.length;
 
             return state;
@@ -77,6 +79,7 @@ define([
 
         componentDidMount: function() {
             EngineVirtualStore.addChangeListener(this._onChange);
+            ChatStore.addChangeListener(this._onChange);
 
             var msgs = this.refs.messages.getDOMNode();
             msgs.scrollTop = msgs.scrollHeight;
@@ -84,22 +87,21 @@ define([
 
         componentWillUnmount: function() {
             EngineVirtualStore.removeChangeListener(this._onChange);
+            ChatStore.removeChangeListener(this._onChange);
         },
 
-        shouldComponentUpdate: function(nextProps, nextState) {
-            if(nextState.engine.chat.length != this.listLength) {
-                this.listLength = nextState.engine.chat.length;
-                return true;
+        /** If the length of the chat changed and the scroll position is near bottom scroll to the bottom **/
+        componentDidUpdate: function(prevProps, prevState) {
+
+            if(prevState.engine.chat.length != this.listLength){
+                this.listLength = this.state.engine.chat.length;
+
+                var msgsBox = this.refs.messages.getDOMNode();
+                var scrollBottom = msgsBox.scrollHeight-msgsBox.offsetHeight-msgsBox.scrollTop;
+
+                if(scrollBottom < SCROLL_OFFSET)
+                    msgsBox.scrollTop = msgsBox.scrollHeight;
             }
-            return false;
-        },
-
-        componentDidUpdate: function() {
-            var msgs = this.refs.messages.getDOMNode();
-            var scrollBottom = msgs.scrollHeight-msgs.offsetHeight-msgs.scrollTop;
-
-            if(scrollBottom < SCROLL_OFFSET)
-                msgs.scrollTop = msgs.scrollHeight;
         },
 
         _onChange: function() {
@@ -108,16 +110,19 @@ define([
 
         _sendMessage: function(e) {
             if(e.keyCode == 13) {
-                var msg = this.refs.input.getDOMNode().value;
-                if(msg.length > 1 && msg.length < 500){
+                var msg = this.state.inputText;
+                if(msg.length > 1 && msg.length < 500) {
                     this._say(msg);
-                    this.refs.input.getDOMNode().value = '';
                 }
             }
         },
 
         _say: function(msg) {
             ChatActions.say(msg);
+        },
+
+        _updateInputText: function(ev) {
+            ChatActions.updateInputText(ev.target.value);
         },
 
         render: function() {
@@ -129,6 +134,8 @@ define([
                 chatInput = D.input(
                     { className: 'chat-input',
                         onKeyDown: this._sendMessage,
+                        onChange: this._updateInputText,
+                        value: this.state.inputText,
                         ref: 'input',
                         placeholder: 'Type here...'
                     }
@@ -136,7 +143,6 @@ define([
             else
                 chatInput = D.input(
                     { className: 'chat-input',
-                        onKeyDown: this._sendMessage,
                         ref: 'input',
                         placeholder: 'Log in to chat...',
                         disabled: true

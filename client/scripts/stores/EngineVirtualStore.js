@@ -30,12 +30,12 @@ define([
             this.trigger(CHANGE_EVENT);
         },
 
-        addChangeListener: function(callback) {
-            this.on(CHANGE_EVENT, callback);
+        addChangeListener: function(fn) {
+            this.on(CHANGE_EVENT, fn);
         },
 
-        removeChangeListener: function(callback) {
-            this.off(CHANGE_EVENT, callback);
+        removeChangeListener: function(fn) {
+            this.off(CHANGE_EVENT, fn);
         },
 
         _placeBet: function(bet, cashOut) {

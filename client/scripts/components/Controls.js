@@ -34,6 +34,10 @@ define([
         }
     }
 
+
+
+    var onchange;
+
     return React.createClass({
         displayName: 'Controls',
 
@@ -41,7 +45,9 @@ define([
             return getState();
         },
 
+
         componentDidMount: function() {
+            onchange = this._onChange;
             ControlsStore.addChangeListener(this._onChange);
             EngineVirtualStore.addChangeListener(this._onChange);
         },
@@ -49,10 +55,14 @@ define([
         componentWillUnmount: function() {
             ControlsStore.removeChangeListener(this._onChange);
             EngineVirtualStore.removeChangeListener(this._onChange);
+            this.unmounted = true;
         },
 
         _onChange: function() {
-            this.setState(getState());
+            //Check if its mounted because when Game view receives the disconnect event from EngineVirtualStore unmounts all views
+            //and the views unregister their events before the event dispatcher dispatch them with the disconnect event
+            if(this.isMounted())
+                this.setState(getState());
         },
 
         _placeBet: function () {

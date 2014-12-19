@@ -11,7 +11,7 @@ define([
     Clib,
     AppConstants
 ) {
-    
+
     function Engine() {
         var self = this;
 
@@ -442,7 +442,7 @@ define([
         } else {
             var elapsed = this.lastGameTick - this.startTime + AppConstants.Engine.STOP_PREDICTING_LAPSE;
         }
-        var gamePayout = growthFunc(elapsed);
+        var gamePayout = Clib.growthFunc(elapsed);
         console.assert(isFinite(gamePayout));
         return gamePayout;
     };

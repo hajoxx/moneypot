@@ -26,7 +26,7 @@ define([
 
     var D = React.DOM;
 
-    function getState(){
+    function getState() {
         return {
             isConnected: EngineVirtualStore.getState().isConnected
         }

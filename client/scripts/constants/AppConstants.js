@@ -24,7 +24,10 @@ define(['lib/key-mirror'], function(KeyMirror){
 
             //Controls
             SET_BET_SIZE: null,
-            SET_AUTO_CASH_OUT: null
+            SET_AUTO_CASH_OUT: null,
+
+            //Chat
+            SET_CHAT_INPUT_TEXT: null
         }),
 
         PayloadSources: KeyMirror({

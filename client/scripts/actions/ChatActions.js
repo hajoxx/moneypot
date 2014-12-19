@@ -13,6 +13,13 @@ define([
                 actionType: AppConstants.ActionTypes.SAY_CHAT,
                 msg: msg
             });
+        },
+
+        updateInputText: function(text) {
+            AppDispatcher.handleViewAction({
+                actionType: AppConstants.ActionTypes.SET_CHAT_INPUT_TEXT,
+                text: text
+            });
         }
 
     };
