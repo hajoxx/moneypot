@@ -34,10 +34,6 @@ define([
         }
     }
 
-
-
-    var onchange;
-
     return React.createClass({
         displayName: 'Controls',
 
@@ -47,7 +43,6 @@ define([
 
 
         componentDidMount: function() {
-            onchange = this._onChange;
             ControlsStore.addChangeListener(this._onChange);
             EngineVirtualStore.addChangeListener(this._onChange);
         },
