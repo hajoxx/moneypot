@@ -1,7 +1,7 @@
 define([
     'lib/lodash',
     'lib/events',
-    'constants/Appconstants',
+    'constants/AppConstants',
     'dispatcher/AppDispatcher'
 ], function(
     _,
