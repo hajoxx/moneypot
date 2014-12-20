@@ -90,6 +90,8 @@ define([
             _engineController.stopScript();
             _engineController = null;
             _active = false;
+            this.emitChange();
+            this.emitWidgetChange();
         },
 
         //Updates de script of our current strategy every time it changes

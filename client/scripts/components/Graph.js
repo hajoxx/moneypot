@@ -51,21 +51,8 @@ define([
 
         this.startTime = engine.startTime;
 
-        if(this.gameState == 'IN_PROGRESS') { //TODO: Send This functions to a library helper or something
-            if(this.lag) {
-                this.currentTime = engine.lastGameTick - this.startTime + AppConstants.Engine.STOP_PREDICTING_LAPSE; //+ STOP_PREDICTING_LAPSE because it looks better
-                this.lastBalance = Clib.growthFunc(this.currentTime);
-            } else {
-                this.currentTime = Clib.getElapsedTime(this.startTime);
-                this.lastBalance = Clib.growthFunc(this.currentTime); //Payout in percentage
-            }
-        } else {
-            this.lastBalance = 0;
-            this.currentTime = 0;
-        }
-
-
-
+        this.currentTime = Clib.getElapsedTimeWithLag(engine);
+        this.lastBalance = Clib.calcGamePayout(this.currentTime);
     };
 
     Graph.prototype.calculatePlotValues = function() {

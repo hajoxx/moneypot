@@ -155,33 +155,36 @@ define([
             return bits <= 100 ? 'bit' : 'bits';
         },
 
+        //Calculate the payout based on the time
         growthFunc: function(ms) {
             console.assert(typeof ms == 'number' && ms >= 0);
             var r = 0.00006;
             return Math.floor(100 * Math.pow(Math.E, r * ms)) / 100;
         },
 
+        //A better name
         calcGamePayout: function(ms) {
-            return this.growthFunc(ms);
-        },
-
-        currentGamePayout: function(startTime) {
-            var currentTime = Date.now() - startTime;
-            return this.growthFunc(currentTime); //Payout in percentage
-        },
-
-        getGamePayout: function(lastGameTick, startTime) {
-            var elapsed;
-            if((Date.now() - this.lastGameTick) < AppConstants.Engine.STOP_PREDICTING_LAPSE) {
-                elapsed = Date.now() - this.startTime;
-            } else {
-                elapsed = this.lastGameTick - this.startTime + AppConstants.Engine.STOP_PREDICTING_LAPSE;
-            }
-            var gamePayout = this.growthFunc(elapsed);
+            var gamePayout = this.growthFunc(ms);
             console.assert(isFinite(gamePayout));
             return gamePayout;
         },
 
+        //Returns the current payout and stops when lag, use this time to calc game payout with lag
+        getElapsedTimeWithLag: function(engine) {
+            if(engine.gameState == 'IN_PROGRESS') {
+                var elapsed;
+                if(engine.lag)
+                    elapsed = engine.lastGameTick - engine.startTime + AppConstants.Engine.STOP_PREDICTING_LAPSE; //+ STOP_PREDICTING_LAPSE because it looks better
+                else
+                    elapsed = this.getElapsedTime(engine.startTime);
+
+                return elapsed;
+            } else {
+                return 0;
+            }
+        },
+
+        //Just calculates the elapsed time
         getElapsedTime: function(startTime) {
             return Date.now() - startTime;
         }

@@ -100,8 +100,6 @@ exports.logout = function(req, res, next) {
 
 exports.profile = function(req, res, next) {
 
-    console.log('Profile!');
-
     var user = req.user;
 
     var username = req.params.name;
@@ -189,8 +187,6 @@ exports.profile = function(req, res, next) {
                 else if (page && page == pages-1)
                     nextPage = stats.username;
             }
-
-            console.log('render user profile');
 
             res.render('user', {
                 user: user,

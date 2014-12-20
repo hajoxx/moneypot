@@ -23,7 +23,7 @@ define(['lib/react', 'lib/clib'], function(React, Clib) {
             if (!this.isMounted())
                 return;
 
-            var po = Clib.currentGamePayout(this.props.engine.startTime);
+            var po = Clib.calcGamePayout(Clib.getElapsedTimeWithLag(this.props.engine));
 
             if (po)
                 this.setState({ payout: po * this.props.engine.currentPlay.bet });
