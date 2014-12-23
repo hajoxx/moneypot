@@ -10,6 +10,7 @@ define([
     'components/Controls',
     'components/TabsSelector',
     'components/Players',
+    'components/BetBar',
     'stores/EngineVirtualStore'
 ], function(
     React,
@@ -17,12 +18,14 @@ define([
     ControlsClass,
     TabsSelectorClass,
     PlayersClass,
+    BetBarClass,
     EngineVirtualStore
 ){
     var Chart = React.createFactory(ChartClass);
     var Controls  = React.createFactory(ControlsClass);
     var TabsSelector = React.createFactory(TabsSelectorClass);
     var Players = React.createFactory(PlayersClass);
+    var BetBar = React.createFactory(BetBarClass);
 
     var D = React.DOM;
 
@@ -69,10 +72,14 @@ define([
                         D.div({ className: 'players' },
                             Players()
                         ),
+                        D.div({ className: 'bet-bar' },
+                            BetBar()
+                        ),
                         D.div({ className: 'log-chat' },
                             TabsSelector()
                         )
                     )
+
                 )
             )
         }

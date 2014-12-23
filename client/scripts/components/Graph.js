@@ -86,12 +86,10 @@ define([
 
     Graph.prototype.drawGraph = function() {
 
-        var pi = (this.engine.username)? this.engine.playerInfo[this.engine.username]: null; //TODO: Abstract this on engine virtual store?
-
         /* Style the line depending on the game states */
         this.ctx.strokeStyle = "Black";
         //if(this.lastGameWon) {
-        if(pi && pi.bet && !pi.stopped_at) {
+        if(this.engine.currentlyPlaying) { //playing and not cashed out
             this.ctx.lineWidth=6;
             this.ctx.strokeStyle = '#7cba00';
         } else if(this.cashingOut) {

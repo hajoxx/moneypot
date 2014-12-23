@@ -66,11 +66,13 @@ define([
                 return false;
             }
 
-            function currentPlay() {
-                if (!Engine.username) return null;
+            var currentPlay;
+            if (!Engine.username)
+                currentPlay = null;
+            else
+                currentPlay = Engine.playerInfo[Engine.username];
 
-                return Engine.playerInfo[Engine.username];
-            }
+            var currentlyPlaying = currentPlay && currentPlay.bet && !currentPlay.stopped_at;
 
             return {
                 //Raw states
@@ -81,9 +83,7 @@ define([
                 tableHistory: Engine.tableHistory,
                 username: Engine.username,
                 isConnected: Engine.isConnected,
-                isBetting: isBetting(),
                 hash: Engine.hash,
-                currentPlay: currentPlay(),
                 nextBetAmount: Engine.nextBetAmount,
                 nextAutoCashout: Engine.nextAutoCashout,
                 joined: Engine.joined,
@@ -91,10 +91,12 @@ define([
                 balanceSatoshis: Engine.balanceSatoshis,
                 gameId: Engine.gameId,
                 lag: Engine.lag,
-
-                lastGameTick: Engine.lastGameTick
+                lastGameTick: Engine.lastGameTick,
 
                 //Helper States
+                isBetting: isBetting(),
+                currentPlay: currentPlay, //If the user is currently playing return and object with the status else null
+                currentlyPlaying: currentlyPlaying //True if you are playing and haven't cashed out
             }
         }
 

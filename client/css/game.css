@@ -861,7 +861,7 @@ i {
 
 .log-chat-tabs-container {
     position: relative;
-    margin-top: 5px;
+    margin-top: .5em;
     background-color: white;
     color: #32526E;
 }
@@ -1010,26 +1010,44 @@ i {
         margin-left: 1.2em;
     }
 
+/* ==========================================================================
+   BetBar
+   ========================================================================== */
 
-/* FOUNDATION MEDIA QUERIES */
+.bet-bar-container {
+    width: 100%;
+    height: .3em;
+    background-color: #007ba4;
+}
 
-@media only screen { } /* Define mobile styles */
+.bet-bar-playing, .bet-bar-lost, .bet-bar-me-won, .bet-bar-me-lost, .bet-bar-me-playing, .bet-bar-me-cashed, .bet-bar-cashed, .bet-bar-won {
+    height: 100%;
+    float: left;
+}
 
-@media only screen and (max-width: 40em) { } /* max-width 640px, mobile-only styles, use when QAing mobile issues */
+/* Colors for the players playing and lost */
+.bet-bar-playing {
+    background-color: #b75f17;
+}
 
+.bet-bar-lost {
+    background-color: #a30400;
+}
 
-@media only screen and (min-width: 40.063em) { } /* min-width 641px, medium screens */
+/* Colors for the player */
+.bet-bar-me-lost {
+    background-color: #e60400;
+}
 
-@media only screen and (min-width: 40.063em) and (max-width: 64em) { } /* min-width 641px and max-width 1024px, use when QAing tablet-only issues */
+.bet-bar-me-playing {
+    background-color: #e58203
+}
 
+.bet-bar-me-won, .bet-bar-me-cashed {
+    background-color: #0ccb03;
+}
 
-@media only screen and (min-width: 64.063em) { } /* min-width 1025px, large screens */
-
-@media only screen and (min-width: 64.063em) and (max-width: 90em) { } /* min-width 1025px and max-width 1440px, use when QAing large screen-only issues */
-
-
-@media only screen and (min-width: 90.063em) { } /* min-width 1441px, xlarge screens */
-
-@media only screen and (min-width: 90.063em) and (max-width: 120em) { } /* min-width 1441px and max-width 1920px, use when QAing xlarge screen-only issues */
-
-@media only screen and (min-width: 120.063em) { } /* min-width 1921px, xxlarge screens */
+/* Colors for the players cashed and won */
+.bet-bar-cashed, .bet-bar-won {
+    background-color: #338628;
+}
