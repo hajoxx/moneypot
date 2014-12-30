@@ -11,6 +11,7 @@ define([
 ){
 
     var D = React.DOM;
+    var cx = React.addons.classSet;
 
     function calcProfit(bet, stoppedAt) {
         return ((stoppedAt - 100) * bet)/100;
@@ -94,11 +95,15 @@ define([
 
             //Users Playing and users cashed
             if(self.state.engine.gameState === 'IN_PROGRESS' || self.state.engine.gameState === 'STARTING') {
+                var i, length;
 
                 trUsersLostPlaying = [];
-                for(var i=0, length = usersLostPlaying.length; i < length; i++) {
-
-                    trUsersLostPlaying.push( D.tr({ className: 'user-playing', key: 'user' + i },
+                for(i=0, length = usersLostPlaying.length; i < length; i++) {
+                    var classes = cx({
+                        'user-playing': true,
+                        'me': self.state.engine.username === usersLostPlaying[i].username
+                    });
+                    trUsersLostPlaying.push( D.tr({ className: classes, key: 'user' + i },
                         D.td(null, D.a({ href: '/user/' + usersLostPlaying[i].username,
                                 target: '_blank'
                             },
@@ -113,11 +118,16 @@ define([
                 }
 
                 trUsersWonCashed = [];
-                for (var i=0, length = usersWonCashed.length; i < length; i++) {
+                for (i=0, length = usersWonCashed.length; i < length; i++) {
                     var user = usersWonCashed[i];
                     var bet = user.info.bet;
                     var profit = calcProfit(bet, user.info.stopped_at);
-                    trUsersWonCashed.push( D.tr({ className: 'user-cashed', key: 'user' + i },
+                    var classes = cx({
+                        'user-cashed': true,
+                        'me': self.state.engine.username === user.username
+                    });
+
+                    trUsersWonCashed.push( D.tr({ className: classes, key: 'user' + i },
                         D.td(null, D.a({ href: '/user/' + user.username,
                                 target: '_blank'
                             },
@@ -153,7 +163,12 @@ define([
                         bonus = '0%';
                     }
 
-                    return D.tr({ className: 'user-lost', key: 'user' + i },
+                    var classes = cx({
+                        'user-lost': true,
+                        'me': self.state.engine.username === entry.username
+                    });
+
+                    return D.tr({ className: classes, key: 'user' + i },
                         D.td(null, D.a({ href: '/user/' + entry.username,
                                 target: '_blank'
                             },
@@ -179,9 +194,15 @@ define([
                         bonus = '0%';
                     }
 
+                    var classes = cx({
+                        'user-won': true,
+                        'me': self.state.engine.username === entry.username
+                    });
+
                     return D.tr(
-                        { className: 'user-won', key: 'user' + i },
-                        D.td(null, D.a({ href: '/user/' + entry.username,
+                        { className: classes, key: 'user' + i },
+                        D.td(null, D.a({
+                                href: '/user/' + entry.username,
                                 target: '_blank'
                             },
                             entry.username)),
