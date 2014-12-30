@@ -56,6 +56,7 @@ define([
 
         getState: function() {
 
+            /** To Know if the user is betting **/
             function isBetting() {
                 if (!Engine.username) return false;
                 if (Engine.nextBetAmount) return true;
@@ -66,6 +67,7 @@ define([
                 return false;
             }
 
+            /** If the user is currently playing return and object with the status else null **/
             var currentPlay;
             if (!Engine.username)
                 currentPlay = null;

@@ -42,10 +42,13 @@ define([
         /** Object containing the game history */
         self.tableHistory = [];
 
-        // The current players who joined the game, while the game is STARTING
+        /** Array of the user names of the current players who joined the game, while the game is STARTING
+         * sorted by bet by the server but the client doesn't know the bet amount
+         * its empty in the other states */
         self.joined = [];
 
-        /** Object containing the current game players and their status, this is saved in game history every game crash */
+        /** Object containing the current game players and their status, this is saved in game history every game crash
+         * cleared in game_starting */
         self.playerInfo = null;
 
         /**

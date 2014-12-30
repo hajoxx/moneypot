@@ -43,12 +43,9 @@ define([
             var self = this;
 
             if(this.state.engine.gameState === 'STARTING')
-             return D.div({ className: 'bet-bar-container' });
+             return D.div({ className: 'bet-bar-starting' });
 
             var betPercentages = calculatePlayingPercentages(this.state.engine);
-            var percentagePlayingLost = betPercentages[0];
-            var percentageCashedWon = betPercentages[1];
-            var myPercentage = betPercentages[2];
 
             var playingLostClass, cashedWonClass, mePlayingClass;
             if(this.state.engine.gameState === 'ENDED') {
@@ -62,9 +59,10 @@ define([
             }
 
             return D.div({ className: 'bet-bar-container' },
-                D.div({ className: playingLostClass, style: { width: percentagePlayingLost + '%' } }),
-                D.div({ className: mePlayingClass, style: { width: myPercentage + '%' } }),
-                D.div({ className: cashedWonClass, style: { width: percentageCashedWon + '%' } })
+                D.div({ className: cashedWonClass, style: { width: betPercentages.cashedWon + '%' } }),
+                D.div({ className: mePlayingClass, style: { width: betPercentages.me + '%' } }),
+                D.div({ className: cashedWonClass, style: { width: betPercentages.cashedWonAfter + '%' } }),
+                D.div({ className: playingLostClass, style: { width: betPercentages.playingLost + '%' } })
             );
         }
 
@@ -72,24 +70,59 @@ define([
 
     function calculatePlayingPercentages(engine) {
         /**
-         * bitsPlaying: The total amount of bits playing minus your qty if you are playing
-         * bitsCashedOut: The total amount of bits cashed minus your qty if you are playing
+         * bitsPlaying: The total amount of bits playing(not cashed) minus your qty if you are playing
+         * bitsCashedOut: The total amount of bits cashed before you if you are playing, if you are not its the total cashed out amount minus your qty
+         * bitsCashedOutAfterMe: If you are playing...
          * myBet: guess!
          */
-        var bitsPlaying = 0, bitsCashedOut = 0, myBet = 0;
-        _.each(engine.playerInfo, function(player, username) {
+
+        //If there are no players
+        if(Object.getOwnPropertyNames(engine.playerInfo).length <= 0) {
+            return {
+                playingLost: 0,
+                cashedWon: 0,
+                cashedWonAfter: 0,
+                me: 0
+            }
+        }
+
+        var bitsPlaying = 0, bitsCashedOut = 0, bitsCashedOutAfterMe = 0, myBet = 0;
+
+        //Divide users WonCashed and LostPlaying
+        var usersWonCashed = [];
+
+        _.forEach(engine.playerInfo, function (value, username) {
             if(engine.username !== username)
-                if(player.stopped_at)
-                    bitsCashedOut += player.bet;
+                if (value.stopped_at)
+                    usersWonCashed.push(value);
                 else
-                    bitsPlaying += player.bet;
+                    bitsPlaying += value.bet;
         });
 
-        //If you are playing here is your qty
-        if(engine.currentPlay)
-            myBet = engine.currentPlay.bet;
+        //If playing and cashed out divide between after and before if not just put all in bitsCashedOut
+        var i = 0, length = usersWonCashed.length;
+        if(engine.currentPlay && engine.currentPlay.stopped_at) {
+            for(; i < length; i++) {
+                if(usersWonCashed[i].stopped_at > engine.currentPlay.stopped_at)
+                    bitsCashedOutAfterMe += usersWonCashed[i].bet;
+                else
+                    bitsCashedOut += usersWonCashed[i].bet;
+            }
+        } else {
+            for(; i < length; i++) {
+                    bitsCashedOut += usersWonCashed[i].bet;
+            }
+        }
 
-        var totalAmountPlaying = bitsPlaying + bitsCashedOut + myBet;
-        return [bitsPlaying / totalAmountPlaying * 100, bitsCashedOut / totalAmountPlaying * 100, myBet / totalAmountPlaying * 100];
+        //If playing this is my bet
+        myBet = engine.currentPlay? engine.currentPlay.bet: 0;
+
+        var totalAmountPlaying = bitsPlaying + bitsCashedOut + bitsCashedOutAfterMe + myBet;
+        return {
+            playingLost: bitsPlaying / totalAmountPlaying * 100,
+            cashedWon: bitsCashedOut / totalAmountPlaying * 100,
+            cashedWonAfter: bitsCashedOutAfterMe / totalAmountPlaying * 100,
+            me: myBet / totalAmountPlaying * 100
+        }
     }
 });
