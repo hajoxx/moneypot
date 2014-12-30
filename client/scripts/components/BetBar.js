@@ -86,43 +86,31 @@ define([
             }
         }
 
-        var bitsPlaying = 0, bitsCashedOut = 0, bitsCashedOutAfterMe = 0, myBet = 0;
+        var bitsPlaying = 0, bitsCashedOut = 0, bitsCashedOutAfterMe = 0;
 
-        //Divide users WonCashed and LostPlaying
-        var usersWonCashed = [];
+        var myBet = engine.currentPlay? engine.currentPlay.bet: 0;
+        var myStop = (engine.currentPlay && engine.currentPlay.stopped_at)? engine.currentPlay.stopped_at: 0;
 
-        _.forEach(engine.playerInfo, function (value, username) {
-            if(engine.username !== username)
-                if (value.stopped_at)
-                    usersWonCashed.push(value);
-                else
-                    bitsPlaying += value.bet;
+        _.forEach(engine.playerInfo,function(player, username) {
+            if(username !== engine.username)
+                if(player.stopped_at) {
+                    if(player.stopped_at > myStop)
+                        bitsCashedOutAfterMe += player.bet;
+                    else
+                        bitsCashedOut += player.bet;
+
+                } else {
+                    bitsPlaying+= player.bet;
+                }
         });
 
-        //If playing and cashed out divide between after and before if not just put all in bitsCashedOut
-        var i = 0, length = usersWonCashed.length;
-        if(engine.currentPlay && engine.currentPlay.stopped_at) {
-            for(; i < length; i++) {
-                if(usersWonCashed[i].stopped_at > engine.currentPlay.stopped_at)
-                    bitsCashedOutAfterMe += usersWonCashed[i].bet;
-                else
-                    bitsCashedOut += usersWonCashed[i].bet;
-            }
-        } else {
-            for(; i < length; i++) {
-                    bitsCashedOut += usersWonCashed[i].bet;
-            }
-        }
-
-        //If playing this is my bet
-        myBet = engine.currentPlay? engine.currentPlay.bet: 0;
-
         var totalAmountPlaying = bitsPlaying + bitsCashedOut + bitsCashedOutAfterMe + myBet;
-        return {
+        var obj = {
             playingLost: bitsPlaying / totalAmountPlaying * 100,
             cashedWon: bitsCashedOut / totalAmountPlaying * 100,
             cashedWonAfter: bitsCashedOutAfterMe / totalAmountPlaying * 100,
             me: myBet / totalAmountPlaying * 100
-        }
+        };
+        return obj;
     }
 });
