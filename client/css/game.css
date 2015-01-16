@@ -846,15 +846,32 @@ tr.user-cashed.me {
 
 .games-log td:nth-child(1), .games-log th:nth-child(1) {
     padding-left: 6px;
-    max-width: 3rem;
+    max-width: 2rem;
 }
 
-.games-log tbody tr {
-    cursor: pointer;
+.games-log td:nth-child(6), .games-log th:nth-child(6) {
+    max-width: 2rem;
 }
 
 .games-log tbody tr:hover {
-    opacity: 0.4;
+    color: black;
+    background: #FFCC99;
+}
+
+.games-log a {
+    font-weight: bold;
+}
+
+.games-log-goodcrash  {
+    color: green;
+}
+
+.games-log-badcrash  {
+    color: red;
+}
+
+.games-log-hash {
+    width: 5em;
 }
 
 .game-details {

@@ -85,7 +85,7 @@ define([
                 tableHistory: Engine.tableHistory,
                 username: Engine.username,
                 isConnected: Engine.isConnected,
-                hash: Engine.hash,
+                lastHash: Engine.lastHash,
                 nextBetAmount: Engine.nextBetAmount,
                 nextAutoCashout: Engine.nextAutoCashout,
                 joined: Engine.joined,

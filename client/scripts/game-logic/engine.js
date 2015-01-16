@@ -157,7 +157,7 @@ define([
          * @param {number} data.elapsed - Total game elapsed time
          * @param {number} data.game_crash - Crash payout quantity in percent eg. 200 = 2x. Use this to calculate payout!
          * @param {object} data.bonuses - List of bonuses of each user, in satoshis
-         * @param {string} data.seed - Revealed seed of the game
+         * @param {string} data.hash - Revealed hash of the game
          */
         self.ws.on('game_crash', function(data) {
 
@@ -173,15 +173,19 @@ define([
                 }
             }
 
+            self.lastHash = data.hash;
+
+            console.log('Set the last hash to: ', self.lastHash);
+
             var gameInfo = {
                 created: self.created,
                 ended: true,
                 game_crash: data.game_crash,
                 game_id: self.gameId,
-                hash: self.hash,
-                player_info: self.playerInfo,
-                seed: data.seed
+                hash: data.hash,
+                player_info: self.playerInfo
             };
+
 
             //Add the current game info to the game history and if the game history is larger than 40 remove one element
             if (self.tableHistory.length >= 40)
@@ -200,7 +204,6 @@ define([
          * Event called before starting the game to let the client know when the game is going to start
          * @param {object} info - JSON payload
          * @param {number} info.game_id - The next game id
-         * @param {number} info.hash - Provably predetermined hash
          * @param {number} info.time_till_start - Time lapse for the next game to begin
          */
         self.ws.on('game_starting', function(info) {
@@ -209,7 +212,6 @@ define([
 
             self.gameState = 'STARTING';
             self.gameId = info.game_id;
-            self.hash = info.hash;
             self.startTime = new Date(Date.now() + info.time_till_start);
 
 
@@ -324,7 +326,7 @@ define([
 
                         // set current game properties
                         self.gameId = resp.game_id;
-                        self.hash = resp.hash;
+                        self.lastHash = resp.last_hash;
                         self.created = resp.created;
                         self.startTime = new Date(Date.now() - resp.elapsed);
                         self.joined = resp.joined;

@@ -168,16 +168,13 @@ define([
                     );
 
                 } else { // didn't bet
+
                     return D.span(null,
                         'Game crashed @ ', D.b({className: 'red'}, this.state.engine.tableHistory[0].game_crash / 100, 'x')
                     );
                 }
 
             }
-        },
-
-        _copyHash: function () {
-            prompt('Game ' + this.state.engine.gameId + ' hash:', this.state.engine.hash);
         },
 
         /** Control Inputs: Bet, AutoCash, AutoBet  **/
@@ -295,10 +292,8 @@ define([
                 ),
 
                 D.div({ className: 'hash-cont'  },
-                    D.span({ className: 'hash-text' }, 'Hash'),
-                    D.input({ className: 'hash-input', type: 'text', value: this.state.engine.hash, readOnly: true }),
-                    D.div({ className: 'hash-copy-cont', onClick: self._copyHash },
-                        D.span({ className: 'hash-copy' }, D.i({ className: 'fa fa-clipboard' })))
+                    D.span({ className: 'hash-text' }, 'Last Hash'),
+                    D.input({ className: 'hash-input', type: 'text', value: this.state.engine.lastHash, readOnly: true })
                 )
             );
         }

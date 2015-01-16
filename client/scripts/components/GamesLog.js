@@ -19,6 +19,14 @@ define([
         }
     }
 
+    function copyHash(gameId, hash) {
+        return function() {
+            prompt('Game ' + gameId + ' Hash: ', hash);
+        }
+    }
+
+
+
     return React.createClass({
         displayName: 'gamesLog',
 
@@ -88,23 +96,45 @@ define([
                     bonus = '-';
                 }
 
-                return D.tr({ key: 'game_' + i, onClick: self._gameDetails(game.game_id) },
-                    D.td(null, Clib.formatSatoshis(game.game_crash), D.i(null, 'x')),
+                var className;
+                if (game.game_crash >= 198)
+                    className = 'games-log-goodcrash';
+                else if (game.game_crash <= 196)
+                    className = 'games-log-badcrash';
+                else
+                    className = '';
+
+                return D.tr({ key: 'game_' + i },
+
+                    D.td(null,
+                        D.a({ href: '/', target: '_blank',
+                            className: className
+                        },
+                            Clib.formatSatoshis(game.game_crash), D.i(null, 'x'))
+                        ),
                     D.td(null, cashed_at),
                     D.td(null, bet),
                     D.td(null, bonus),
-                    D.td(null, profit)
+                    D.td(null, profit),
+                    D.td(null,
+                        D.input({type: 'input', className: 'games-log-hash', readOnly: true, value: game.hash }),
+                        D.div({ className: 'hash-copy-cont', onClick: copyHash(game.game_id, game.hash) },
+                            D.span({ className: 'hash-copy' }, D.i({ className: 'fa fa-clipboard' })))
+                    )
+
                 );
             });
 
             return D.table({ className: 'games-log' },
                 D.thead(null,
                     D.tr(null,
+
                         D.th(null, 'Crash'),
                         D.th(null, '@'),
                         D.th(null, 'Bet'),
                         D.th(null, 'Bonus'),
-                        D.th(null, 'Profit')
+                        D.th(null, 'Profit'),
+                        D.th(null, 'Hash')
                     )
                 ),
                 D.tbody(null,

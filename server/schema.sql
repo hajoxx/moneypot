@@ -256,6 +256,17 @@ CREATE VIEW users_view AS
    FROM users u;
 
 
+
+   CREATE TABLE game_hashes
+   (
+     game_id bigint NOT NULL,
+     hash text NOT NULL,
+     CONSTRAINT game_hashes_pkey PRIMARY KEY (game_id)
+   );
+
+
+
+
 --
 -- TOC entry 2739 (class 2604 OID 87739)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -

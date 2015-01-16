@@ -91,7 +91,6 @@ define([
      * 'game_starting': Event called before starting the game to let the client know when the game is going to start
      * @param {object} info - JSON payload
      * @param {number} info.game_id - The next game id
-     * @param {number} info.hash - Provably predetermined hash
      * @param {number} info.time_till_start - Time lapse for the next game to begin
      */
 
@@ -108,7 +107,7 @@ define([
      * @param {number} data.elapsed - Total game elapsed time
      * @param {number} data.game_crash - Crash payout quantity in percent eg. 200 = 2x. Use this to calculate payout!
      * @param {object} data.bonuses - List of bonuses of each user, in satoshis
-     * @param {string} data.seed - Revealed seed of the game
+     * @param {string} data.hash - Revealed provably fair hash of the game
      */
 
     /* ==========================================================================
