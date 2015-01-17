@@ -253,20 +253,9 @@
             <dd>
                 <b><a name="fair"></a>Is the game fair?</b>
                 <p>
-                    Absolutely! And we can prove it: Before each game starts and before any player joins
-                    we send a hash of what the result will be. The hash we display is calculated as:
-                     <code>sha256(gameCrashAmount + '|' + seed)</code>
-                </p>
-                <p>
-                    And after a game ends, you can look up the <code>gameCrashAmount</code> and the <code>seed</code> and compute the
-                    <code>sha256(gameCrashAmount + '|' + seed)</code> to verify that we never changed the gameCrashAmount.
-                </p>
-                <p>
-                    <strong>Note:</strong> The gameCrashAmount is an integer that represents when the game crashes as a percentage. E.g.
-                    <a href="https://www.moneypot.com/game/451337">this Game</a> crashed at 16.31x with a a seed of
-                    <code>e4e93da14e26c6d9a1e22f6d0e63c52d</code>. So, to prove we didn't cheat, the hash you would have seen
-                    on your client is <code>25957aaf0a91ed9faaa0b4622f890a98eba174d40513cb0344ffc01a4bb55fce</code>
-                    which we computed via: <code>sha256('1631|e4e93da14e26c6d9a1e22f6d0e63c52d')</code>
+                    Absolutely! And we can prove it. Please see:
+                    <a href="https://bitcointalk.org/index.php?topic=922898.0">the bitcoin talk thread</a>
+                    for technical details.
                 </p>
             </dd>
             <dd>

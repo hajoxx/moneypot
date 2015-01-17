@@ -256,12 +256,12 @@ CREATE VIEW users_view AS
 
 
 
-   CREATE TABLE game_hashes
-   (
-     game_id bigint NOT NULL,
-     hash text NOT NULL,
-     CONSTRAINT game_hashes_pkey PRIMARY KEY (game_id)
-   );
+CREATE TABLE game_hashes
+(
+ game_id bigint NOT NULL,
+ hash text NOT NULL,
+ CONSTRAINT game_hashes_pkey PRIMARY KEY (game_id)
+);
 
 
 
