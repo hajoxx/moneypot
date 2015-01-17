@@ -49,12 +49,6 @@ define([
                 this.setState(getState());
         },
 
-        _gameDetails: function (gameId) {
-            return function () {
-                window.open('/game/' + gameId, '_blank');
-            }
-        },
-
         render: function () {
             var self = this;
 
@@ -107,7 +101,7 @@ define([
                 return D.tr({ key: 'game_' + i },
 
                     D.td(null,
-                        D.a({ href: '/', target: '_blank',
+                        D.a({ href: '/game/' + game.game_id, target: '_blank',
                             className: className
                         },
                             Clib.formatSatoshis(game.game_crash), D.i(null, 'x'))
