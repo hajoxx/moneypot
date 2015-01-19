@@ -366,6 +366,7 @@ i {
 
 .hash-copy-cont{
      display: inline-block;
+     cursor: pointer;
  }
 
 .hash-copy {
