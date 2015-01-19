@@ -9,6 +9,7 @@ var withdraw = require('./withdraw');
 var sendEmail = require('./sendEmail');
 var speakeasy = require('speakeasy');
 var qr = require('qr-image');
+var _ = require('lodash');
 
 var sessionOptions = {
         httpOnly: true,
@@ -16,9 +17,10 @@ var sessionOptions = {
 };
 
 exports.register  = function(req, res, next) {
-    var values = req.body;
+    var values = _.merge(req.body, { user: {} });
     var username = values.user.name;
     var password = values.user.password;
+    var password2 = values.user.confirm;
     var email = values.user.email;
 
     var notValid = lib.isInvalidUsername(username);
@@ -38,6 +40,13 @@ exports.register  = function(req, res, next) {
     if (email) {
         notValid = lib.isInvalidEmail(email);
         if (notValid) return res.render('register', { warning: 'email not valid because: ' + notValid, values: values.user });
+    }
+
+    // Ensure password and confirmation match
+    if (password !== password2) {
+        return res.render('register', {
+          warning: 'password and confirmation did not match'
+        });
     }
 
     database.createUser(username, password, email, function(err, sessionId) {
