@@ -444,7 +444,9 @@ exports.endGame = function(gameId, bonuses, callback) {
 exports.getGame = function(gameId, callback) {
     assert(gameId);
 
-    query('SELECT games.*, game_hashes.hash FROM games games JOIN game_hashes game_hashes ON games.id = game_hashes.game_id WHERE id = $1 AND ended = TRUE;', [gameId], function(err, result) {
+    query('SELECT * FROM games ' +
+    'LEFT JOIN game_hashes ON games.id = game_hashes.game_id ' +
+    'WHERE games.id = $1 AND games.ended = TRUE', [gameId], function(err, result) {
         if (err) return callback(err);
         if (result.rows.length == 0) return callback('GAME_DOES_NOT_EXISTS');
         assert(result.rows.length == 1);
