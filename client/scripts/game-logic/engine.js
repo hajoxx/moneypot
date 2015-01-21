@@ -63,6 +63,9 @@ define([
         /** The game id of the current game */
         self.gameId = null;
 
+        /** How much can be won this game */
+        self.maxWin = null;
+
         /**
          * if the game is pending, startTime is how long till it starts
          * if the game is running, startTime is how long its running for
@@ -175,7 +178,6 @@ define([
 
             self.lastHash = data.hash;
 
-            console.log('Set the last hash to: ', self.lastHash);
 
             var gameInfo = {
                 created: self.created,
@@ -213,7 +215,7 @@ define([
             self.gameState = 'STARTING';
             self.gameId = info.game_id;
             self.startTime = new Date(Date.now() + info.time_till_start);
-
+            self.maxWin = info.max_win;
 
             // Every time the game starts checks if there is a queue bet and send it
             if (self.nextBetAmount) {
@@ -326,6 +328,7 @@ define([
 
                         // set current game properties
                         self.gameId = resp.game_id;
+                        self.maxWin = resp.max_win;
                         self.lastHash = resp.last_hash;
                         self.created = resp.created;
                         self.startTime = new Date(Date.now() - resp.elapsed);

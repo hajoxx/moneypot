@@ -9,22 +9,25 @@ define([
 ){
 
     var rng;
-    var currentTime;
+
+    function formatSatoshis(n, decimals) {
+        return formatDecimals(n/100, decimals);
+    }
+
+    function formatDecimals (n, decimals) {
+        if (typeof decimals === 'undefined') {
+            if (n % 100 === 0)
+                decimals = 0;
+            else
+                decimals = 2;
+        }
+        return n.toFixed(decimals).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+    }
 
     return {
-        formatSatoshis: function (n, decimals) {
-            return this.formatDecimals(n/100, decimals);
-        },
+        formatSatoshis: formatSatoshis,
 
-        formatDecimals: function formatDecimals (n, decimals) {
-            if (typeof decimals === 'undefined') {
-                if (n % 100 === 0)
-                    decimals = 0;
-                else
-                    decimals = 2;
-            }
-            return n.toFixed(decimals).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-        },
+        formatDecimals: formatDecimals,
 
         payout: function(betSize, ms) {
             return betSize * Math.pow(Math.E, (0.00006*ms));
@@ -36,7 +39,6 @@ define([
 
         seed: function (newSeed) {
             rng = Seedrandom(newSeed);
-            currentTime = 0;
         },
 
         parseBet: function (betString) {
@@ -50,8 +52,8 @@ define([
             if (bet < 1)
                 return new Error('The bet should be at least 1 bit');
 
-            if (bet > 1e5)
-                return new Error('The bet must be less no more than 100,000 bits');
+            if (bet * 100 > AppConstants.Engine.MAX_BET)
+                return new Error('The bet must be less no more than ' + formatSatoshis(AppConstants.Engine.MAX_BET) + ' bits');
 
             if (_.isNaN(bet) || Math.floor(bet) !== bet)
                 return new Error('The bet should be an integer greater than or equal to one');

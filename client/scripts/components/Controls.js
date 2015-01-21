@@ -50,7 +50,6 @@ define([
         componentWillUnmount: function() {
             ControlsStore.removeChangeListener(this._onChange);
             EngineVirtualStore.removeChangeListener(this._onChange);
-            this.unmounted = true;
         },
 
         _onChange: function() {

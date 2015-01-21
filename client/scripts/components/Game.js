@@ -30,9 +30,11 @@ define([
     var D = React.DOM;
 
     function getState() {
+        var s = EngineVirtualStore.getState();
         return {
-            isConnected: EngineVirtualStore.getState().isConnected
-        }
+            isConnected: s.isConnected,
+            maxWin: s.maxWin
+        };
     }
 
     return React.createClass({
@@ -51,9 +53,8 @@ define([
         },
 
         _onChange: function() {
-            var isConnected = getState().isConnected;
-            if(this.state.isConnected != isConnected)
-                this.setState({ isConnected: isConnected });
+            if (this.isMounted())
+                this.setState(getState());
         },
 
         render: function() {
@@ -63,7 +64,9 @@ define([
             return D.div({ className: 'content' },
                 D.div({ className: 'grid grid-pad' },
                     D.div({ className: 'col-7-12 game' },
-                        D.div( { className: 'chart' },
+                        D.div( { className: 'chart', style: { position: 'relative' } },
+                            D.div({ style: { position: 'absolute', bottom: '27px', right: '30px', fontSize: '55%', backgroundColor: 'white' }},
+                                'Max profit: ', (this.state.maxWin/1e8).toFixed(2), ' BTC'),
                             Chart()
                         ),
                         Controls()

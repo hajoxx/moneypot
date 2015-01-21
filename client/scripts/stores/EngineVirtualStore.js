@@ -95,6 +95,8 @@ define([
                 lag: Engine.lag,
                 lastGameTick: Engine.lastGameTick,
 
+                maxWin: Engine.maxWin,
+
                 //Helper States
                 isBetting: isBetting(),
                 currentPlay: currentPlay, //If the user is currently playing return and object with the status else null
