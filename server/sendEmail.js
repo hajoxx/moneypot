@@ -1,27 +1,30 @@
-
 var assert = require('assert');
 var nodemailer = require('nodemailer');
+var sesTransport = require('nodemailer-ses-transport');
+
+var siteURL = process.env.SITE_URL || 'https://www.moneypot.com';
 
 
 function send(details, callback) {
-    var transport = nodemailer.createTransport("SES", {
+    assert(details, callback);
+
+    var transport = nodemailer.createTransport(sesTransport({
         AWSAccessKeyID: process.env.AWS_SES_KEY,
         AWSSecretKey: process.env.AWS_SES_SECRET
-    });
+    }));
 
     transport.sendMail(details, function(err) {
-        if (err) {
-            console.error('Send mail error: ', err);
-            if (callback) return callback(err);
-        }
-        if (callback) return callback(null);
+        if (err)
+            return callback(err);
+
+        callback(null);
     });
 }
 
 exports.contact = function(from, content, user, callback) {
 
     var details = {
-        to: 'ryan@moneypot.com',
+        to: process.env.CONTACT_EMAIL || 'ryan@moneypot.com',
         from: 'contact@moneypot.com',
         replyTo: from,
         subject: 'Moneypot Contact (' + from + ')',
@@ -48,8 +51,8 @@ exports.passwordReset = function(to, recoveryId, callback) {
             '<title>MoneyPot</title>' +
             '</head>' +
             '<body>'+
-            '<a href="https://www.moneypot.com/reset/' + recoveryId +'">Please click here to reset your password</a>' +
+            '<a href="' + siteURL + '/reset/' + recoveryId +'">Please click here to reset your password</a>' +
             '</body></html>'
     };
     send(details, callback);
-}
+};

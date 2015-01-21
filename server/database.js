@@ -101,7 +101,7 @@ function getClient(runner, callback) {
 
 }
 
-// returns a sessionId
+//Returns a sessionId
 exports.createUser = function(username, password, email, callback) {
     assert(username && password);
 
@@ -138,44 +138,6 @@ exports.createUser = function(username, password, email, callback) {
     , callback);
 };
 
-exports.getUserByName = function(username, callback) {
-    assert(username);
-    query('SELECT * FROM users WHERE lower(username) = lower($1)', [username], function(err, result) {
-        if (err) return callback(err);
-        if (result.rows.length === 0)
-            return callback('USER_DOES_NOT_EXIST');
-
-        assert(result.rows.length === 1);
-        callback(null, result.rows[0]);
-    });
-};
-
-exports.getUserAndGamesPlayedByName = function(username, callback) {
-    assert(username);
-    query('SELECT *, (SELECT COUNT(*) AS games_played FROM plays WHERE user_id = users.id) ' +
-          'FROM users WHERE lower(username) = lower($1)', [username], function(err, result) {
-        if (err) return callback(err);
-        if (result.rows.length === 0)
-            return callback('USER_DOES_NOT_EXIST');
-
-        assert(result.rows.length === 1);
-        callback(null, result.rows[0]);
-    });
-};
-
-
-exports.getUserById = function(userId, callback) {
-    assert(userId);
-    query('SELECT * FROM users WHERE id = $1', [userId], function(err, result) {
-        if (err) return callback(err);
-        if (result.rows.length === 0)
-            return callback('USER_DOES_NOT_EXIST');
-
-        assert(result.rows.length === 1);
-        callback(null, result.rows[0]);
-    });
-};
-
 exports.updateEmail = function(userId, email, callback) {
     assert(userId);
 
@@ -189,7 +151,7 @@ exports.updateEmail = function(userId, email, callback) {
 };
 
 exports.changeUserPassword = function(userId, password, callback) {
-    assert(userId && password);
+    assert(userId && password && callback);
     var hashedPassword = passwordHash.generate(password);
     query('UPDATE users SET password = $1 WHERE id = $2', [hashedPassword, userId], function(err, res) {
         if (err) return callback(err);
@@ -266,20 +228,6 @@ exports.createOneTimeToken = function(userId, callback) {
     });
 };
 
-exports.validateOneTimeToken = function(token, callback) {
-    assert(token);
-
-    query('WITH t as (DELETE FROM sessions WHERE id = $1 AND ott = TRUE RETURNING *) ' +
-        'SELECT * FROM users WHERE id = (SELECT user_id FROM t)',
-        [token], function(err, result) {
-            if (err) return callback(err);
-            if (result.rowCount == 0) return callback('NOT_VALID_TOKEN');
-            assert(result.rows.length === 1);
-            callback(null, result.rows[0]);
-        }
-    );
-};
-
 exports.createSession = function(userId, callback) {
     assert(userId && callback);
 
@@ -293,7 +241,7 @@ exports.getUserFromUsername = function(username, callback) {
     assert(username && callback);
 
     query('SELECT * FROM users_view WHERE lower(username) = lower($1)', [username], function(err, data) {
-        if (err) return callback(new Error('Unable to query get user by username: ' + username + '\n' + err));
+        if (err) return callback(err);
 
         if (data.rows.length === 0)
             return callback('NO_USER');
@@ -312,7 +260,7 @@ exports.addRecoverId = function(userId, callback) {
     var recoveryId = uuid.v4();
 
     query('INSERT INTO recovery (id, user_id)  values($1, $2)', [recoveryId, userId], function(err, res) {
-        if (err) return callback(new Error('Unable to insert recovery id: ' + recoveryId + ' for user ' + userId + '\n' + err));
+        if (err) return callback(err);
         callback(null, recoveryId);
     });
 };
@@ -320,7 +268,7 @@ exports.addRecoverId = function(userId, callback) {
 exports.getUserBySessionId = function(sessionId, callback) {
     assert(sessionId && callback);
     query('SELECT * FROM users_view WHERE id = (SELECT user_id FROM sessions WHERE id = $1 AND ott = FALSE)', [sessionId], function(err, response) {
-        if (err) return callback(new Error('Unable to query user by session id ' + sessionId + '\n' + err));
+        if (err) return callback(err);
 
         var data = response.rows;
         if (data.length === 0)
@@ -338,7 +286,7 @@ exports.getUserBySessionId = function(sessionId, callback) {
 exports.getUserByRecoverId = function(recoverId, callback) {
     assert(recoverId && callback);
     query('SELECT * FROM users_view WHERE id = (SELECT user_id FROM recovery WHERE id = $1)', [recoverId], function(err, res) {
-        if (err) return callback(new Error('Unable to get user by recover id :' + recoverId + '\n' + err));
+        if (err) return callback(err);
 
         var data = res.rows;
         if (data.length === 0)
@@ -356,7 +304,7 @@ exports.changePasswordFromRecoverId = function(recoverId, password, callback) {
     query("WITH t as (DELETE FROM recovery WHERE id = $2 AND created > NOW() - interval '24 hours' RETURNING *) UPDATE users SET password = $1 where id = (SELECT user_id FROM t) RETURNING *",
         [hashedPassword, recoverId], function(err, res) {
             if (err)
-                return callback(new Error('Unable to query changePasswordFromRecoverId -> recoverId: ' + recoverId, + 'password: ' + password + '\n' + err));
+                return callback(err);
 
             var data = res.rows;
             if (data.length === 0)
@@ -369,80 +317,8 @@ exports.changePasswordFromRecoverId = function(recoverId, password, callback) {
     );
 };
 
-exports.placeBet = function(amount, userId, gameId, callback) {
-    assert(typeof amount === 'number');
-    assert(typeof userId === 'number');
-    assert(typeof gameId === 'number');
-    assert(typeof callback === 'function');
-
-    getClient(function(client, callback) {
-        client.query('UPDATE users SET balance_satoshis = balance_satoshis - $1 WHERE id = $2',
-            [amount, userId], function(err) {
-                if (err)
-                    return callback(err);
-
-                client.query(
-                    'INSERT INTO plays(user_id, game_id, bet) VALUES($1, $2, $3) RETURNING id',
-                    [userId, gameId, amount], function(err, result) {
-                        if (err)
-                            return callback(err);
-
-                        var playId = result.rows[0].id;
-                        assert(typeof playId === 'number');
-
-                        callback(null, playId);
-                    }
-                );
-            });
-    }, callback);
-};
-
-exports.endGame = function(gameId, bonuses, callback) {
-    assert(typeof gameId === 'number');
-    assert(typeof callback === 'function');
-
-    var error = false;
-
-    getClient(function(client, callback) {
-
-        var tasks = [function(callback) {
-            if (error) return callback(new Error('aborted'));
-            client.query('UPDATE games SET ended = true WHERE id = $1', [gameId], callback);
-        }];
-
-        bonuses.forEach(function(bonus) {
-            assert(lib.isInt(bonus.user.id));
-            assert(lib.isInt(bonus.playId));
-            assert(lib.isInt(bonus.amount) && bonus.amount > 0);
-
-            tasks.push(
-                function(callback) {
-                    if (error) return callback(new Error('aborted'));
-                        client.query('UPDATE plays SET bonus = $1 WHERE id = $2', [bonus.amount, bonus.playId], callback)
-                }
-            );
-
-            tasks.push(
-                function(callback) {
-                    if (error) return callback(new Error('aborted'));
-                    addSatoshis(client, bonus.user.id, bonus.amount, callback);
-                }
-            );
-        });
-
-        async.parallelLimit(tasks, 5, function(err) {
-           if (err) {
-               error = true;
-               return callback(err);
-           }
-           callback(null);
-        });
-
-    }, callback);
-};
-
 exports.getGame = function(gameId, callback) {
-    assert(gameId);
+    assert(gameId && callback);
 
     query('SELECT * FROM games ' +
     'LEFT JOIN game_hashes ON games.id = game_hashes.game_id ' +
@@ -475,38 +351,6 @@ function addSatoshis(client, userId, amount, callback) {
 }
 
 
-exports.cashOut = function(userId, playId, amount, callback) {
-    assert(typeof userId === 'number');
-    assert(typeof playId === 'number');
-    assert(typeof amount === 'number');
-    assert(typeof callback === 'function');
-
-    getClient(function(client, callback) {
-        addSatoshis(client, userId, amount, function(err) {
-            if (err)
-                return callback(err);
-
-            client.query(
-                'UPDATE plays SET cash_out = $1 WHERE id = $2 AND cash_out IS NULL',
-                [amount, playId], function(err, result) {
-                    if (err)
-                        return callback(err);
-
-                    if (result.rowCount !== 1) {
-                        console.error('[INTERNAL_ERROR] Double cashout? ',
-                            'User: ', userId, ' play: ', playId, ' amount: ', amount,
-                            ' got: ', result.rowCount);
-
-                        return callback(new Error('Double cashout'));
-                    }
-
-                    callback(null);
-                }
-            );
-        });
-    }, callback);
-};
-
 exports.getUserPlays = function(userId, limit, offset, callback) {
     assert(userId);
 
@@ -529,7 +373,7 @@ exports.getGiveAwaysAmount = function(userId, callback) {
 };
 
 exports.addGiveaway = function(userId, callback) {
-    assert(userId);
+    assert(userId && callback);
     getClient(function(client, callback) {
 
             client.query('SELECT last_giveaway FROM users_view WHERE id = $1', [userId] , function(err, result) {
@@ -561,7 +405,7 @@ exports.addGiveaway = function(userId, callback) {
 };
 
 exports.addRawGiveaway = function(userNames, amount, callback) {
-    assert(userNames && amount);
+    assert(userNames && amount && callback);
 
     getClient(function(client, callback) {
 
@@ -571,7 +415,7 @@ exports.addRawGiveaway = function(userNames, amount, callback) {
                 client.query('SELECT id FROM users WHERE lower(username) = lower($1)', [username], function(err, result) {
                     if (err) return callback('unable to add bits');
 
-                    if (result.rows.length === 0) return callback(new Error(username + ' didnt exists'));
+                    if (result.rows.length === 0) return callback(username + ' didnt exists');
 
                     var userId = result.rows[0].id;
                     client.query('INSERT INTO giveaways(user_id, amount) VALUES($1, $2) ', [userId, amount], function(err, result) {
@@ -643,57 +487,6 @@ exports.getPublicStats = function(username, callback) {
     );
 };
 
-
-
-
-exports.getUserChartData = function(userId, callback) {
-    assert(typeof userId === 'number');
-    assert(typeof callback === 'function');
-
-    query('WITH raw AS ( ' +
-            'SELECT ' +
-            '(coalesce(cash_out, 0) + coalesce(bonus, 0) - bet) profit, ' +
-            'row_number() over (ORDER BY id) as rnum ' +
-            'FROM plays ' +
-            'WHERE user_id = $1 ' +
-    ') ' +
-    'SELECT SUM(profit) profit FROM raw ' +
-    'GROUP BY (rnum-1) / (SELECT GREATEST(COUNT(*) / 200.0, 1)::int res FROM raw) ' +
-    'ORDER BY (rnum-1) / (SELECT GREATEST(COUNT(*) / 200.0, 1)::int res FROM raw)',
-        [userId], function(err, result) {
-
-        if (err)
-            return callback(err);
-
-        var running = 0;
-
-        var transformed = result.rows.map(function(row) {
-            running += row.profit;
-            return running;
-        });
-
-        callback(null, transformed);
-    });
-};
-
-// callback called with (err, gameId)
-exports.createGame = function(gameCrash, seed, callback) {
-    assert(typeof gameCrash === 'number');
-    assert(typeof gameCrash === 'number');
-    assert(typeof callback === 'function');
-
-    query('INSERT INTO games(game_crash, seed) VALUES($1, $2) RETURNING id',
-        [gameCrash, seed],
-        function(err, result) {
-        if (err) return callback(err);
-
-        var id = result.rows[0].id;
-        assert(typeof id == 'number');
-
-        return callback(null, id);
-    });
-};
-
 exports.makeWithdrawal = function(userId, satoshis, withdrawalAddress, callback) {
     assert(typeof userId === 'number');
     assert(typeof satoshis === 'number');
@@ -706,10 +499,8 @@ exports.makeWithdrawal = function(userId, satoshis, withdrawalAddress, callback)
             [satoshis, userId], function(err, response) {
             if (err) return callback(err);
 
-            if (response.rowCount !== 1) {
-                console.log('[INTERNAL_ERROR] unable to make withdrawal got: ', response);
-                return callback(new Error('Unexpected withdrawal row count'));
-            }
+            if (response.rowCount !== 1)
+                return callback(new Error('Unexpected withdrawal row count: \n' + response));
 
             client.query('INSERT INTO fundings(user_id, amount, bitcoin_withdrawal_address) ' +
                 "VALUES($1, $2, $3) RETURNING id",
@@ -729,8 +520,7 @@ exports.makeWithdrawal = function(userId, satoshis, withdrawalAddress, callback)
 };
 
 exports.getWithdrawals = function(userId, callback) {
-    assert(userId);
-    assert(typeof callback === 'function');
+    assert(userId && callback);
 
     query("SELECT * FROM fundings WHERE user_id = $1 AND amount < 0 ORDER BY created DESC", [userId], function(err, result) {
         if (err) return callback(err);
@@ -748,8 +538,7 @@ exports.getWithdrawals = function(userId, callback) {
 };
 
 exports.getDeposits = function(userId, callback) {
-    assert(userId);
-    assert(typeof callback === 'function');
+    assert(userId && callback);
 
     query("SELECT * FROM fundings WHERE user_id = $1 AND amount > 0 ORDER BY created DESC", [userId], function(err, result) {
         if (err) return callback(err);
@@ -785,6 +574,7 @@ exports.getWithdrawalsAmount = function(userId, callback) {
 exports.setFundingsWithdrawalTxid = function(fundingId, txid, callback) {
     assert(typeof fundingId === 'number');
     assert(typeof txid === 'string');
+    assert(callback);
 
     query('UPDATE fundings SET bitcoin_withdrawal_txid = $1 WHERE id = $2', [txid, fundingId],
         function(err, result) {
@@ -795,39 +585,6 @@ exports.setFundingsWithdrawalTxid = function(fundingId, txid, callback) {
             callback(null);
         }
     );
-};
-
-exports.getGameHistory = function(callback) {
-    query('SELECT games.id game_id, games.game_crash, games.created, json_agg(pv) plays ' +
-        'FROM games ' +
-        'LEFT JOIN (SELECT users.username, plays.bet, plays.cash_out, plays.bonus, plays.game_id ' +
-        '  FROM plays, users ' +
-        '  WHERE plays.user_id = users.id) pv ON pv.game_id = games.id ' +
-        'WHERE games.ended = true ' +
-        'GROUP BY 1 ' +
-        'ORDER BY games.id DESC LIMIT 10;', function(err, data) {
-            if (err) return err;
-
-            data.rows.forEach(function(row) {
-                row.player_info = {};
-
-                row.plays.forEach(function(play) {
-                    if (!play) return;
-
-                    // The database does not store the stopped_at value,
-                    // so we recalculate it.
-                    var stopped_at = Math.round(100 * play.cash_out / play.bet);
-                    row.player_info[play.username] =
-                        { bet: play.bet,
-                          stopped_at: stopped_at,
-                          bonus: play.bonus
-                        };
-                });
-
-                delete row.plays;
-            });
-            callback(null, data.rows);
-        });
 };
 
 exports.getLeaderBoard = function(byDb, order, callback) {

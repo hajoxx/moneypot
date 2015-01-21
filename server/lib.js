@@ -148,3 +148,9 @@ exports.validateSignature = function(str, sig){
     return exports.sign(str) == sig;
 };
 
+exports.removeNullsAndTrim = function(str) {
+    if(typeof str === 'string')
+        return str.replace(/\0/g, '').trim();
+    else
+        return str;
+};

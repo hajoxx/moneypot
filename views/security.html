@@ -12,7 +12,6 @@
         var confirm = document.getElementById('confirmation').value;
         console.log(password, confirm);
         if (password != confirm) {
-            console.log('not equals');
             document.getElementById('confirmation').setCustomValidity("Confirmation and password should be the same");
         } else document.getElementById("confirmation").setCustomValidity('');
     }
