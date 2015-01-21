@@ -66,7 +66,7 @@ define([
                     D.div({ className: 'col-7-12 game' },
                         D.div( { className: 'chart', style: { position: 'relative' } },
                             D.div({ style: { position: 'absolute', bottom: '27px', right: '30px', fontSize: '55%', backgroundColor: 'white' }},
-                                'Max profit: ', (this.state.maxWin/1e8).toFixed(2), ' BTC'),
+                                'Max profit: ', (this.state.maxWin/1e8).toFixed(4), ' BTC'),
                             Chart()
                         ),
                         Controls()

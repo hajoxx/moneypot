@@ -18,7 +18,7 @@
                 <li><a href="#gross-profit">What is Gross Profit?</a></li>
                 <li><a href="#dropout">What happens if I disconnect form the game?</a></li>
                 <li><a href="#high">How high can the game go?</a></li>
-                <li><a href="#limit"></a>What is the most I can bet?</a></li>
+                <li><a href="#limit">What is the most I can bet?</a></li>
                 <li><a href="#last">What is the bonus?</a></li>
                 <li><a href="#odds">What are the game odds?</a></li>
                 <li><a href="#crash-point">How is the game crash calculated?</a></li>
@@ -128,14 +128,15 @@
             <dd>
                 <b><a name="high"></a>How high can the game go?</b>
                 <p>
-                    There's no real limit! However, if during a game we ever are facing a net loss of 2,000,000 bits (2 BTC) or greater,
+                    There's no real limit! However, if during a game we ever are facing a net loss of 3% of the bankroll or greater,
                     the server will automatically cash out all players still in the game, forcing them to enjoy an early win and a sizeable profit.
+                    You can see in game what the current max win is (in the bottom right of the chart)
                 </p>
             </dd>
             <dd>
                 <b><a name="limit"></a>What is the most I can bet?</b>
                 <p>
-                    We currently have a bet limit of 1,000,000 bits (0.1 BTC). This will increase in the near future.
+                    We currently have a bet limit of 1,000,000 bits (1 BTC).
                 </p>
             </dd>
             <dd>
@@ -175,7 +176,7 @@
                     have a fixed house margin, as this would prevent highly conservative play (e.g. If you were
                     only attempting to make $2 in a $100 game, a house margin of 1 % would be 50 % of your potential profits!).
                     Our unique formula makes it fair for both highly conservative play (cash out early) and highly aggressive
-                    play (hold until you're a millionaire). All games are <a href="#provably-fair">provably fair</a>.
+                    play (hold until you're a millionaire). All games are <a href="#fair">provably fair</a>.
                 </p>
                 <p>
                     The exact formula for the houses expected return is:<br />
@@ -195,40 +196,23 @@
                     The code that decides the multiplier for each round is here:
                 </p>
                 <p>
-                    <a href="https://github.com/moneypot/gameserver/blob/master/server/game.js#L626">https://github.com/moneypot/gameserver/blob/master/server/Game.js#L626</a>
+                    <a href="https://github.com/moneypot/gameserver/blob/master/server/lib.js#L146-L158">https://github.com/moneypot/gameserver/blob/master/server/lib.js#L146-L158</a>
                 </p>
                 <p>
                     It basically does three things.
                 </p>
                 <p>
-                    First, it picks a random integer between 0 and 100 inclusive. If it's
-                    0 (a 1 in 101 chance), the game crashes at 0x and nobody gets a bonus:
+                    First, it mixes the hash with the clientSeed (decided by the provably fair seeding event) using hmac-sha256
                 </p>
                 <p>
-                    <code>if (cryptoRand.randInt(0, 100) === 0)
-                    return 0;</code>
+                    Secondly it gives a 1 in 101 chance of instant crashing
                 </p>
                 <p>
-                    Second, it works out what the multiplier would be if there was no
-                    house edge.  cryptoRand.rand() gives a random number between 0
-                    (inclusive) and 1 (exclusive):
+                    Third, it works out what the multiplier would be if there was no
+                    house edge.
                 </p>
                 <p>
-                    <code>perfect = (1 / (1 - cryptoRand.rand()));</code>
-                </p>
-                <p>
-                    Third, it takes 1% off the multiplier and adds on 0.01x:
-                </p>
-                <p>
-                    <code>multiplier = perfect*0.99 + 0.01;</code>
-                </p>
-                <p>
-                    For example, if the rand() returns 0.5 (right in the middle of its
-                    range):
-                </p>
-                <p>
-                    <code>perfect = 1 / (1-0.5) = 1 / 0.5 = 2
-                    multiplier = 2*0.99 + 0.01 = 1.98 + 0.01 = 1.99x</code>
+                    Fourth, it takes 1% off the multiplier and adds on 0.01x:
                 </p>
                 <p>
                     So half the time (other than 0x crashes which we can ignore because

@@ -101,7 +101,7 @@ define([
 
             var co = Clib.parseAutoCash(self.state.cashOut);
             if(co instanceof Error)
-                return bet.message;
+                return co.message;
 
             if (self.state.engine.balanceSatoshis < bet * 100)
                 return 'Not enough bits';

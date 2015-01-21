@@ -192,6 +192,20 @@ define([
         return Engine.username;
     };
 
+    /**
+     * Returns the raw engine
+     */
+    ScriptExecutor.prototype.getEngine = function() {
+        return Engine;
+    };
+
+    /**
+     * Returns the max win
+     */
+    ScriptExecutor.prototype.getMaxWin = function() {
+        return Engine.maxWin;
+    };
+
 
     /* ==========================================================================
      Helpers

@@ -56,6 +56,8 @@ console.log('Balance: ' + engine.getBalance());\n\
 console.log('The current payout is: ' + engine.getCurrentPayout());\n\
 console.log('My username is: ', engine.getUsername());\n\
 console.log('The max current bet is: ', engine.getMaxBet()/100, ' Bits');\n\
+console.log('The current maxWin is: ', engine.getMaxWin()/100, ' Bits');\n\
+// engine.getEngine() for raw engine \n\
 \n\
 \n\
 //Helpers:\n\
