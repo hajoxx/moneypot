@@ -12,7 +12,7 @@ function staticPageLogged(page, loggedGoTo) {
 
     return function(req, res) {
         var user = req.user;
-        if ( !user){
+        if (!user){
             return res.render(page);
         }
         if (loggedGoTo) return res.redirect(loggedGoTo);
@@ -24,7 +24,7 @@ function staticPageLogged(page, loggedGoTo) {
 function contact(origin) {
     assert(typeof origin == 'string');
 
-    return function(req, res) {
+    return function(req, res, next) {
         var user = req.user;
         var from = req.body.email;
         var message = req.body.message;
@@ -36,10 +36,9 @@ function contact(origin) {
         if (user) message = 'user_id: ' + req.user.id + '\n' + message;
 
         sendEmail.contact(from, message, null, function(err) {
-            if (err) {
-                console.log('[INTERNAL_ERROR] got error: ', err);
-                return res.send('error');
-            }
+            if (err)
+                return next(new Error('Error sending email: \n' + err ));
+
             return res.render(origin, { user: user, success: 'Thank you for writing, one of my humans will write you back very soon :) ' });
         });
     }
@@ -64,7 +63,7 @@ function adminRestrict(req, res, next) {
         if (req.header('Accept') === 'text/plain')
             res.send('Not authorized');
         else
-            res.render('401');
+            res.render('401'); //Not authorized page.
         return;
     }
     next();
@@ -84,8 +83,8 @@ function error(req, res, next) {
 module.exports = function(app) {
 
     app.get('/', staticPageLogged('index'));
-    app.get('/register', staticPageLogged('register', '/tables'));
-    app.get('/login', staticPageLogged('login', '/tables'));
+    app.get('/register', staticPageLogged('register', '/play'));
+    app.get('/login', staticPageLogged('login', '/play'));
     app.get('/reset/:recoverId', user.resetForm);
     app.get('/faq', staticPageLogged('faq'));
     app.get('/contact', staticPageLogged('contact'));
@@ -105,17 +104,6 @@ module.exports = function(app) {
 
     app.get('/play', table());
     app.get('/icarus', staticPageLogged('icarus'));
-
-    var playRedirect = function(req,res) {
-        return res.redirect(301, '/play');
-    };
-
-    // TODO: deprecate
-    app.get('/tables', playRedirect);
-    app.get('/tables/fun', playRedirect);
-    app.get('/tables/casual', playRedirect);
-    app.get('/tables/players', playRedirect);
-    app.get('/tables/serious', playRedirect);
 
     app.get('/leaderboard', games.getLeaderBoard);
     app.get('/game/:id', games.show);
@@ -137,7 +125,7 @@ module.exports = function(app) {
     app.post('/login', user.login);
     app.post('/register', user.register);
 
-    app.post('/ott', restrict, function(req, res) {
+    app.post('/ott', restrict, function(req, res, next) {
         var user = req.user;
         assert(user);
         database.createOneTimeToken(user.id, function(err, token) {

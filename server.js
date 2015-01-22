@@ -57,7 +57,6 @@ app.set("view engine", "html");
 app.disable('x-powered-by');
 app.enable('trust proxy');
 
-
 app.use(compression());
 
 var twoWeeksInSeconds = 1209600;
@@ -80,14 +79,15 @@ app.use(function(req, res, next) {
     }
 
     database.getUserBySessionId(sessionId, function(err, user) {
+        //The error is handled manually to avoid sending it into routes
         if (err) {
             if (err === 'NOT_VALID_SESSION') {
                 res.clearCookie('id');
+                return res.redirect('/');
             } else {
-                console.error('[INTERNAL_ERROR] while getting user by session ', err);
+                console.error('[INTERNAL_ERROR] Unable to get user by session id ' + sessionId + ':', err);
                 return res.redirect('/error');
             }
-            return next();
         }
         user.advice = req.query.m;
         user.error = req.query.err;
@@ -101,16 +101,32 @@ app.use(function(req, res, next) {
 
 });
 
+/**
+ * How to handle the errors:
+ * If the error is a string: Send it to the client.
+ * If the error is an actual: error print it to the server log.
+ *
+ * We do not use next() to avoid sending error logs to the client
+ * so this should be the last middleware in express .
+ */
+
 function errorHandler(err, req, res, next) {
 
     if (err) {
-        if (err.stack) {
-            console.error('[INTERNAL_ERROR] ', err, err.stack);
-        } else console.error('[INTERNAL_ERROR', err);
+        if(typeof err === 'string') {
+            return res.render('error', { error: err });
+        } else {
+            if (err.stack) {
+                console.error('[INTERNAL_ERROR] ', err.stack);
+            } else console.error('[INTERNAL_ERROR', err);
 
-        return res.render('error');
+            res.render('error');
+        }
+
+    } else {
+        console.warning("A 'next()' call was made without arguments, if this an error or a msg to the client?");
     }
-    next();
+
 }
 
 routes(app);

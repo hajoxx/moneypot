@@ -10,7 +10,6 @@ module.exports = function(userId, satoshis, withdrawalAddress, callback) {
     assert(typeof withdrawalAddress === 'string');
     assert(typeof callback === 'function');
 
-
     db.makeWithdrawal(userId, satoshis, withdrawalAddress, function (err, fundingId) {
         if (err) {
             if (err.code === '23514')
@@ -24,16 +23,12 @@ module.exports = function(userId, satoshis, withdrawalAddress, callback) {
 
         var amountToSend = (satoshis - 10000) / 1e8;
         bc.sendToAddress(withdrawalAddress, amountToSend, function (err, hash) {
-            if (err) {
-                console.error('[INTERNAL_ERROR] COULD NOT SEND TO ADDRESS: ', err, fundingId, withdrawalAddress);
-                return callback(err);
-            }
+            if (err)
+                return callback(new Error('Could not sent to Address ' + withdrawalAddress  + ', funding id ' + fundingId + ': \n' + err));
 
             db.setFundingsWithdrawalTxid(fundingId, hash, function (err) {
-                if (err) {
-                    console.error('[INTERNAL_ERROR] Could not set fundingId ', fundingId, ' to ', hash, ' because: ', err);
-                    return callback(err);
-                }
+                if (err)
+                    return callback(new Error('Could not set fundingId ' + fundingId + ' to ' + hash + ': \n' + err));
 
                 callback(null);
             });
