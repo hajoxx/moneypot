@@ -6,6 +6,7 @@ define(function(){
         onLossIncreaseQty: 2,
         onWinSelectedOpt: 'return_to_base', //Options: return_to_base, increase_bet_by
         onWinIncreaseQty: 2,
-        invalidData: false
+        invalidData: false,
+        maxBetStop: 1000000
     }
 });

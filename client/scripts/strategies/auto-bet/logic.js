@@ -22,6 +22,8 @@ define(['lib/clib'], function(Clib){
             var onLossIncreaseQty = Number(settings.onLossIncreaseQty);
             var onWinIncreaseQty = Number(settings.onWinIncreaseQty);
             var autoCashAt = Number(settings.autoCashAt);
+            var maxBetStop = Number(settings.maxBetStop) * 100;
+
             console.assert(Clib.isNumber(autoCashAt));
 
             engine.on('game_starting', function() {
@@ -45,7 +47,7 @@ define(['lib/clib'], function(Clib){
 
                 var fixedCurrentBet = Math.round(currentBet / 100) * 100;
 
-                if(fixedCurrentBet > 0 && fixedCurrentBet <= engine.getBalance() && fixedCurrentBet <= engine.getMaxBet()) {
+                if(fixedCurrentBet > 0 && fixedCurrentBet <= engine.getBalance() && fixedCurrentBet <= engine.getMaxBet() && fixedCurrentBet <= maxBetStop) {
                     engine.placeBet(fixedCurrentBet, Math.round(autoCashAt * 100), false);
                 } else {
                     engine.stop();
