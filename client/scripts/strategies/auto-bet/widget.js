@@ -69,6 +69,11 @@ define([
             this.props.StrategyEditorActions.setWidgetState('onWinIncreaseQty', amount);
         },
 
+        updateMaxBetStop: function() {
+            var amount = this.refs.max_bet_stop.getDOMNode().value;
+            this.props.StrategyEditorActions.setWidgetState('maxBetStop', amount);
+        },
+
         render: function() {
             return D.div({ className: 'widget-container' },
                 D.div({ className: 'stra-base-bet' },
@@ -80,6 +85,11 @@ define([
                     D.span({ className: 'widget-title' }, 'Auto Cashout at:'),
                     D.input({ type: 'text', ref: 'auto_cash_at', onChange: this.updateAutoCashAt, value: this.state.autoCashAt, disabled: this.state.active }),
                     D.span(null, 'x')
+                ),
+                D.div({ className: 'stra-max-bet-stop' },
+                    D.span({ className: 'widget-title' }, 'Stop if bet is > '),
+                    D.input({ type: 'text', ref: 'max_bet_stop', onChange: this.updateMaxBetStop, value: this.state.maxBetStop, disabled: this.state.active }),
+                    D.span(null, 'Bits')
                 ),
                 D.div({ className: 'stra-on-loss' },
                     D.span({ className: 'widget-title' }, 'On loss:'),

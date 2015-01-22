@@ -509,7 +509,7 @@ exports.disableMfa = function(req, res, next) {
     database.updateMfa(user.id, null, function(err) {
         if (err) return next(new Error('Error updating Mfa: \n' + err));
 
-        res.redirect('/security?=m=Two-Factor%20Authentication%20Disables');
+        res.redirect('/security?=m=Two-Factor%20Authentication%20Disabled');
     });
 };
 

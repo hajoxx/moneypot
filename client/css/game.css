@@ -976,7 +976,7 @@ tr.user-cashed.me {
    ========================================================================== */
 
     .widget-container {
-        height: 253px;
+        height: 283px
         width: 100%;
         border: 1px solid rgba(94, 94, 94, 0.2);
         background-color: #f9f9f9;
@@ -1006,7 +1006,11 @@ tr.user-cashed.me {
     .stra-cash-out-at {
     }
 
-    .stra-base-bet, .stra-cash-out-at {
+    .stra-max-bet-stop {
+        background-color: #ffffff;
+    }
+
+    .stra-base-bet, .stra-cash-out-at, .stra-max-bet-stop {
         line-height: 2em;
         padding-left: 1em;
     }
@@ -1015,7 +1019,6 @@ tr.user-cashed.me {
         padding-left: 1em;
         padding-top: .3em;
         padding-bottom: .3em;
-        background-color: #ffffff;
     }
 
         .stra-on-loss:first-child {
@@ -1026,6 +1029,7 @@ tr.user-cashed.me {
         padding-left: 1em;
         padding-top: .3em;
         padding-bottom: .3em;
+        background-color: #ffffff;
     }
 
         .stra-on-win:first-child {

@@ -12,6 +12,10 @@ define(['lib/clib'], function(Clib){
         if(co instanceof Error)
             return co.message;
 
+        //Validate maxBetAmount
+        if(!Clib.isInteger(Number(settings.maxBetStop)))
+            return 'Max bet should be a number';
+
         if(!settings.onLossIncreaseQty || settings.onLossIncreaseQty == 0)
             return 'Increase bet by should be a number bigger than 0';
         if(!settings.onWinIncreaseQty || settings.onLossIncreaseQty == 0)
