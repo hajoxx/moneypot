@@ -401,7 +401,7 @@ CREATE INDEX plays_game_id_idx ON plays USING btree (game_id);
 -- Name: plays_user_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX plays_user_id_idx ON plays USING btree (user_id);
+CREATE INDEX plays_user_id_idx ON plays USING btree (user_id, id DESC);
 
 
 --
