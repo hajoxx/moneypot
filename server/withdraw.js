@@ -23,8 +23,11 @@ module.exports = function(userId, satoshis, withdrawalAddress, callback) {
 
         var amountToSend = (satoshis - 10000) / 1e8;
         bc.sendToAddress(withdrawalAddress, amountToSend, function (err, hash) {
-            if (err)
+            if (err) {
+                if (err.message === 'Insufficient funds')
+                    return callback('PENDING');
                 return callback(new Error('Could not sent to Address ' + withdrawalAddress  + ', funding id ' + fundingId + ': \n' + err));
+            }
 
             db.setFundingsWithdrawalTxid(fundingId, hash, function (err) {
                 if (err)

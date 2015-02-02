@@ -149,6 +149,13 @@ exports.profile = function(req, res, next) {
                 return next(new Error('Cant get public stats: \n' + err));
         }
 
+        /**
+         * Pagination
+         * If the page number is undefined it shows the last page
+         * If the page number is given it shows that page
+         * It starts counting from zero
+         */
+
         var resultsPerPage = 50;
         var pages = Math.floor(stats.games_played / resultsPerPage);
 
@@ -691,7 +698,7 @@ exports.handleWithdrawRequest = function(req, res, next) {
                 if (err === 'NOT_ENOUGH_MONEY')
                     return res.render('withdraw_request', {user: user, warning: 'Not enough money to process withdraw.'});
                 else if (err === 'PENDING') //TODO: Whats with this error code?
-                    return res.render('withdraw_request', { user: user, success: 'PENDING' });
+                    return res.render('withdraw_request', { user: user, success: 'Withdrawal successful, however hot wallet was empty. Withdrawal will be reviewed and sent ASAP' });
                 else
                     return next(new Error('Unable to withdraw: \n' + err));
             }

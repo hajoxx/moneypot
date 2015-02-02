@@ -59,69 +59,82 @@ define([
             var containerClass;
             var tableClass;
 
-            if (self.state.engine.gameState === 'STARTING') {
+            var game = self.state.engine;
+
+            /** Separate and sort the users depending on the game state **/
+            if (game.gameState === 'STARTING') {
+                //The list is already ordered by engine given an index
+
                 usersLostPlaying = self.state.engine.joined.map(function(player) {
                     var bet; // can be undefined
 
                     if (player === self.state.engine.username)
                         bet = self.state.engine.nextBetAmount;
 
-                    return { username: player, info: { bet: bet } };
+                    return { username: player, bet: bet };
                 });
             } else {
+                _.forEach(game.playerInfo, function (player, username) {
+                    player.username = username;
 
-                //In progress: Users with cashed out are users chased
-                //Ended: Users with cashed are users Won
-                _.forEach(self.state.engine.playerInfo, function (value, key) {
-                    if (value.stopped_at)
-                        usersWonCashed.push({ username: key, info: value });
+                    if (player.stopped_at)
+                        usersWonCashed.push(player);
                     else
-                        usersLostPlaying.push({ username: key, info: value });
+                        usersLostPlaying.push(player);
                 });
 
                 usersWonCashed.sort(function(a, b) {
-                    var r = b.info.stopped_at - a.info.stopped_at;
+                    var r = b.stopped_at - a.stopped_at;
                     if (r !== 0) return r;
                     return a.username < b.username ? 1 : -1;
                 });
 
                 usersLostPlaying.sort(function(a, b) {
-                    var r = b.info.bet - a.info.bet;
+                    var r = b.bet - a.bet;
                     if (r !== 0) return r;
                     return a.username < b.username ? 1 : -1;
                 });
 
             }
 
+            /** Create the rows for the table **/
+
             //Users Playing and users cashed
-            if(self.state.engine.gameState === 'IN_PROGRESS' || self.state.engine.gameState === 'STARTING') {
+            if(game.gameState === 'IN_PROGRESS' || game.gameState === 'STARTING') {
                 var i, length;
+                var bonusClass = (game.gameState === 'IN_PROGRESS')? 'bonus-projection' : '';
 
                 trUsersLostPlaying = [];
                 for(i=0, length = usersLostPlaying.length; i < length; i++) {
+
+                    var user = usersLostPlaying[i];
+                    var bonus = (game.gameState === 'IN_PROGRESS')? ( (user.bonus)? Clib.formatDecimals((user.bonus*100/user.bet), 2) + '%': '0%' ) : '-';
                     var classes = cx({
                         'user-playing': true,
-                        'me': self.state.engine.username === usersLostPlaying[i].username
+                        'me': self.state.engine.username === user.username
                     });
+
                     trUsersLostPlaying.push( D.tr({ className: classes, key: 'user' + i },
-                        D.td(null, D.a({ href: '/user/' + usersLostPlaying[i].username,
+                        D.td(null, D.a({ href: '/user/' + user.username,
                                 target: '_blank'
                             },
-                            usersLostPlaying[i].username)),
+                            user.username)),
                         D.td(null, '-'),
                         D.td(null,
-                            usersLostPlaying[i].info.bet ? Clib.formatSatoshis(usersLostPlaying[i].info.bet, 0) : '?'
+                            user.bet ? Clib.formatSatoshis(user.bet, 0) : '?'
                         ),
-                        D.td(null, '-'),
+                        D.td({ className: bonusClass }, bonus),
                         D.td(null, '-')
                     ));
+
                 }
 
                 trUsersWonCashed = [];
                 for (i=0, length = usersWonCashed.length; i < length; i++) {
+
                     var user = usersWonCashed[i];
-                    var bet = user.info.bet;
-                    var profit = calcProfit(bet, user.info.stopped_at);
+                    var profit = calcProfit(user.bet, user.stopped_at);
+                    var bonus = (game.gameState === 'IN_PROGRESS')? ( (user.bonus)? Clib.formatDecimals((user.bonus*100/user.bet), 2) + '%': '0%' ) : '-';
                     var classes = cx({
                         'user-cashed': true,
                         'me': self.state.engine.username === user.username
@@ -132,9 +145,9 @@ define([
                                 target: '_blank'
                             },
                             user.username)),
-                        D.td(null, user.info.stopped_at/100 + 'x'),
-                        D.td(null, Clib.formatSatoshis(bet, 0)),
-                        D.td(null, '-'),
+                        D.td(null, user.stopped_at/100 + 'x'),
+                        D.td(null, Clib.formatSatoshis(user.bet, 0)),
+                        D.td({ className: bonusClass }, bonus),
                         D.td(null, Clib.formatSatoshis(profit))
                     ));
                 }
@@ -148,11 +161,11 @@ define([
                 tableClass = 'users-playing';
 
                 //Users Lost and users Won
-            } else if(self.state.engine.gameState === 'ENDED') {
+            } else if(game.gameState === 'ENDED') {
 
                 trUsersLostPlaying = usersLostPlaying.map(function(entry, i) {
-                    var bet = entry.info.bet;
-                    var bonus = entry.info.bonus;
+                    var bet = entry.bet;
+                    var bonus = entry.bonus;
                     var profit = -bet;
 
                     if (bonus) {
@@ -174,16 +187,16 @@ define([
                             },
                             entry.username)),
                         D.td(null, '-'),
-                        D.td(null, Clib.formatSatoshis(entry.info.bet, 0)),
+                        D.td(null, Clib.formatSatoshis(entry.bet, 0)),
                         D.td(null, bonus),
                         D.td(null, profit)
                     );
                 });
 
                 trUsersWonCashed = usersWonCashed.map(function(entry, i) {
-                    var bet = entry.info.bet;
-                    var bonus = entry.info.bonus;
-                    var stopped = entry.info.stopped_at;
+                    var bet = entry.bet;
+                    var bonus = entry.bonus;
+                    var stopped = entry.stopped_at;
                     var profit = bet * (stopped - 100) / 100;
 
                     if (bonus) {

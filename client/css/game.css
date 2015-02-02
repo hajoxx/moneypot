@@ -774,6 +774,10 @@ i {
     font-size: 0.8rem;
 }
 
+.bonus-projection {
+    opacity: 0.5;
+}
+
 .users-summary tr:nth-of-type(even), .users-playing tr:nth-of-type(even) {
     background: #f9f9f9;
 }

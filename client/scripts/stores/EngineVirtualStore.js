@@ -23,6 +23,17 @@ define([
 
     var CHANGE_EVENT = 'change';
 
+    /** To Know if the user is betting **/
+    function isBetting() {
+        if (!Engine.username) return false;
+        if (Engine.nextBetAmount) return true;
+        for (var i = 0 ; i < Engine.joined.length; ++i) {
+            if (Engine.joined[i] == Engine.username)
+                return true;
+        }
+        return false;
+    }
+
     //Singleton Store Object
     var EngineVirtualStore = _.extend({}, Events, {
 
@@ -55,17 +66,6 @@ define([
         },
 
         getState: function() {
-
-            /** To Know if the user is betting **/
-            function isBetting() {
-                if (!Engine.username) return false;
-                if (Engine.nextBetAmount) return true;
-                for (var i = 0 ; i < Engine.joined.length; ++i) {
-                    if (Engine.joined[i] == Engine.username)
-                        return true;
-                }
-                return false;
-            }
 
             /** If the user is currently playing return and object with the status else null **/
             var currentPlay;
@@ -100,7 +100,7 @@ define([
                 //Helper States
                 isBetting: isBetting(),
                 currentPlay: currentPlay, //If the user is currently playing return and object with the status else null
-                currentlyPlaying: currentlyPlaying //True if you are playing and haven't cashed out
+                currentlyPlaying: currentlyPlaying //True if you are playing and haven't cashed out,
             }
         }
 
