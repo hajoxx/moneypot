@@ -48,7 +48,9 @@ define([
         self.joined = [];
 
         /** Object containing the current game players and their status, this is saved in game history every game crash
-         * cleared in game_starting */
+         * cleared in game_starting.
+         * e.g: { user1: { bet: satoshis, stopped_at: 200 }, user2: { bet: satoshis } }
+         */
         self.playerInfo = null;
 
         /**
@@ -121,6 +123,8 @@ define([
                 self.playerInfo[username] = { bet: bets[username] };
             });
 
+            calcBonuses(self);
+
             self.trigger('game_started', self.playerInfo);
         });
 
@@ -170,7 +174,7 @@ define([
             //Add the bonus to each user that wins it
             for (var user in data.bonuses) {
                 console.assert(self.playerInfo[user]);
-                self.playerInfo[user].bonus = data.bonuses[user];
+                //self.playerInfo[user].bonus = data.bonuses[user]; //TODO: Deprecate sending bonuses to the client?
                 if (self.username === user) {
                     self.balanceSatoshis += data.bonuses[user];
                 }
@@ -267,6 +271,8 @@ define([
                 self.balanceSatoshis += self.playerInfo[resp.username].bet * resp.stopped_at / 100;
             }
 
+            calcBonuses(self);
+
             self.trigger('cashed_out', resp);
         });
 
@@ -335,8 +341,12 @@ define([
                         self.joined = resp.joined;
                         self.tableHistory = resp.table_history;
 
-                        if (self.gameState == 'IN_PROGRESS')
+                        if (self.gameState === 'IN_PROGRESS')
                             self.lastGameTick = Date.now();
+
+                        if (self.gameState === 'IN_PROGRESS' || self.gameState === 'ENDED')
+                            calcBonuses(self);
+
 
                         self.trigger('connected');
                     }
@@ -481,59 +491,77 @@ define([
         return gamePayout;
     };
 
-    /**
-     * Returns the remaining time fot the next game to begin
-     * Can only be called when the game is STARTING
-     *
-     * @return {number} - Estimated miliseconds till game starts
-     */
-    //Engine.prototype.nextGameIn = function() { //Todo: Deprecated
-    //    console.assert(this.gameState === 'STARTING');
-    //    return Math.max(this.startTime - Date.now(), 0);
-    //};
+    /** Calculate the bonuses based on player info and append them to it **/
+    function calcBonuses(engine) {
 
-    /**
-     * Calculate and returns the game payout as a percentage given the elapsed time
-     * Use it for render, strategy, etc.
-     * @return {number | null}
-     */
-    //Engine.prototype.calcGamePayout = function(ms) { //Todo: Deprecated
-    //    return growthFunc(ms);
-    //};
+        //Slides across the array and apply the function to equally stopped_at parts of the array
+        function slideSameStoppedAt(arr, fn) {
+            var i = 0;
+            while (i < arr.length) {
+                var tmp = [];
+                var betAmount = 0;
+                var sa = arr[i].stopped_at;
+                for (; i < arr.length && arr[i].stopped_at === sa; ++i) {
+                    betAmount += arr[i].bet;
+                    tmp.push(i);
+                }
+                fn(arr, tmp, sa, betAmount);
+            }
+        }
 
-    // is either queuing up a bet, placing a bet, or placed a bet
-    //Engine.prototype.isBetting = function() { //Todo: Deprecated
-    //    if (!this.username) return false;
-    //
-    //    if (this.nextBetAmount) return true;
-    //
-    //    for (var i = 0 ; i < this.joined.length; ++i) {
-    //        if (this.joined[i] == this.username)
-    //            return true;
-    //    }
-    //
-    //    return false;
-    //};
+        //Transform the player info object in an array of references to the user objects
+        //{ user1: { bet: satoshis, stopped_at: 200 }, user2: { bet: satoshis } } -> [ user1: { bet: satoshis, stopped_at: 200 } ... ]
+        var playersArr = _.map(engine.playerInfo, function(player, username) {
+            return player;
+        });
 
-    //Engine.prototype.currentPlay = function() { //Todo: Deprecated
-    //    if (!this.username) return null;
-    //
-    //    return this.playerInfo[this.username];
-    //};
+        //Sort the list of players based on the cashed position, the rest doesn't matter because the losers get the same ratio of bonus
+        var playersArrSorted = _.sortBy(playersArr, function(player){
+            return player.stopped_at ? -player.stopped_at : null;
+        });
 
-    /**
-     * Returns the elapsed time of the current game
-     * If the game is not in progress returns null
-     * Use it for render, strategy, etc.
-     * @return {number | null}
-     */
-    //Engine.prototype.getElapsedTime = function() { //Todo: Deprecated
-    //    if (this.gameState === 'IN_PROGRESS') {
-    //        return Date.now() - this.startTime;
-    //    } else {
-    //        return null;
-    //    }
-    //};
+        var bonusPool = 0;
+        var largestBet = 0;
+
+        //Get max bet and bonus pool
+        for (var i = 0, length = playersArrSorted.length; i < length; ++i) {
+            var bet = playersArrSorted[i].bet;
+            bonusPool += bet / 100;
+            largestBet = Math.max(largestBet, bet);
+        }
+
+        //The ratio bits per bit bet
+        var maxWinRatio = bonusPool / largestBet;
+
+        slideSameStoppedAt(playersArrSorted,
+            function(array, listOfRecordsPositions, cashOutAmount, totalBetAmount) {
+
+                //If the bonus pool is empty fill the bonus with 0's
+                if (bonusPool <= 0) {
+                    for (var i = 0, length = listOfRecordsPositions.length; i < length; i++) {
+                        array[listOfRecordsPositions[i]].bonus = 0;
+                    }
+                    return;
+                }
+
+                //If the bonusPool is less than what this user/group could get just give the remaining of the bonus pool
+                var toAllocAll = Math.min(totalBetAmount * maxWinRatio, bonusPool);
+
+                //Alloc the bonuses
+                for (var i = 0, length = listOfRecordsPositions.length; i < length; i++) {
+
+                    //The alloc qty of this user, if its one it will get all
+                    var toAlloc = (array[listOfRecordsPositions[i]].bet / totalBetAmount) * toAllocAll;
+
+                    bonusPool -= toAlloc;
+
+                    array[listOfRecordsPositions[i]].bonus = toAlloc;
+                }
+            }
+        );
+
+        return playersArrSorted;
+    }
 
     /**
      * Function to request the one time token to the server
