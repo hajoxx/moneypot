@@ -826,7 +826,7 @@ tr.user-cashed.me {
 .games-log{ /* table */
     height: 100%;
     width: 100%;
-    text-align: center;
+    /*text-align: center;*/
     border: 1px solid rgba(94, 94, 94, 0.2);
 }
 
@@ -836,19 +836,101 @@ tr.user-cashed.me {
     text-align: left;
 }
 
+.games-log tr {
+    width: 100%;
+    display: table;
+    text-align: left;
+}
+
+/* Adjust head columns */
+
+.games-log th:nth-child(1) {
+    width: 15%;
+}
+
+.games-log th:nth-child(2) {
+    width: 15%;
+}
+
+.games-log th:nth-child(3) {
+    width: 20%;
+}
+
+.games-log th:nth-child(4) {
+    width: 15%;
+}
+
+.games-log th:nth-child(5) {
+    width: 20%;
+}
+
+.games-log th:nth-child(6) {
+    width: 15%;
+}
+
+/* Adjust body columns */
+
+.games-log td:nth-child(1) {
+    width: 15%;
+}
+
+.games-log td:nth-child(2) {
+    width: 15%;
+}
+
+.games-log td:nth-child(3) {
+    width: 20%;
+}
+
+.games-log td:nth-child(4) {
+    width: 15%;
+}
+
+.games-log td:nth-child(5) {
+    width: 20%;
+}
+
+.games-log td:nth-child(6) {
+    width: 15%;
+}
+
+.games-log td:nth-child(6)>input {
+    width: 60%;
+}
+
+.games-log td:nth-child(6)>input {
+    max-width: 40%;
+}
+
+.games-log td:nth-child(6) .hash-copy {
+    width: auto;
+}
+
+.games-log thead, .games-log tbody {
+    float: left;
+    width: 100%;
+}
+
 .games-log thead {
     border: 1px solid rgba(94, 94, 94, 0.2);
+}
+
+.games-log tbody {
+    overflow-y: auto;
+    height: 250px;
 }
 
 .games-log tr:nth-of-type(even) {
     background: #f9f9f9;
 }
 
+
+
 .games-log tr td {
     font-size: 0.8rem;
     text-align: left;
 }
-
+/*
 .games-log td:nth-child(1), .games-log th:nth-child(1) {
     padding-left: 6px;
     max-width: 2rem;
@@ -856,7 +938,7 @@ tr.user-cashed.me {
 
 .games-log td:nth-child(6), .games-log th:nth-child(6) {
     max-width: 2rem;
-}
+}*/
 
 .games-log tbody tr:hover {
     color: black;

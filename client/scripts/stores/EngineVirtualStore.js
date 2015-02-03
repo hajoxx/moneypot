@@ -100,7 +100,7 @@ define([
                 //Helper States
                 isBetting: isBetting(),
                 currentPlay: currentPlay, //If the user is currently playing return and object with the status else null
-                currentlyPlaying: currentlyPlaying //True if you are playing and haven't cashed out,
+                currentlyPlaying: currentlyPlaying //True if you are playing and haven't cashed out
             }
         }
 

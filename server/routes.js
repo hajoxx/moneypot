@@ -52,6 +52,14 @@ function restrict(req, res, next) {
        else
           res.render('401');
        return;
+    } else
+        next();
+}
+
+function restrictRedirectToHome(req, res, next) {
+    if(!req.user) {
+        res.redirect('/');
+        return;
     }
     next();
 }
@@ -121,7 +129,7 @@ module.exports = function(app) {
     app.post('/withdraw-request', restrict, user.handleWithdrawRequest);
     app.post('/support', restrict, contact('support'));
     app.post('/contact', contact('contact'));
-    app.post('/logout', restrict, user.logout);
+    app.post('/logout', restrictRedirectToHome, user.logout);
     app.post('/login', user.login);
     app.post('/register', user.register);
 

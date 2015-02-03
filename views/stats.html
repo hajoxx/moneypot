@@ -80,6 +80,22 @@
                             <td></td>
                         </tr>
                         <tr>
+                            <td class="strong">Bankroll:</td>
+                            <td class="strong">
+                                {{#def.format: {n: it.stats.plays.total_bet - it.stats.plays.cashed_out - it.stats.plays.bonused + it.stats.bankroll_offset } }} bits
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="strong">Max win per game:</td>
+                            <td>
+                                {{#def.format: {n: (it.stats.plays.total_bet - it.stats.plays.cashed_out - it.stats.plays.bonused + it.stats.bankroll_offset)*0.03 } }} bits
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
                             <td><b>Total Users:</b></td>
                             <td>{{=it.stats.users.count}}</td>
                         </tr>

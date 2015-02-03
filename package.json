@@ -6,7 +6,6 @@
   },
   "dependencies": {
     "async": "~0.8.0",
-    "async-cache": "~0.1.5",
     "better-assert": "^1.0.0",
     "bitcoin": "^2.2.0",
     "bitcoinjs-lib": "^1.1.1",

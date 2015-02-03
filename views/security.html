@@ -10,7 +10,6 @@
     function validatePassword() {
         var password = document.getElementById('password').value;
         var confirm = document.getElementById('confirmation').value;
-        console.log(password, confirm);
         if (password != confirm) {
             document.getElementById('confirmation').setCustomValidity("Confirmation and password should be the same");
         } else document.getElementById("confirmation").setCustomValidity('');

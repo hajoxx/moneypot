@@ -195,9 +195,14 @@ exports.validateUser = function(username, password, otp, callback) {
     });
 };
 
-exports.deleteUserSession = function(sessionId, callback) {
+exports.deleteUserSessionsBySessionId = function(sessionId, callback) {
     assert(sessionId);
     query('DELETE FROM sessions WHERE user_id = (SELECT user_id FROM sessions WHERE id = $1)', [sessionId], callback);
+};
+
+exports.deleteUserSessionsByUserId = function(userId, callback) {
+    assert(userId);
+    query('DELETE FROM sessions WHERE user_id = $1', [userId], callback);
 };
 
 function createSession(client, userId, callback) {

@@ -114,7 +114,7 @@ exports.logout = function(req, res, next) {
     var sessionId = req.cookies.id;
     if (!sessionId) return res.redirect('/');
 
-    database.deleteUserSession(sessionId, function(err) {
+    database.deleteUserSessionsBySessionId(sessionId, function(err) {
         if (err)
             return next(new Error('Unable to logout got error: \n' + err));
         res.redirect('/');
@@ -375,7 +375,18 @@ exports.resetPassword = function(req, res, next) {
             if (err)
                 return next(new Error('Unable to change user password: \n' +  err));
 
-           res.redirect('/security?m=Password changed');
+            database.deleteUserSessionsByUserId(user.id, function(err) {
+                if (err)
+                    return next(new Error('Unable to delete user sessions for userId: ' + user.id + ': \n' + err));
+
+                database.createSession(user.id, function(err, sessionId) {
+                    if (err)
+                        return next(new Error('Unable to create session for userid ' + userId +  ':\n' + err));
+
+                    res.cookie('id', sessionId, sessionOptions);
+                    res.redirect('/security?m=Password changed');
+                });
+            });
         });
     });
 };
