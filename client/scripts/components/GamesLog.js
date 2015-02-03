@@ -9,7 +9,7 @@ define([
 ){
 
     /** Constants **/
-    var MAX_GAMES_SHOWED = 10;
+    var MAX_GAMES_SHOWED = 50;
 
     var D = React.DOM;
 

@@ -123,7 +123,7 @@ define([
                 self.playerInfo[username] = { bet: bets[username] };
             });
 
-            calcBonuses(self);
+            self.calcBonuses();
 
             self.trigger('game_started', self.playerInfo);
         });
@@ -271,7 +271,7 @@ define([
                 self.balanceSatoshis += self.playerInfo[resp.username].bet * resp.stopped_at / 100;
             }
 
-            calcBonuses(self);
+            self.calcBonuses();
 
             self.trigger('cashed_out', resp);
         });
@@ -345,7 +345,7 @@ define([
                             self.lastGameTick = Date.now();
 
                         if (self.gameState === 'IN_PROGRESS' || self.gameState === 'ENDED')
-                            calcBonuses(self);
+                            self.calcBonuses();
 
 
                         self.trigger('connected');
@@ -491,8 +491,11 @@ define([
         return gamePayout;
     };
 
-    /** Calculate the bonuses based on player info and append them to it **/
-    function calcBonuses(engine) {
+    /**
+     * Calculate the bonuses based on player info and append them to it
+     **/
+    Engine.prototype.calcBonuses = function() {
+        var self = this;
 
         //Slides across the array and apply the function to equally stopped_at parts of the array
         function slideSameStoppedAt(arr, fn) {
@@ -511,7 +514,7 @@ define([
 
         //Transform the player info object in an array of references to the user objects
         //{ user1: { bet: satoshis, stopped_at: 200 }, user2: { bet: satoshis } } -> [ user1: { bet: satoshis, stopped_at: 200 } ... ]
-        var playersArr = _.map(engine.playerInfo, function(player, username) {
+        var playersArr = _.map(self.playerInfo, function(player, username) {
             return player;
         });
 
@@ -560,8 +563,7 @@ define([
             }
         );
 
-        return playersArrSorted;
-    }
+    };
 
     /**
      * Function to request the one time token to the server
