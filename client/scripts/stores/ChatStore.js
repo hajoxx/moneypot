@@ -12,9 +12,8 @@ define([
 
     var CHANGE_EVENT = 'change';
 
-
     var _inputText = '';
-
+    var _height = 253;
 
     var ChatStore = _.extend({}, Events, {
 
@@ -38,9 +37,14 @@ define([
             _inputText = '';
         },
 
+        _setHeight: function(newHeight) {
+            _height = newHeight;
+        },
+
         getState: function() {
             return {
-                inputText: _inputText
+                inputText: _inputText,
+                height: _height
             }
         }
     });
@@ -57,6 +61,11 @@ define([
 
             case AppConstants.ActionTypes.SAY_CHAT:
                 ChatStore._clearInputText();
+                ChatStore.emitChange();
+                return;
+
+            case AppConstants.ActionTypes.SET_CHAT_HEIGHT:
+                ChatStore._setHeight(action.newHeight);
                 ChatStore.emitChange();
                 return;
         }

@@ -4,16 +4,18 @@ var db = require('./database');
 var request = require('request');
 
 // Doesn't validate
-module.exports = function(userId, satoshis, withdrawalAddress, callback) {
+module.exports = function(userId, satoshis, withdrawalAddress, withdrawalId, callback) {
     assert(typeof userId === 'number');
     assert(satoshis > 10000);
     assert(typeof withdrawalAddress === 'string');
     assert(typeof callback === 'function');
 
-    db.makeWithdrawal(userId, satoshis, withdrawalAddress, function (err, fundingId) {
+    db.makeWithdrawal(userId, satoshis, withdrawalAddress, withdrawalId, function (err, fundingId) {
         if (err) {
             if (err.code === '23514')
                 callback('NOT_ENOUGH_MONEY');
+            else if(err.code === '23505')
+                callback('SAME_WITHDRAWAL_ID');
             else
                 callback(err);
             return;
@@ -26,7 +28,7 @@ module.exports = function(userId, satoshis, withdrawalAddress, callback) {
             if (err) {
                 if (err.message === 'Insufficient funds')
                     return callback('PENDING');
-                return callback(new Error('Could not sent to Address ' + withdrawalAddress  + ', funding id ' + fundingId + ': \n' + err));
+                return callback('FUNDING_QUEUED');
             }
 
             db.setFundingsWithdrawalTxid(fundingId, hash, function (err) {

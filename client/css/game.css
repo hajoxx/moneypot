@@ -930,15 +930,6 @@ tr.user-cashed.me {
     font-size: 0.8rem;
     text-align: left;
 }
-/*
-.games-log td:nth-child(1), .games-log th:nth-child(1) {
-    padding-left: 6px;
-    max-width: 2rem;
-}
-
-.games-log td:nth-child(6), .games-log th:nth-child(6) {
-    max-width: 2rem;
-}*/
 
 .games-log tbody tr:hover {
     color: black;

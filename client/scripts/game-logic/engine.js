@@ -171,7 +171,11 @@ define([
             if(self.tickTimer)
                 clearTimeout(self.tickTimer);
 
-            //Add the bonus to each user that wins it
+            //If the game crashed at zero x remove bonuses projections by setting them to zero.
+            if(data.game_crash == 0)
+                self.setBonusesToZero();
+
+            //Update your balance if you won a bonus, use this one because its the bonus rounded by the server
             for (var user in data.bonuses) {
                 console.assert(self.playerInfo[user]);
                 //self.playerInfo[user].bonus = data.bonuses[user]; //TODO: Deprecate sending bonuses to the client?
@@ -181,7 +185,6 @@ define([
             }
 
             self.lastHash = data.hash;
-
 
             var gameInfo = {
                 created: self.created,
@@ -489,6 +492,15 @@ define([
         var gamePayout = Clib.growthFunc(elapsed);
         console.assert(isFinite(gamePayout));
         return gamePayout;
+    };
+
+    /**
+     * If the game crashed at zero x remove the bonus projections by setting bonuses to zero.
+     */
+    Engine.prototype.setBonusesToZero = function() {
+        for(var user in this.playerInfo) {
+            this.playerInfo[user].bonus = 0;
+        }
     };
 
     /**

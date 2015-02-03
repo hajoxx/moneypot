@@ -9,6 +9,7 @@ var withdraw = require('./withdraw');
 var sendEmail = require('./sendEmail');
 var speakeasy = require('speakeasy');
 var qr = require('qr-image');
+var uuid = require('uuid');
 var _ = require('lodash');
 
 var sessionOptions = {
@@ -165,7 +166,6 @@ exports.profile = function(req, res, next) {
         // first page absorbs all overflow
         var firstPageResultCount = stats.games_played - ((pages-1) * resultsPerPage);
 
-
         var showing = page ? resultsPerPage : firstPageResultCount;
         var offset = page ? (firstPageResultCount + ((pages - page - 1) * resultsPerPage)) : 0 ;
 
@@ -184,6 +184,7 @@ exports.profile = function(req, res, next) {
 
             var netProfitOffset = results[0];
             var plays = results[1];
+
 
             if (!lib.isInt(netProfitOffset))
                 return next(new Error('Internal profit calc error: ' + username + ' does not have an integer net profit offset'));
@@ -669,14 +670,16 @@ exports.handleWithdrawRequest = function(req, res, next) {
 
     var amount = req.body.amount;
     var destination = req.body.destination;
+    var withdrawalId = req.body.withdrawal_id;
     var password = lib.removeNullsAndTrim(req.body.password);
     var otp = lib.removeNullsAndTrim(req.body.otp);
 
-    var r =  /^[1-9]\d*$/;
+    var r =  /^[1-9]\d*(\.\d{0,2})?$/;
     if (!r.test(amount))
         return res.render('withdraw_request', { user: user, warning: 'Not a valid amount' });
 
-    amount = parseInt(amount) * 100;
+    amount = parseFloat(amount) * 100;
+    assert(Number.isFinite(amount));
 
     if (amount < 20000)
         return res.render('withdraw_request', { user: user, warning: 'Must more 200 bits or more' });
@@ -693,6 +696,9 @@ exports.handleWithdrawRequest = function(req, res, next) {
     if (!password)
         return res.render('withdraw_request', { user: user, warning: 'Must enter a password' });
 
+    if(!lib.isUUIDv4(withdrawalId))
+        return next('We do not generated that withdrawal id');
+
     database.validateUser(user.username, password, otp, function(err) {
 
         if (err) {
@@ -704,12 +710,16 @@ exports.handleWithdrawRequest = function(req, res, next) {
             return next(new Error('Unable to validate user handling withdrawal: \n' + err));
         }
 
-        withdraw(req.user.id, amount, destination, function(err) {
+        withdraw(req.user.id, amount, destination, withdrawalId, function(err) {
             if (err) {
                 if (err === 'NOT_ENOUGH_MONEY')
                     return res.render('withdraw_request', {user: user, warning: 'Not enough money to process withdraw.'});
                 else if (err === 'PENDING') //TODO: Whats with this error code?
                     return res.render('withdraw_request', { user: user, success: 'Withdrawal successful, however hot wallet was empty. Withdrawal will be reviewed and sent ASAP' });
+                else if(err === 'SAME_WITHDRAWAL_ID')
+                    return res.render('withdraw_request', {user: user, warning: 'Please reload your page, it looks like you tried to make the same transaction twice.'});
+                else if(err === 'FUNDING_QUEUED')
+                    return res.render('withdraw_request', {user: user, success: 'Your transaction is being processed come back later to see the status.'});
                 else
                     return next(new Error('Unable to withdraw: \n' + err));
             }
@@ -725,7 +735,8 @@ exports.handleWithdrawRequest = function(req, res, next) {
  **/
 exports.withdrawRequest = function(req, res) {
     assert(req.user);
-    res.render('withdraw_request', { user: req.user });
+    var withdrawId = uuid.v4();
+    res.render('withdraw_request', { user: req.user, id: withdrawId });
 };
 
 /**

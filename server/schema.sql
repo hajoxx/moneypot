@@ -19,7 +19,9 @@ CREATE TABLE fundings (
     bitcoin_withdrawal_address text,
     created timestamp with time zone DEFAULT now() NOT NULL,
     description text,
-    bitcoin_deposit_txid text
+    bitcoin_deposit_txid text,
+    withdrawal_id UUID,
+    CONSTRAINT fundings_withdrawal_id_key UNIQUE (withdrawal_id)
 );
 
 
