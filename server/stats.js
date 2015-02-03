@@ -22,7 +22,7 @@ getSiteStats();
 
 exports.index = function(req, res, next) {
     if (!stats) {
-        next('Stats are loading');
+        return next('Stats are loading');
     }
     var user = req.user;
 
