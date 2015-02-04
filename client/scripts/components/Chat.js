@@ -88,6 +88,9 @@ define([
         componentWillUnmount: function() {
             EngineVirtualStore.removeChangeListener(this._onChange);
             ChatStore.removeChangeListener(this._onChange);
+
+            var height = this.refs.messages.getDOMNode().style.height;
+            ChatActions.setHeight(height);
         },
 
         /** If the length of the chat changed and the scroll position is near bottom scroll to the bottom **/
@@ -152,8 +155,12 @@ define([
                     }
                 );
 
+            var ulStyle = {
+                height: this.state.height
+            };
+
             return D.div({ className: 'messages-container' },
-                D.ul({ className: 'messages', ref: 'messages'},
+                D.ul({ className: 'messages', ref: 'messages', style: ulStyle },
                     messages
                 ),
                 chatInput

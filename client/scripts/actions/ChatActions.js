@@ -20,6 +20,13 @@ define([
                 actionType: AppConstants.ActionTypes.SET_CHAT_INPUT_TEXT,
                 text: text
             });
+        },
+
+        setHeight: function(newHeight) {
+            AppDispatcher.handleViewAction({
+                actionType: AppConstants.ActionTypes.SET_CHAT_HEIGHT,
+                newHeight: newHeight
+            });
         }
 
     };

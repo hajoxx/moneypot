@@ -3,7 +3,7 @@ var timeago = require('timeago');
 
 var stats;
 var generated;
-var bankrollOffset = process.env.BANKROLL_OFFSET || 0;
+var bankrollOffset = parseInt(process.env.BANKROLL_OFFSET) || 0;
 
 function getSiteStats() {
     database.getSiteStats(function(err, results) {

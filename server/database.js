@@ -335,7 +335,8 @@ exports.getGame = function(gameId, callback) {
     });
 };
 
-exports.getGamesPlays = function(gameId, callback) {
+/*
+exports.getUserPlays = function(gameId, callback) {
     query('SELECT u.username, p.bet, p.cash_out, p.bonus FROM plays p, users u ' +
         ' WHERE game_id = $1 AND p.user_id = u.id ORDER by p.cash_out/p.bet::float DESC NULLS LAST, p.bet DESC', [gameId],
         function(err, result) {
@@ -343,7 +344,7 @@ exports.getGamesPlays = function(gameId, callback) {
             return callback(null, result.rows);
         }
     );
-};
+};*/
 
 
 function addSatoshis(client, userId, amount, callback) {
@@ -360,8 +361,8 @@ exports.getUserPlays = function(userId, limit, offset, callback) {
     assert(userId);
 
     query('SELECT p.bet, p.bonus, p.cash_out, p.created, p.game_id, g.game_crash FROM plays p ' +
-        'LEFT JOIN (SELECT * FROM games WHERE ended = true) g ON g.id = p.game_id ' +
-        'WHERE p.user_id = $1 ORDER BY p.id DESC LIMIT $2 OFFSET $3',
+        'LEFT JOIN (SELECT * FROM games) g ON g.id = p.game_id ' +
+        'WHERE p.user_id = $1 AND g.ended = true ORDER BY p.id DESC LIMIT $2 OFFSET $3',
         [userId, limit, offset], function(err, result) {
             if (err) return callback(err);
             callback(null, result.rows);
@@ -492,11 +493,12 @@ exports.getPublicStats = function(username, callback) {
     );
 };
 
-exports.makeWithdrawal = function(userId, satoshis, withdrawalAddress, callback) {
+exports.makeWithdrawal = function(userId, satoshis, withdrawalAddress, withdrawalId, callback) {
     assert(typeof userId === 'number');
     assert(typeof satoshis === 'number');
     assert(typeof withdrawalAddress === 'string');
     assert(satoshis > 10000);
+    assert(lib.isUUIDv4(withdrawalId));
 
     getClient(function(client, callback) {
 
@@ -507,9 +509,9 @@ exports.makeWithdrawal = function(userId, satoshis, withdrawalAddress, callback)
             if (response.rowCount !== 1)
                 return callback(new Error('Unexpected withdrawal row count: \n' + response));
 
-            client.query('INSERT INTO fundings(user_id, amount, bitcoin_withdrawal_address) ' +
-                "VALUES($1, $2, $3) RETURNING id",
-                [userId, -1 * satoshis, withdrawalAddress],
+            client.query('INSERT INTO fundings(user_id, amount, bitcoin_withdrawal_address, withdrawal_id) ' +
+                "VALUES($1, $2, $3, $4) RETURNING id",
+                [userId, -1 * satoshis, withdrawalAddress, withdrawalId],
                 function(err, response) {
                     if (err) return callback(err);
 

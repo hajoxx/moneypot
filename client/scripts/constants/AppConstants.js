@@ -27,7 +27,8 @@ define(['lib/key-mirror'], function(KeyMirror){
             SET_AUTO_CASH_OUT: null,
 
             //Chat
-            SET_CHAT_INPUT_TEXT: null
+            SET_CHAT_INPUT_TEXT: null,
+            SET_CHAT_HEIGHT: null
         }),
 
         PayloadSources: KeyMirror({

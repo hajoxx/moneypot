@@ -9,7 +9,6 @@
     overflow-y: scroll;
     width: 100%;
     font-size: 1rem;
-    height: 253px;
     padding: 2px 3px;
     resize: vertical;  /* Allow user to resize element */
 }
