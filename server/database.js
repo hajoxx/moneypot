@@ -335,8 +335,7 @@ exports.getGame = function(gameId, callback) {
     });
 };
 
-/*
-exports.getUserPlays = function(gameId, callback) {
+exports.getGamesPlays = function(gameId, callback) {
     query('SELECT u.username, p.bet, p.cash_out, p.bonus FROM plays p, users u ' +
         ' WHERE game_id = $1 AND p.user_id = u.id ORDER by p.cash_out/p.bet::float DESC NULLS LAST, p.bet DESC', [gameId],
         function(err, result) {
@@ -344,8 +343,7 @@ exports.getUserPlays = function(gameId, callback) {
             return callback(null, result.rows);
         }
     );
-};*/
-
+};
 
 function addSatoshis(client, userId, amount, callback) {
 
@@ -355,7 +353,6 @@ function addSatoshis(client, userId, amount, callback) {
         callback(null);
     });
 }
-
 
 exports.getUserPlays = function(userId, limit, offset, callback) {
     assert(userId);
