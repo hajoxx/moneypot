@@ -292,6 +292,11 @@ define([
             //The chat only renders if the Arr length is diff, remove blocks of the array
             if (self.chat.length > AppConstants.Chat.MAX_LENGTH)
                 self.chat.splice(0, 400);
+
+            var r = new RegExp('^\\s*' + self.username + ':');
+            if (data.type === 'say' && data.username !== self.username && r.test(data.message)) {
+                new Audio('http://soundbible.com/mp3/A-Tone-His_Self-1266414414.mp3').play();
+            }
             self.chat.push(data);
 
             self.trigger('msg', data);
