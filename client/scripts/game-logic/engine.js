@@ -293,7 +293,7 @@ define([
             if (self.chat.length > AppConstants.Chat.MAX_LENGTH)
                 self.chat.splice(0, 400);
 
-            var r = new RegExp('\\s+' + self.username + ':');
+            var r = new RegExp('(^|\\s+)' + self.username + ':');
             if (data.type === 'say' && data.username !== self.username && r.test(data.message)) {
                 new Audio('http://soundbible.com/mp3/A-Tone-His_Self-1266414414.mp3').play();
             }
