@@ -678,7 +678,7 @@ exports.handleWithdrawRequest = function(req, res, next) {
     if (!r.test(amount))
         return res.render('withdraw_request', { user: user, warning: 'Not a valid amount' });
 
-    amount = parseFloat(amount) * 100;
+    amount = Math.round(parseFloat(amount) * 100);
     assert(Number.isFinite(amount));
 
     if (amount < 20000)
