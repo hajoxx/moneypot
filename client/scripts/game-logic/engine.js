@@ -123,7 +123,7 @@ define([
                 self.playerInfo[username] = { bet: bets[username] };
             });
 
-            // self.calcBonuses();
+            self.calcBonuses();
 
             self.trigger('game_started', self.playerInfo);
         });
@@ -131,7 +131,7 @@ define([
         /**
          * Event called each 150ms telling the client the game is still alive
          * @param {object} data - JSON payload
-         * @param {number} data.elapsed - Time elapsed since game_started
+         * @param {number} data.elacapsed - Time elapsed since game_started
          */
         self.ws.on('game_tick', function(data) {
             /** Time of the last tick received */
@@ -512,6 +512,7 @@ define([
      * Calculate the bonuses based on player info and append them to it
      **/
     Engine.prototype.calcBonuses = function() {
+        return;
         var self = this;
 
         //Slides across the array and apply the function to equally stopped_at parts of the array
