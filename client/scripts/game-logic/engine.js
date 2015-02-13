@@ -123,7 +123,7 @@ define([
                 self.playerInfo[username] = { bet: bets[username] };
             });
 
-            self.calcBonuses();
+            // self.calcBonuses();
 
             self.trigger('game_started', self.playerInfo);
         });
@@ -178,7 +178,7 @@ define([
             //Update your balance if you won a bonus, use this one because its the bonus rounded by the server
             for (var user in data.bonuses) {
                 console.assert(self.playerInfo[user]);
-                //self.playerInfo[user].bonus = data.bonuses[user]; //TODO: Deprecate sending bonuses to the client?
+                self.playerInfo[user].bonus = data.bonuses[user]; //TODO: Deprecate sending bonuses to the client?
                 if (self.username === user) {
                     self.balanceSatoshis += data.bonuses[user];
                 }
