@@ -475,7 +475,7 @@ ALTER TABLE ONLY plays
     ADD CONSTRAINT plays_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
-CREATE OR REPLACE VIEW leaderboard AS
+CREATE MATERIALIZED VIEW leaderboard AS
  WITH t AS (
          SELECT user_id,
             (COALESCE(sum(cash_out - bet), 0::numeric) + COALESCE(sum(bonus), 0::numeric))::bigint AS gross_profit,
