@@ -475,21 +475,17 @@ ALTER TABLE ONLY plays
     ADD CONSTRAINT plays_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
-CREATE OR REPLACE VIEW leaderboard AS 
+CREATE OR REPLACE VIEW leaderboard AS
  WITH t AS (
-         SELECT u.id AS user_id,
-            u.username,
-            (COALESCE(sum(p.cash_out - p.bet), 0::numeric) + COALESCE(sum(p.bonus), 0::numeric))::bigint AS gross_profit,
-            (COALESCE(sum(p.cash_out), 0::numeric) + COALESCE(sum(p.bonus), 0::numeric) - COALESCE(sum(p.bet), 0::numeric))::bigint AS net_profit,
+         SELECT user_id,
+            (COALESCE(sum(cash_out - bet), 0::numeric) + COALESCE(sum(bonus), 0::numeric))::bigint AS gross_profit,
+            (COALESCE(sum(cash_out), 0::numeric) + COALESCE(sum(bonus), 0::numeric) - COALESCE(sum(bet), 0::numeric))::bigint AS net_profit,
             count(*) AS games_played
-           FROM plays p,
-            games g,
-            users u
-          WHERE p.game_id = g.id AND p.user_id = u.id AND p.id IS NOT NULL
-          GROUP BY u.id
+           FROM plays
+          GROUP BY user_id
         )
  SELECT t.user_id,
-    t.username,
+    (SELECT username FROM users WHERE users.id = user_id),
     t.gross_profit,
     t.net_profit,
     t.games_played,
