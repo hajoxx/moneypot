@@ -1,11 +1,11 @@
 define([
     'lib/react',
     'lib/clib',
-    'stores/EngineVirtualStore'
+    'game-logic/engine'
 ], function(
     React,
     Clib,
-    EngineVirtualStore
+    Engine
 ){
 
     /** Constants **/
@@ -15,7 +15,7 @@ define([
 
     function getState(){
         return {
-            engine: EngineVirtualStore.getState()
+            engine: Engine
         }
     }
 
@@ -25,8 +25,6 @@ define([
         }
     }
 
-
-
     return React.createClass({
         displayName: 'gamesLog',
 
@@ -35,11 +33,15 @@ define([
         },
 
         componentDidMount: function() {
-            EngineVirtualStore.addChangeListener(this._onChange);
+            Engine.on({
+                game_crash: this._onChange
+            });
         },
 
         componentWillUnmount: function() {
-            EngineVirtualStore.removeChangeListener(this._onChange);
+            Engine.off({
+                game_crash: this._onChange
+            });
         },
 
         _onChange: function() {

@@ -2,12 +2,12 @@ define([
     'lib/react',
     'lib/clib',
     'lib/lodash',
-    'stores/EngineVirtualStore'
+    'game-logic/engine'
 ], function(
     React,
     Clib,
     _,
-    EngineVirtualStore
+    Engine
 ){
 
     var D = React.DOM;
@@ -19,7 +19,7 @@ define([
 
     function getState(){
         return {
-            engine: EngineVirtualStore.getState()
+            engine: Engine
         }
     }
 
@@ -31,11 +31,23 @@ define([
         },
 
         componentDidMount: function() {
-            EngineVirtualStore.addChangeListener(this._onChange);
+            Engine.on({
+                game_started: this._onChange,
+                game_crash: this._onChange,
+                game_starting: this._onChange,
+                player_bet: this._onChange,
+                cashed_out: this._onChange
+            });
         },
 
         componentWillUnmount: function() {
-            EngineVirtualStore.removeChangeListener(this._onChange);
+            Engine.off({
+                game_started: this._onChange,
+                game_crash: this._onChange,
+                game_starting: this._onChange,
+                player_bet: this._onChange,
+                cashed_out: this._onChange
+            });
         },
 
         _onChange: function() {

@@ -3,7 +3,7 @@ define([
     'strategies/strategies',
     'lib/lodash',
     'lib/clib',
-    'stores/EngineVirtualStore',
+    'game-logic/engine',
     'stores/StrategyEditorStore',
     'actions/StrategyEditorActions'
 ],function(
@@ -11,34 +11,31 @@ define([
     Strategies,
     _,
     Clib,
-    EngineVirtualStore,
+    Engine,
     StrategyEditorStore,
     StrategyEditorActions
 ){
 
     var D = React.DOM;
 
+    function getState() {
+        var state = StrategyEditorStore.getState();
+        state.engine = Engine; //Just to know if the user is logged in
+        return state;
+    }
+
     return React.createClass({
         displayName: 'strategyEditor',
 
-        getState: function() {
-            var state = StrategyEditorStore.getState();
-            state.engine = EngineVirtualStore.getState();
-
-            return state;
-        },
-
         getInitialState: function() {
-            return this.getState();
+            return getState();
         },
 
         componentDidMount: function() {
-            EngineVirtualStore.addChangeListener(this._onChange);
             StrategyEditorStore.addChangeListener(this._onChange);
         },
 
         componentWillUnmount: function() {
-            EngineVirtualStore.removeChangeListener(this._onChange);
             StrategyEditorStore.removeChangeListener(this._onChange);
         },
 
@@ -46,7 +43,7 @@ define([
             //Check if its mounted because when Game view receives the disconnect event from EngineVirtualStore unmounts all views
             //and the views unregister their events before the event dispatcher dispatch them with the disconnect event
             if(this.isMounted())
-                this.setState(this.getState());
+                this.setState(getState());
         },
 
         _runStrategy: function() {

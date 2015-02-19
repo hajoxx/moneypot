@@ -1,15 +1,15 @@
 define([
     'lib/react',
     'lib/clib',
-    'stores/EngineVirtualStore',
     'stores/ChatStore',
-    'actions/ChatActions'
+    'actions/ChatActions',
+    'game-logic/engine'
 ], function(
     React,
     Clib,
-    EngineVirtualStore,
     ChatStore,
-    ChatActions
+    ChatActions,
+    Engine
 ){
 
     var D = React.DOM;
@@ -17,51 +17,9 @@ define([
     /* Constants */
     var SCROLL_OFFSET = 120;
 
-    function renderMessage(message, index) {
-        var self = this;
-
-        var pri = 'msg-chat-message';
-        switch(message.type) {
-            case 'say':
-                if (message.role === 'admin') pri += ' msg-admin-message';
-
-                var username = self.state.engine.username;
-                if (username && message.username != username && message.message.toLowerCase().indexOf(username.toLowerCase()) != -1) {
-                    pri += ' msg-highlight-message';
-                }
-                return D.li({ className: pri , key: 'msg' + index },
-                    D.a({
-                            href: '/user/' + message.username,
-                            target: '_blank'
-                        },
-                        message.username, ':'), ' ', message.message);
-            case 'mute':
-                pri = 'msg-mute-message';
-                return D.li({ className: pri , key: 'msg' + index },
-                    D.a({ href: '/user/' + message.moderator,
-                            target: '_blank'
-                        },
-                        '*** <'+message.moderator+'>'),
-                    message.shadow ? ' shadow muted ' : ' muted ',
-                    D.a({ href: '/user/' + message.username,
-                            target: '_blank'
-                        },
-                        '<'+message.username+'>'),
-                    ' for ' + message.timespec);
-            case 'error':
-            case 'info':
-                pri = 'msg-info-message';
-                return D.li({ className: pri, key: 'msg' + index },
-                    D.span(null, ' *** ' + message.message));
-                break;
-            default:
-                break;
-        }
-    }
-
     function getState(){
         var state = ChatStore.getState();
-        state.engine = EngineVirtualStore.getState();
+        state.engine = Engine;
         return state;
     }
 
@@ -78,7 +36,7 @@ define([
         },
 
         componentDidMount: function() {
-            EngineVirtualStore.addChangeListener(this._onChange);
+            Engine.on({ msg: this._onChange });
             ChatStore.addChangeListener(this._onChange);
 
             var msgs = this.refs.messages.getDOMNode();
@@ -86,7 +44,7 @@ define([
         },
 
         componentWillUnmount: function() {
-            EngineVirtualStore.removeChangeListener(this._onChange);
+            Engine.off({ msg: this._onChange });
             ChatStore.removeChangeListener(this._onChange);
 
             var height = this.refs.messages.getDOMNode().style.height;
@@ -167,5 +125,47 @@ define([
             );
         }
     });
+
+    function renderMessage(message, index) {
+        var self = this;
+
+        var pri = 'msg-chat-message';
+        switch(message.type) {
+            case 'say':
+                if (message.role === 'admin') pri += ' msg-admin-message';
+
+                var username = self.state.engine.username;
+                if (username && message.username != username && message.message.toLowerCase().indexOf(username.toLowerCase()) != -1) {
+                    pri += ' msg-highlight-message';
+                }
+                return D.li({ className: pri , key: 'msg' + index },
+                    D.a({
+                            href: '/user/' + message.username,
+                            target: '_blank'
+                        },
+                        message.username, ':'), ' ', message.message);
+            case 'mute':
+                pri = 'msg-mute-message';
+                return D.li({ className: pri , key: 'msg' + index },
+                    D.a({ href: '/user/' + message.moderator,
+                            target: '_blank'
+                        },
+                        '*** <'+message.moderator+'>'),
+                    message.shadow ? ' shadow muted ' : ' muted ',
+                    D.a({ href: '/user/' + message.username,
+                            target: '_blank'
+                        },
+                        '<'+message.username+'>'),
+                    ' for ' + message.timespec);
+            case 'error':
+            case 'info':
+                pri = 'msg-info-message';
+                return D.li({ className: pri, key: 'msg' + index },
+                    D.span(null, ' *** ' + message.message));
+                break;
+            default:
+                break;
+        }
+    }
 
 });

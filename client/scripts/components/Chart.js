@@ -2,19 +2,19 @@ define([
     'lib/react',
     'lib/clib',
     'components/Graph',
-    'stores/EngineVirtualStore'
+    'game-logic/engine'
 ], function(
     React,
     Clib,
     Graph,
-    EngineVirtualStore
+    Engine
 ){
 
     var D = React.DOM;
 
     function getState(){
         return {
-            engine: EngineVirtualStore.getState()
+            engine: Engine
         }
     }
 
@@ -62,19 +62,30 @@ define([
         },
 
         componentWillUnmount: function() {
-            EngineVirtualStore.removeChangeListener(this._onChange);
+            Engine.off({
+                game_started: this._onChange,
+                game_crash: this._onChange,
+                game_starting: this._onChange,
+                lag_change: this._onChange
+            });
+
             this.mounted = false;
         },
 
         componentDidMount: function() {
-            EngineVirtualStore.addChangeListener(this._onChange);
+            Engine.on({
+                game_started: this._onChange,
+                game_crash: this._onChange,
+                game_starting: this._onChange,
+                lag_change: this._onChange
+            });
 
             this.mounted = true;
             this.animRequest = window.requestAnimationFrame(this._draw);
         },
 
         _draw: function() {
-            if(this.mounted) { //TODO: If mounted could be checked with react
+            if(this.mounted) { //TODO: If mounted could be checked with react, is there a reason to do it manually?
                 var canvas = this.refs.canvas.getDOMNode();
                 if (!canvas.getContext) {
                     console.log('No canvas');

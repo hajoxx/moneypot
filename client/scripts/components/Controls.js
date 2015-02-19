@@ -7,7 +7,7 @@ define([
     'components/CashOutButton',
     'actions/ControlsActions',
     'stores/ControlsStore',
-    'stores/EngineVirtualStore'
+    'game-logic/engine'
 ], function(
     React,
     Clib,
@@ -17,7 +17,7 @@ define([
     CashOutButtonClass,
     ControlsActions,
     ControlsStore,
-    EngineVirtualStore
+    Engine
 ){
 
     var Countdown = React.createFactory(CountDownClass);
@@ -30,7 +30,7 @@ define([
         return {
             betSize: ControlsStore.getBetSize(),
             cashOut: ControlsStore.getCashOut(),
-            engine: EngineVirtualStore.getState()
+            engine: Engine
         }
     }
 
@@ -44,12 +44,37 @@ define([
 
         componentDidMount: function() {
             ControlsStore.addChangeListener(this._onChange);
-            EngineVirtualStore.addChangeListener(this._onChange);
+            Engine.on({
+                game_started: this._onChange,
+                game_crash: this._onChange,
+                game_starting: this._onChange,
+                player_bet: this._onChange,
+                cashed_out: this._onChange,
+
+                placing_bet: this._onChange,
+                bet_placed: this._onChange,
+                bet_queued: this._onChange,
+                cashing_out: this._onChange,
+                cancel_bet: this._onChange
+            });
         },
 
         componentWillUnmount: function() {
             ControlsStore.removeChangeListener(this._onChange);
-            EngineVirtualStore.removeChangeListener(this._onChange);
+            Engine.off({
+                game_started: this._onChange,
+                game_crash: this._onChange,
+                game_starting: this._onChange,
+                player_bet: this._onChange,
+                cashed_out: this._onChange,
+
+
+                placing_bet: this._onChange,
+                bet_placed: this._onChange,
+                bet_queued: this._onChange,
+                cashing_out: this._onChange,
+                cancel_bet: this._onChange
+            });
         },
 
         _onChange: function() {
@@ -110,7 +135,7 @@ define([
         },
 
         _getStatusMessage: function () {
-            var pi = this.state.engine.currentPlay;
+            var pi = this.state.engine.currentPlay();
 
             if (this.state.engine.gameState === 'STARTING') {
                 return Countdown({ engine: this.state.engine });
@@ -222,7 +247,8 @@ define([
 
         render: function () {
             var self = this;
-            var pi = this.state.engine.currentPlay;
+            var pi = this.state.engine.currentPlay();
+            var betting = this.state.engine.isBetting();
 
             // If they're not logged in, let just show a login to play
             if (!this.state.engine.username)
@@ -236,7 +262,7 @@ define([
 
             // Able to bet, and not betting
             var ableToBet;
-            if (this.state.engine.isBetting)
+            if (betting)
                 ableToBet = false;
             else if (this.state.engine.gameState === 'IN_PROGRESS' && pi && pi.bet && !pi.stopped_at) //TODO: Document this if and maybe reduce
                 ableToBet = false;
@@ -244,7 +270,7 @@ define([
                 ableToBet = true;
 
             // Able to bet, or is already betting
-            var ableToBetOrBetting = ableToBet || this.state.engine.isBetting;
+            var ableToBetOrBetting = ableToBet || betting;
 
             var button;
             if (ableToBetOrBetting) {

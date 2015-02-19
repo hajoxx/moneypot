@@ -47,7 +47,7 @@ define([
             var self = this;
 
             // If betting (a bet is queued or the user already bet and the game has not started yet)
-            if (this.props.engine.isBetting) {
+            if (this.props.engine.isBetting()) {
                 var aco = this.props.engine.nextAutoCashout;
 
                 var bet;

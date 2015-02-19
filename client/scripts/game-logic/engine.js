@@ -3,13 +3,15 @@ define([
     'lib/events',
     'lib/lodash',
     'lib/clib',
-    'constants/AppConstants'
+    'constants/AppConstants',
+    'dispatcher/AppDispatcher'
 ], function(
     io,
     Events,
     _,
     Clib,
-    AppConstants
+    AppConstants,
+    AppDispatcher
 ) {
 
     function Engine() {
@@ -100,6 +102,34 @@ define([
 
         /** Tell if the game is lagging but only  when the game is in progress **/
         self.lag = false;
+
+        /**
+         * Events triggered by the engine
+         *
+         * 'connected': The client is connected to the server
+         * 'disconnected': The client got disconnected to the server
+         * 'game_started': The game just started
+         * 'game_crash': The game just crashed
+         * 'game_starting': The game is going to start in X ms
+         *
+         * 'player_bet': A player bet
+         * 'cashed_out': A player cashed out
+         * 'msg': A player sent a message to the chat
+         *
+         * 'placing_bet':
+         * 'bet_placed':
+         * 'bet_queued':
+         * 'cashing_out':
+         * 'cancel_bet':
+         *
+         * 'lag_change': The engine changed its lag state
+         *
+         * 'error': Socket io errors
+         * 'err': Server errors
+         */
+
+
+
 
         /**
          * Event called at the moment when the game starts
@@ -403,6 +433,7 @@ define([
 
         this.nextBetAmount = amount;
         this.nextAutoCashout = autoCashOut;
+        this.placingBet = true;
 
         if (this.gameState === 'STARTING')
             return this.doBet(amount, autoCashOut, callback);
@@ -418,7 +449,6 @@ define([
     Engine.prototype.doBet =  function(amount, autoCashOut, callback) {
         var self = this;
 
-        self.placingBet = true;
         this.ws.emit('place_bet', amount, autoCashOut, function(error) {
 
             if (error) {
@@ -444,11 +474,11 @@ define([
      * Cancels a bet, if the game state is able to do it so
      */
     Engine.prototype.cancelBet = function() {
-
         if (!this.nextBetAmount)
             return console.error('Can not cancel next bet, wasn\'t going to make it...');
 
         this.nextBetAmount = null;
+        this.placingBet = false;
 
         this.trigger('cancel_bet');
     };
@@ -582,6 +612,31 @@ define([
 
     };
 
+    /** If the user is currently playing return and object with the status else null **/
+    Engine.prototype.currentPlay = function() {
+        if (!this.username)
+            return null;
+        else
+            return this.playerInfo[this.username];
+    };
+
+    /** True if you are playing and haven't cashed out **/
+    Engine.prototype.currentlyPlaying = function() {
+        var currentPlay = this.currentPlay();
+        return currentPlay && currentPlay.bet && !currentPlay.stopped_at;
+    };
+
+    /** To Know if the user is betting **/
+    Engine.prototype.isBetting = function() {
+        if (!this.username) return false;
+        if (this.nextBetAmount) return true;
+        for (var i = 0 ; i < this.joined.length; ++i) {
+            if (this.joined[i] == this.username)
+                return true;
+        }
+        return false;
+    };
+
     /**
      * Function to request the one time token to the server
      */
@@ -614,6 +669,42 @@ define([
         }
     }
 
+
+    /** Create engine Singleton **/
+    var EngineSingleton = new Engine();
+
+    /**
+     * Here is the other virtual part of the store:
+     * The actions created by flux views are converted
+     * to calls to the engine which will case changes there
+     * and they will be reflected here through the event listener
+     */
+    AppDispatcher.register(function(payload) {
+        var action = payload.action;
+
+        switch(action.actionType) {
+
+            case AppConstants.ActionTypes.PLACE_BET:
+                EngineSingleton.bet(action.bet, action.cashOut);
+                break;
+
+            case AppConstants.ActionTypes.CANCEL_BET:
+                EngineSingleton.cancelBet();
+                break;
+
+            case AppConstants.ActionTypes.CASH_OUT:
+                EngineSingleton.cashOut();
+                break;
+
+            case AppConstants.ActionTypes.SAY_CHAT:
+                EngineSingleton.say(action.msg);
+                break;
+
+        }
+
+        return true; // No errors. Needed by promise in Dispatcher.
+    });
+
     //Singleton Engine
-    return new Engine();
+    return EngineSingleton;
 });

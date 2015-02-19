@@ -89,7 +89,7 @@ define([
         /* Style the line depending on the game states */
         this.ctx.strokeStyle = "Black";
         //if(this.lastGameWon) {
-        if(this.engine.currentlyPlaying) { //playing and not cashed out
+        if(this.engine.currentlyPlaying()) { //playing and not cashed out
             this.ctx.lineWidth=6;
             this.ctx.strokeStyle = '#7cba00';
         } else if(this.cashingOut) {

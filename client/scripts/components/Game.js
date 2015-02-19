@@ -11,7 +11,7 @@ define([
     'components/TabsSelector',
     'components/Players',
     'components/BetBar',
-    'stores/EngineVirtualStore'
+    'game-logic/engine'
 ], function(
     React,
     ChartClass,
@@ -19,7 +19,7 @@ define([
     TabsSelectorClass,
     PlayersClass,
     BetBarClass,
-    EngineVirtualStore
+    Engine
 ){
     var Chart = React.createFactory(ChartClass);
     var Controls  = React.createFactory(ControlsClass);
@@ -29,31 +29,32 @@ define([
 
     var D = React.DOM;
 
-    function getState() {
-        return {
-            isConnected: EngineVirtualStore.getState().isConnected
-        }
-    }
-
     return React.createClass({
         displayName: 'Game',
 
         getInitialState: function () {
-            return getState();
+            return {
+                isConnected: Engine.isConnected
+            }
         },
 
         componentDidMount: function() {
-            EngineVirtualStore.addChangeListener(this._onChange);
+            Engine.on({
+                'connected': this._onChange,
+                'disconnected': this._onChange
+            });
         },
 
         componentWillUnmount: function() {
-            EngineVirtualStore.removeChangeListener(this._onChange);
+            Engine.off({
+                'connected': this._onChange,
+                'disconnected': this._onChange
+            });
         },
 
         _onChange: function() {
-            var isConnected = getState().isConnected;
-            if(this.state.isConnected != isConnected)
-                this.setState({ isConnected: isConnected });
+            if(this.state.isConnected != Engine.isConnected)
+                this.setState({ isConnected: Engine.isConnected });
         },
 
         render: function() {
