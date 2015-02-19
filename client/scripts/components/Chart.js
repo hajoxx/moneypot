@@ -75,7 +75,7 @@ define([
 
         _draw: function() {
             if(this.mounted) { //TODO: If mounted could be checked with react
-                var canvas = this.getDOMNode();
+                var canvas = this.refs.canvas.getDOMNode();
                 if (!canvas.getContext) {
                     console.log('No canvas');
                     return;
@@ -94,10 +94,16 @@ define([
         },
 
         render: function() {
-            return D.canvas({
-                width: this.graph.canvasWidth,
-                height: this.graph.canvasHeight
-            });
+            return D.div({ className: 'chart', style: { position: 'relative' }},
+                D.div({ style: { position: 'absolute', bottom: '27px', right: '30px', fontSize: '55%' }},
+                    'Max profit: ', (this.state.engine.maxWin/1e8).toFixed(4), ' BTC'),
+
+                D.canvas({
+                    width: this.graph.canvasWidth,
+                    height: this.graph.canvasHeight,
+                    ref: 'canvas'
+                })
+            )
         }
 
     });
