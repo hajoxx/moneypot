@@ -688,7 +688,9 @@ exports.handleWithdrawRequest = function(req, res, next) {
         return res.render('withdraw_request', { user: user, warning: 'Destination address not provided' });
 
     try {
-        bitcoinjs.Address.fromBase58Check(destination);
+        var version = bitcoinjs.Address.fromBase58Check(destination);
+        return version === bitcoinjs.networks.bitcoin.pubKeyHash ||
+            version === bitcoinjs.networks.bitcoin.scriptHash;
     } catch(ex) {
         return res.render('withdraw_request', { user: user, warning: 'Not a valid destination address' });
     }
