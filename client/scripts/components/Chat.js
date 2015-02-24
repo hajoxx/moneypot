@@ -1,16 +1,34 @@
 define([
     'lib/react',
     'lib/clib',
+    'lib/Autolinker',
     'stores/ChatStore',
     'actions/ChatActions',
     'game-logic/engine'
 ], function(
     React,
     Clib,
+    Autolinker,
     ChatStore,
     ChatActions,
     Engine
 ){
+
+    var escapeHTML = (function() {
+      var entityMap = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': '&quot;',
+        "'": '&#39;'
+      };
+
+      return function(str) {
+        return String(str).replace(/[&<>"']/g, function (s) {
+          return entityMap[s];
+        });
+      };
+    })();
 
     var D = React.DOM;
 
@@ -143,7 +161,18 @@ define([
                             href: '/user/' + message.username,
                             target: '_blank'
                         },
-                        message.username, ':'), ' ', message.message);
+                        message.username, ':'),
+                        ' ',
+                        D.span({
+                          className: 'msg-body',
+                          dangerouslySetInnerHTML: {
+                            __html: Autolinker.link(
+                                      escapeHTML(message.message),
+                                      { truncate: 50 }
+                                    )
+                          }
+                        })
+                    );
             case 'mute':
                 pri = 'msg-mute-message';
                 return D.li({ className: pri , key: 'msg' + index },
