@@ -1,16 +1,44 @@
 define([
     'lib/react',
     'lib/clib',
+    'lib/Autolinker',
     'stores/ChatStore',
     'actions/ChatActions',
     'game-logic/engine'
 ], function(
     React,
     Clib,
+    Autolinker,
     ChatStore,
     ChatActions,
     Engine
 ){
+
+    // Overrides Autolinker.js' @username handler to instead link to
+    // user profile page.
+    var replaceUsernameMentions = function(autolinker, match) {
+      // Use default handler for non-twitter links
+      if (match.getType() !== 'twitter') return true;
+
+      var username = match.getTwitterHandle();
+      return '<a href="/user/' + username +'" target="_blank">@' + username + '</a>';
+    };
+
+    var escapeHTML = (function() {
+      var entityMap = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': '&quot;',
+        "'": '&#39;'
+      };
+
+      return function(str) {
+        return String(str).replace(/[&<>"']/g, function (s) {
+          return entityMap[s];
+        });
+      };
+    })();
 
     var D = React.DOM;
 
@@ -135,7 +163,9 @@ define([
                 if (message.role === 'admin') pri += ' msg-admin-message';
 
                 var username = self.state.engine.username;
-                if (username && message.username != username && message.message.toLowerCase().indexOf(username.toLowerCase()) != -1) {
+
+                var r = new RegExp('@' + username + '(?:$|[^a-z0-9_\-])', 'i');
+                if (username && message.username != username && r.test(message.message)) {
                     pri += ' msg-highlight-message';
                 }
                 return D.li({ className: pri , key: 'msg' + index },
@@ -143,7 +173,18 @@ define([
                             href: '/user/' + message.username,
                             target: '_blank'
                         },
-                        message.username, ':'), ' ', message.message);
+                        message.username, ':'),
+                        ' ',
+                        D.span({
+                          className: 'msg-body',
+                          dangerouslySetInnerHTML: {
+                            __html: Autolinker.link(
+                                      escapeHTML(message.message),
+                                      { truncate: 50, replaceFn: replaceUsernameMentions }
+                                    )
+                          }
+                        })
+                    );
             case 'mute':
                 pri = 'msg-mute-message';
                 return D.li({ className: pri , key: 'msg' + index },

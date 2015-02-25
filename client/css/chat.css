@@ -34,6 +34,15 @@
     font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
 }
 
+/* Links within the message */
+.msg-chat-message .msg-body a {
+    color: #008cba; /* Blue */
+    font-family: Helvetica, Arial, sans-serif;
+}
+.msg-chat-message .msg-body a:hover {
+    text-decoration: underline;
+}
+
 .msg-chat-message.msg-admin-message a {
     color: #ce1e1e;
 }

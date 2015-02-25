@@ -323,9 +323,10 @@ define([
             if (self.chat.length > AppConstants.Chat.MAX_LENGTH)
                 self.chat.splice(0, 400);
 
-            var r = new RegExp('(^|\\s+)' + self.username + ':');
+            // Match @username until end of string or invalid username char
+            var r = new RegExp('@' + self.username + '(?:$|[^a-z0-9_\-])', 'i');
             if (data.type === 'say' && data.username !== self.username && r.test(data.message)) {
-                new Audio('http://soundbible.com/mp3/A-Tone-His_Self-1266414414.mp3').play();
+                new Audio('/sounds/gong.mp3').play();
             }
             self.chat.push(data);
 
