@@ -329,7 +329,7 @@ define([
             // users foo1, foo2, and foo3.
             var r = new RegExp('@' + self.username + ':', 'i');
             if (data.type === 'say' && data.username !== self.username && r.test(data.message)) {
-                new Audio('http://soundbible.com/mp3/A-Tone-His_Self-1266414414.mp3').play();
+                new Audio('/sounds/gong.mp3').play();
             }
             self.chat.push(data);
 
