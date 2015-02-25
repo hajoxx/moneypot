@@ -323,7 +323,11 @@ define([
             if (self.chat.length > AppConstants.Chat.MAX_LENGTH)
                 self.chat.splice(0, 400);
 
-            var r = new RegExp('(^|\\s+)' + self.username + ':');
+            // Only play audio for a direction mention (mention trails with colon)
+            // rather than any mention. This also allows us to use the colon to
+            // delineate the mention so that "@foo" doesn't trigger a sound for
+            // users foo1, foo2, and foo3.
+            var r = new RegExp('@' + self.username + ':', 'i');
             if (data.type === 'say' && data.username !== self.username && r.test(data.message)) {
                 new Audio('http://soundbible.com/mp3/A-Tone-His_Self-1266414414.mp3').play();
             }
