@@ -14,6 +14,16 @@ define([
     Engine
 ){
 
+    // Overrides Autolinker.js' @username handler to instead link to
+    // user profile page.
+    var replaceUsernameMentions = function(autolinker, match) {
+      // Use default handler for non-twitter links
+      if (match.getType() !== 'twitter') return true;
+
+      var username = match.getTwitterHandle();
+      return '<a href="/user/' + username +'" target="_blank">@' + username + '</a>';
+    };
+
     var escapeHTML = (function() {
       var entityMap = {
         "&": "&amp;",
@@ -168,7 +178,7 @@ define([
                           dangerouslySetInnerHTML: {
                             __html: Autolinker.link(
                                       escapeHTML(message.message),
-                                      { truncate: 50 }
+                                      { truncate: 50, replaceFn: replaceUsernameMentions }
                                     )
                           }
                         })
