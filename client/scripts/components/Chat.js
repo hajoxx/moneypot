@@ -163,7 +163,9 @@ define([
                 if (message.role === 'admin') pri += ' msg-admin-message';
 
                 var username = self.state.engine.username;
-                if (username && message.username != username && message.message.toLowerCase().indexOf(username.toLowerCase()) != -1) {
+
+                var r = new RegExp('@' + username + '(?:$|[^a-z0-9_\-])', 'i');
+                if (username && message.username != username && r.test(message.message)) {
                     pri += ' msg-highlight-message';
                 }
                 return D.li({ className: pri , key: 'msg' + index },
