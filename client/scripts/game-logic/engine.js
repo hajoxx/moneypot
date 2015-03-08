@@ -493,9 +493,12 @@ define([
         this.cashingOut = true;
         this.ws.emit('cash_out', function(error) { //TODO: Deprecate callback
             if (error) {
+                self.cashingOut = false;
                 console.warn('Cashing out error: ', error);
                 if(callback)
                     return callback(error);
+
+                this.trigger('cashing_out');
             }
             if(callback)
                 return callback(null);
