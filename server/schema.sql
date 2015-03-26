@@ -496,3 +496,9 @@ CREATE UNIQUE INDEX leaderboard_user_id_idx
   ON leaderboard
   USING btree
   (user_id);
+
+CREATE INDEX leaderboard_username_idx ON leaderboard USING btree (lower(username));
+
+CREATE INDEX leaderboard_gross_profit_idx ON leaderboard USING btree (gross_profit);
+
+CREATE INDEX leaderboard_net_profit_idx ON leaderboard USING btree (net_profit);
