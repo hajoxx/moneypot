@@ -491,3 +491,8 @@ CREATE MATERIALIZED VIEW leaderboard AS
     t.games_played,
     rank() OVER (ORDER BY t.gross_profit DESC) AS rank
    FROM t;
+
+CREATE UNIQUE INDEX leaderboard_user_id_idx
+  ON leaderboard
+  USING btree
+  (user_id);
