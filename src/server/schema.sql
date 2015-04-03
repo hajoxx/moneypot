@@ -132,7 +132,7 @@ CREATE TABLE plays (
     auto_cash_out bigint NOT NULL,
     game_id bigint NOT NULL,
     created timestamp with time zone DEFAULT now() NOT NULL,
-    bet bigint,
+    bet bigint NOT NULL,
     bonus bigint
 );
 
