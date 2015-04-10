@@ -252,7 +252,7 @@ exports.giveawayRequest = function(req, res, next) {
     var user = req.user;
     assert(user);
 
-    var privatekey = '6LewY_YSAAAAAIzk70fzWH0zkqVE3q6ufOJStZ37';
+    var privatekey = process.env.RECAPTCHA_PRIV_KEY;
     var remoteip;
 
     var ips = req.ips;
