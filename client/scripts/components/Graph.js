@@ -221,7 +221,7 @@ define([
             else
                 this.ctx.font="40px Verdana";
             this.ctx.fillStyle = "red";
-            this.ctx.fillText('Game crashed', this.canvasWidth/5, 100);
+            this.ctx.fillText('Busted', this.canvasWidth/5, 100);
             this.ctx.fillText('@ ' + Clib.formatDecimals(this.engine.tableHistory[0].game_crash/100, 2) + 'x', this.canvasWidth/5, 180);
         }
 

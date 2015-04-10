@@ -2,7 +2,7 @@ var assert = require('assert');
 var nodemailer = require('nodemailer');
 var sesTransport = require('nodemailer-ses-transport');
 
-var siteURL = process.env.SITE_URL || 'https://www.moneypot.com';
+var siteURL = process.env.SITE_URL || 'https://www.bustabit.com';
 
 
 function send(details, callback) {

@@ -31,6 +31,7 @@
   },
 
   "scripts": {
-    "start": "node server.js --use_strict"
+    "start-dev": "env $(cat .env | xargs) nodemon server",
+    "start": "node server"
   }
 }

@@ -185,7 +185,7 @@ define([
                     }
 
                     return D.span(null,
-                        'Game crashed @ ', D.b({className: 'red'},
+                        'Busted @ ', D.b({className: 'red'},
                             this.state.engine.tableHistory[0].game_crash / 100, 'x'),
                         ' / You lost ', D.b({className: 'red'}, pi.bet / 100), ' ', Clib.grammarBits(pi.bet),
                         bonus
@@ -193,9 +193,13 @@ define([
 
                 } else { // didn't bet
 
-                    return D.span(null,
-                        'Game crashed @ ', D.b({className: 'red'}, this.state.engine.tableHistory[0].game_crash / 100, 'x')
-                    );
+                  if (this.state.engine.tableHistory[0].game_crash === 0) {
+                    return D.span(null, D.b({className: 'red'}, 'INSTABUST!'));
+                  }
+
+                  return D.span(null,
+                      'Busted @ ', D.b({className: 'red'}, this.state.engine.tableHistory[0].game_crash / 100, 'x')
+                  );
                 }
 
             }

@@ -4,7 +4,7 @@ INSTALLATION
 Debian/Ubuntu
 -------------
 
-These are instructions for running MoneyPot locally on a Debian / Ubuntu machine.
+These are instructions for running bustabit locally on a Debian / Ubuntu machine.
 
 ### Distribution packages
 
@@ -16,25 +16,25 @@ package installs `nodejs` but will additionally create a symlink from
 
 ### Getting the sources
 
-    git clone https://github.com/espringe/moneypot.git
-    cd moneypot
+    git clone https://github.com/moneypot/bustabit-webserver.git
+    cd bustabit-webserver
 
 ### Create a database user and setup the tables
 
 Create a user. It will prompt you for a password.
 
-    sudo -u postgres createuser -P moneypot
+    sudo -u postgres createuser -P bustabit
 
 Create the database and setup the tables. The second command will prompt you
 for the password again.
 
-    sudo -u postgres createdb -O moneypot moneypotdb
-    psql -W -U moneypot -d moneypotdb -h localhost -f server/schema.sql
+    sudo -u postgres createdb -O bustabit bustabitdb
+    psql -W -U bustabit -d bustabitdb -h localhost -f server/schema.sql
 
 Mac OS X
 --------
 
-These are instructions for running MoneyPot locally on a Mac using homebrew.
+These are instructions for running bustabit locally on a Mac using homebrew.
 
 ### Install homebrew packages
 
@@ -42,20 +42,20 @@ These are instructions for running MoneyPot locally on a Mac using homebrew.
 
 ### Getting the sources
 
-    git clone https://github.com/espringe/moneypot.git
-    cd moneypot
+    git clone https://github.com/moneypot/bustabit-webserver.git
+    cd bustabit-webserver
 
 ### Create a database user and setup the tables
 
 Create a user. It will prompt you for a password.
 
-    createuser -P moneypot
+    createuser -P bustabit
 
 Create the database and setup the tables. The second command will prompt you
 for the password again.
 
-    createdb -O moneypot moneypotdb
-    psql -W -U moneypot -d moneypotdb -h localhost -f server/schema.sql
+    createdb -O bustabit bustabitdb
+    psql -W -U bustabit -d bustabitdb -h localhost -f server/schema.sql
 
 
 Configuration
@@ -71,7 +71,7 @@ This will download and install all dependencies in the `node_modules` subdirecto
 
 Export the database link as an environment variable
 
-    export DATABASE_URL=postgres://moneypot:<YOURPASSWORD>@localhost/moneypotdb
+    export DATABASE_URL=postgres://bustabit:<YOURPASSWORD>@localhost/bustabitdb
 
 ### BIP32 Key
 

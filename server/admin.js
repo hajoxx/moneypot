@@ -21,7 +21,7 @@ exports.giveAwayHandle = function(req, res, next) {
         var ref = req.get('Referer');
         if (!ref) return next(new Error('Possible xsfr')); //Interesting enough to log it as an error
 
-        if (ref.lastIndexOf('https://www.moneypot.com/admin-giveaway', 0) !== 0)
+        if (ref.lastIndexOf('https://www.bustabit.com/admin-giveaway', 0) !== 0)
             return next(new Error('Bad referrer got: ' + ref));
     }
 
