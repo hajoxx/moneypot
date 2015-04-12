@@ -6,5 +6,5 @@ npm install
 git add build --force
 git commit -a -m "Compiled Version"
 git merge origin/compiled -s recursive -X ours -m "Merge master into compiled"
-git push origin HEAD:compiled
+git push origin HEAD:compiled --force
 git reset --hard origin/master

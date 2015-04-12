@@ -83,6 +83,7 @@ exports.login = function(req, res, next) {
 
 
     database.validateUser(username, password, otp, function(err, userId) {
+        console.log('Attempted login for user: ', username, ' result: ', err);
         if (err) {
             if (err === 'NO_USER')
                 return res.render('login',{ warning: 'Username does not exist' });
