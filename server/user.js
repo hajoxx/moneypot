@@ -24,6 +24,7 @@ var sessionOptions = {
  */
 exports.register  = function(req, res, next) {
     var values = _.merge(req.body, { user: {} });
+    var recaptcha = lib.removeNullsAndTrim(req.body['g-recaptcha-response']);
     var username = lib.removeNullsAndTrim(values.user.name);
     var password = lib.removeNullsAndTrim(values.user.password);
     var password2 = lib.removeNullsAndTrim(values.user.confirm);
@@ -74,9 +75,16 @@ exports.register  = function(req, res, next) {
  * Login a user
  */
 exports.login = function(req, res, next) {
+    var recaptcha = lib.removeNullsAndTrim(req.body['g-recaptcha-response']);
     var username = lib.removeNullsAndTrim(req.body.username);
     var password = lib.removeNullsAndTrim(req.body.password);
     var otp = lib.removeNullsAndTrim(req.body.otp);
+
+    if (!recaptcha) {
+        console.warn('No recaptca found');
+        return res.render('login', {warning: 'Invalid or missing recaptcha'});
+    }
+    console.log('Login with recaptcha: ', recaptcha);
 
     if (!username || !password)
         return res.render('login', { warning: 'no username or password' });

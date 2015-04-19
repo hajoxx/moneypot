@@ -1,7 +1,13 @@
 {{##def.page_title = 'Register' #}}
 
 {{##def.content:
+<script src='https://www.google.com/recaptcha/api.js'></script>
 <script type="text/javascript">
+    function enableSubmit() {
+      var s = document.getElementById('registerSubmit');
+      s.style.display = 'block';
+    }
+
     window.onload = function () {
         if (document.getElementById('confirmation') !== null) {
             document.getElementById('confirmation').onchange = validatePassword;
@@ -66,7 +72,8 @@
                         </div>
                     </div>
                     <div class="large-7 columns">
-                        <input class="border-button blue" type="submit" value="Register"/>
+                        <div class="g-recaptcha" data-sitekey="6LeIdP0SAAAAAGzl61UDdE8rWr-qRqzrL0o4szRJ" data-callback="enableSubmit"></div>
+                        <input id="registerSubmit" style="display: none" class="border-button blue" type="submit" value="Register"/>
                     </div>
                 </div>
             </form>
