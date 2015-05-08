@@ -592,7 +592,7 @@ exports.setFundingsWithdrawalTxid = function(fundingId, txid, callback) {
 };
 
 exports.getLeaderBoard = function(byDb, order, callback) {
-    var sql = 'SELECT * FROM leaderboard ORDER BY ' + byDb + ' ' + order + ' LIMIT 10';
+    var sql = 'SELECT * FROM leaderboard ORDER BY ' + byDb + ' ' + order + ' LIMIT 100';
     query(sql, function(err, data) {
         if (err)
             return callback(err);
