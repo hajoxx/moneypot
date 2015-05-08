@@ -72,8 +72,10 @@ app.use(function(req, res, next) {
     }
 
     res.header('Cache-Control', 'no-cache');
+    res.header("Content-Security-Policy", "frame-ancestors 'none'");
 
-    if (!lib.isUUIDv4(sessionId)) {
+
+  if (!lib.isUUIDv4(sessionId)) {
         res.clearCookie('id');
         return next();
     }
