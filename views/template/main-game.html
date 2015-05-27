@@ -1,0 +1,47 @@
+{{##def.format:param:{{=(param.n/100).toFixed(param.decimals).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")}}#}}
+
+<!DOCTYPE html>
+<html>
+{{#def.include('headNew')}}
+<body>
+
+<div class="wrap">
+    {{#def.include('header')}}
+
+<script>
+    var USER_MESSAGE = {};
+
+    {{?it.user }}
+
+        {{?it.user.error}}
+            USER_MESSAGE.type = 'error';
+            USER_MESSAGE.text = "{{!it.user.error}}";
+
+        {{??it.user.advice == 'new'}}
+            USER_MESSAGE.type = 'newUser';
+
+        {{??it.user.advice == 'received'}}
+            USER_MESSAGE.type = 'received';
+            USER_MESSAGE.qty = 2;
+        {{?? it.user.advice}}
+            USER_MESSAGE.type = 'advice';
+            USER_MESSAGE.text = "{{!it.user.advice}}";
+        {{??it.user && it.user.balance_satoshis < 100 }}
+            {{?it.user.eligible == true}}
+                USER_MESSAGE.type = 'collect';
+                USER_MESSAGE.qty = 2;
+            {{?}}
+        {{?}}
+
+    {{?}}
+
+</script>
+
+    <div class="page-content">
+        {{#def.content || ""}}
+    </div>
+
+</div>
+
+</body>
+</html>

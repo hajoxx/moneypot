@@ -1,0 +1,128 @@
+/* ==========================================================================
+   Tabs
+   ========================================================================== */
+
+/* Container */
+
+#tabs-inner-container, #tabs-inner-container .log-chat-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* z-index: 1003; */
+    /* border-bottom: 1px solid #ddd; */
+    border-top: 1px solid #ddd;
+    /* display: table-cell; */
+    /* position: relative; */
+    /* height: 100%; */
+}
+
+/* Tabs */
+
+#tabs-inner-container .tab-container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: calc(100% - 2rem);
+}
+
+#tabs-inner-container .tab-container>div {
+     /* transform: rotate(270deg); */
+     /* position: absolute; */
+     /* left: 0; */
+     /* top: 0; */
+     /* width: 100%; */
+     /* height: 100%; */
+}
+
+#tabs-inner-container .tab-container ul {
+    color: #32526E;
+    font-size: 0.8rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1.5rem;
+    height: 100%;
+    display: table;      ;
+    /* height: 100%; */
+    /* display: table; */
+    overflow: hidden;
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+}
+
+#tabs-inner-container .tab-container li.chat-log-tab {
+    display: table-row;
+    height: 50%;
+    width: 1.5rem;
+    background: rgba(249, 249, 249, 1);
+    cursor: pointer;
+}
+
+#tabs-inner-container .tab-container li.chat-log-tab:first-child {
+    position: absolute;
+
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 50%;
+}
+
+#tabs-inner-container .tab-container li.chat-log-tab:last-child {
+    position: absolute;   
+    top: 50%;   right: 0;   left: 0;   
+    bottom: 0;
+
+}
+
+#tabs-inner-container .tab-container li.chat-log-tab a{
+    display: table-cell;   
+    vertical-align: middle;   
+    line-height: 1.5rem;   
+    height: 1.5rem;
+    white-space: nowrap;
+    transform: rotate(270deg);
+    max-width: 1.5rem;
+    color: black;
+    display: block;
+    transform-origin: 50% 50%;
+    position: absolute;
+    top: 50%;
+}
+
+#tabs-inner-container .tab-container li.chat-log-tab.tab-active a{
+    color: rgba(228, 121, 3, 1);
+    font-weight: 800;
+}
+
+#tabs-inner-container .tab-container li.chat-log-tab:hover a{
+    color: rgba(228, 121, 3, 1);
+}
+
+
+/*#tabs-inner-container .chat-log-tabs .chat-log-tab a {*/
+    /*color: black;*/
+    /*padding: 0 1em;*/
+/*}*/
+
+/*#tabs-inner-container .chat-log-tabs .tab-active a {*/
+    /*color: rgba(243,150,47,1);*/
+    /*font-weight: 800;*/
+/*}*/
+
+/* Widget */
+
+#tabs-inner-container .widget-container {
+    position: absolute;
+
+    top: 0;
+    right: 0;
+    left: 1.5rem;
+    bottom: 0;
+}

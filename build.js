@@ -3,8 +3,56 @@ var crypto = require('crypto');
 var exec = require('child_process').exec;
 var fs = require('fs');
 
-
 var todo = [];
+var buildConfig = {};
+
+/**************** OLD Client ****************/
+
+var jsHash = hash('./build/main-built.js').substring(0, 8);
+var cssHash = hash('./build/css/app.css').substring(0, 8);
+var gameCssHash = hash('./build/css/game.css').substring(0, 8);
+
+console.log('Hash of js: ', jsHash);
+console.log('Hash of css: ', cssHash);
+console.log('Hash of game css: ', gameCssHash);
+
+execute('cp ./build/main-built.js ./build/' + jsHash + '.js');
+execute('cp ./build/css/app.css ./build/css/' + cssHash + '.css');
+execute('cp ./build/css/game.css ./build/css/' + gameCssHash + '.css');
+
+buildConfig.jsHash = jsHash;
+buildConfig.cssHash = cssHash;
+buildConfig.gameCssHash = gameCssHash;
+
+
+/**************** NEW Client ****************/
+
+var jsHash = hash('./build2/main-built.js').substring(0, 8);
+var cssHash = hash('./build2/css/app.css').substring(0, 8);
+var gameCssHash = hash('./build2/css/game.css').substring(0, 8);
+
+console.log('Hash of new js: ', jsHash);
+console.log('Hash of new css: ', cssHash);
+console.log('Hash of new game css: ', gameCssHash);
+
+execute('cp ./build2/main-built.js ./build/' + jsHash + '.js');
+execute('cp ./build2/css/app.css ./build/css/' + cssHash + '.css');
+execute('cp ./build2/css/game.css ./build/css/' + gameCssHash + '.css');
+
+buildConfig.jsHashNew = jsHash;
+buildConfig.cssHashNew = cssHash;
+buildConfig.gameCssHashNew = gameCssHash;
+
+//Save the config into a file
+fs.writeFileSync('./config/buildConfig.js', JSON.stringify(buildConfig));
+
+
+// simple replace, no escaping bullshit
+function sreplace(str, find, replace) {
+    var arr = str.split(find);
+    assert(arr.length === 2);
+    return arr[0] + replace + arr[1];
+}
 
 function execute(command) {
     todo.push(command);
@@ -33,41 +81,3 @@ function hash(filename) {
     shasum.update(fs.readFileSync(filename));
     return shasum.digest('hex');
 }
-
-var jsHash = hash('./build/main-built.js').substring(0, 8);
-var cssHash = hash('./build/css/app.css').substring(0, 8);
-var gameCssHash = hash('./build/css/game.css').substring(0, 8);
-
-console.log('Hash of js: ', jsHash);
-console.log('Hash of css: ', cssHash);
-console.log('Hash of game css: ', gameCssHash);
-
-
-execute('cp ./build/main-built.js ./build/' + jsHash + '.js');
-execute('cp ./build/css/app.css ./build/css/' + cssHash + '.css');
-execute('cp ./build/css/game.css ./build/css/' + gameCssHash + '.css');
-
-
-// simple replace, no escaping bullshit
-function sreplace(str, find, replace) {
-    var arr = str.split(find);
-    assert(arr.length === 2);
-    return arr[0] + replace + arr[1];
-}
-
-var contents = fs.readFileSync('./views/table.html', { encoding: 'UTF-8' });
-contents = sreplace(contents, 'scripts/lib/require.js',  jsHash + '.js');
-fs.writeFileSync('./views/table.html', contents);
-
-var contents = fs.readFileSync('./server.js', { encoding: 'UTF-8' });
-contents = sreplace(contents, '/client',  '/build');
-fs.writeFileSync('./server.js', contents);
-
-var contents = fs.readFileSync('./views/template/head.html', { encoding: 'UTF-8' });
-contents = sreplace(contents, '/css/app.css',  '/css/' + cssHash + '.css');
-contents = sreplace(contents, '/css/game.css',  '/css/' + gameCssHash + '.css');
-fs.writeFileSync('./views/template/head.html', contents);
-
-
-
-

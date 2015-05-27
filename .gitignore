@@ -1,5 +1,8 @@
-.idea
 node_modules
 build/
+build2/
 .*.swp
-.DS_Store
+config/local.json
+config/production.json
+.env
+config/buildConfig.js

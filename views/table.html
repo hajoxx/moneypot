@@ -10,6 +10,6 @@
         //  var OTT =  {{=it.ott}};
     </script>
     <!--RequireJs-->
-    <script data-main="../scripts/main" src="../scripts/lib/require.js"></script>
+    <script data-main="../scripts/main" src="{{? it.buildConfig }}{{=it.buildConfig.jsHash}}.js{{??}}../scripts/lib/require.js{{?}}"></script>
 #}}
 {{#def.include('./template/main')}}

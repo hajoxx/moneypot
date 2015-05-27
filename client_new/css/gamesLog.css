@@ -1,0 +1,174 @@
+/* Games Log */
+
+.games-log{ /* table */
+    height: 100%;
+    width: 100%;
+    /*text-align: center;*/
+    /* border: 1px solid rgba(94, 94, 94, 0.2); */
+}
+
+.games-log th {
+    font-weight: 400;
+    font-size: 0.8rem;
+    text-align: left;
+}
+
+.games-log tr {
+    width: 100%;
+    display: table;
+    text-align: left;
+}
+
+/* Adjust head columns */
+
+.games-log th:nth-child(1) {
+    width: 15%;
+}
+
+.games-log th:nth-child(2) {
+    width: 15%;
+}
+
+.games-log th:nth-child(3) {
+    width: 20%;
+}
+
+.games-log th:nth-child(4) {
+    width: 15%;
+}
+
+.games-log th:nth-child(5) {
+    width: 20%;
+}
+
+.games-log th:nth-child(6) {
+    width: 15%;
+}
+
+/* Adjust body columns */
+
+.games-log td:nth-child(1) {
+    width: 15%;
+}
+
+.games-log td:nth-child(2) {
+    width: 15%;
+}
+
+.games-log td:nth-child(3) {
+    width: 20%;
+}
+
+.games-log td:nth-child(4) {
+    width: 15%;
+}
+
+.games-log td:nth-child(5) {
+    width: 20%;
+}
+
+.games-log td:nth-child(6) {
+    width: 15%;
+}
+
+.games-log td:nth-child(6)>input {
+    width: 60%;
+}
+
+.games-log td:nth-child(6)>input {
+    max-width: 40%;
+}
+
+.games-log td:nth-child(6) .hash-copy {
+    width: auto;
+}
+
+.games-log thead, .games-log tbody {
+    float: left;
+    width: 100%;
+}
+
+.games-log thead {
+    border-bottom: 1px solid rgba(94, 94, 94, 0.2);
+}
+
+.games-log tbody {
+    overflow-y: auto;
+    height: 100%;
+}
+
+.games-log tr:nth-of-type(even) {
+    background: #f9f9f9;
+}
+
+
+
+.games-log tr td {
+    font-size: 0.8rem;
+    text-align: left;
+}
+
+.games-log tbody tr:hover {
+    color: black;
+    background: #FFCC99;
+}
+
+.games-log a {
+    font-weight: bold;
+}
+
+.games-log-goodcrash  {
+    color: green;
+}
+
+.games-log-badcrash  {
+    color: red;
+}
+
+.games-log-hash {
+    width: 3em;
+}
+
+.game-details {
+    font-size: 11px;
+    color: #408609;
+    letter-spacing: 0.03em;
+    font-weight: 200;
+}
+
+.scroll {
+    overflow-y: scroll;
+}
+
+.hash-copy-cont{
+    display: inline-block;
+    cursor: pointer;
+}
+
+.hash-copy {
+    -webkit-border-radius: 0 4px 4px 0;
+    -moz-border-radius: 0 4px 4px 0;
+    border-radius: 0 4px 4px 0;
+    margin-left: -1px;
+    vertical-align: top;
+    display: inline-block;
+    width: auto;
+    height: 20px;
+    min-width: 16px;
+    padding: 0 5px;
+    font-size: 11px;
+    font-weight: normal;
+    line-height: 20px;
+    text-align: center;
+    text-shadow: 0 1px 0 #ffffff;
+    background-color: #eeeeee;
+    border: 1px solid #ccc;
+    white-space: nowrap;
+    color: #333333;
+}
+
+@media handheld, only screen and (max-width: 767px) {
+.hash-copy {
+    width: 5em;
+}
+}

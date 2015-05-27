@@ -1,0 +1,57 @@
+#controls-selector-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+}
+
+#controls-selector-container .buttons-container {
+    width: 100%;
+    /* z-index: 5001; */
+    display: table;
+    background: rgba(249, 249, 249, 1);
+}
+
+#controls-selector-container .button-holder {
+    display: table-cell;
+    width: 50%;
+    text-align: center;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+#controls-selector-container .button-holder:hover a{
+    color: rgba(228, 121, 3, 1);
+}
+
+#controls-selector-container .button-holder.tab-active a{
+    color: rgba(228, 121, 3, 1);   font-weight: 800;
+    cursor: pointer;
+}
+
+#controls-selector-container .button-holder a{
+    line-height: 1.5rem;
+    color: black;
+}
+
+/*#controls-selector-container .button-container button{*/
+    /*/!* float: right; *!/*/
+
+    /*position: absolute;*/
+    /*right: 0;*/
+    /*background-color: white;*/
+    /*border: 1px solid grey;*/
+    /*cursor: pointer;*/
+    /*outline: 0;*/
+    /*z-index: 50002;*/
+/*}*/
+
+#controls-selector-container .controls-widget-container{
+    position: absolute;
+
+    top: 1.5rem;
+    right: 0;
+    left: 0;
+    bottom: 0;
+}
