@@ -83,7 +83,7 @@ exports.login = function(req, res, next) {
 
     if (!recaptcha) {
         console.warn('No recaptca found');
-        return res.render('login', {warning: 'Invalid or missing recaptcha'});
+        return res.render('login', { warning: 'Invalid or missing recaptcha', recaptchaKey: config.RECAPTCHA_SITE_KEY });
     }
     console.log('Login with recaptcha: ', recaptcha);
 
