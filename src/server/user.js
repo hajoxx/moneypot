@@ -100,7 +100,7 @@ exports.login = function(req, res, next) {
                 return res.render('login', { warning: 'Invalid password' });
             if (err === 'INVALID_OTP') {
                 var warning = otp ? 'Invalid one-time password' : undefined;
-                return res.render('login-mfa', { username: username, password: password, warning: warning });
+                return res.render('login-mfa', { username: username, password: password, warning: warning, recaptchaKey: config.RECAPTCHA_SITE_KEY });
             }
             return next(new Error('Unable to validate user ' + username + ': \n' + err));
         }
