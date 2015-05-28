@@ -17,6 +17,6 @@ node build.js
 # git add node_modules --force
 # git add build --force
 # git commit -a -m "Compiled Version"
-# git merge origin/compiled -s recursive -X ours -m "Merge master into compiled"
-# git push origin HEAD:compiled
+# git merge origin/prod -s recursive -X ours -m "Merge master into compiled"
+# git push origin HEAD:prod
 # git push git@heroku.com:devpot.git HEAD:master
