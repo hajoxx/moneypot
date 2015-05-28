@@ -88,16 +88,16 @@ exports.login = function(req, res, next) {
     console.log('Login with recaptcha: ', recaptcha);
 
     if (!username || !password)
-        return res.render('login', { warning: 'no username or password' });
+        return res.render('login', { warning: 'no username or password', recaptchaKey: config.RECAPTCHA_SITE_KEY });
 
 
     database.validateUser(username, password, otp, function(err, userId) {
         console.log('Attempted login for user: ', username, ' result: ', err);
         if (err) {
             if (err === 'NO_USER')
-                return res.render('login',{ warning: 'Username does not exist' });
+                return res.render('login',{ warning: 'Username does not exist', recaptchaKey: config.RECAPTCHA_SITE_KEY });
             if (err === 'WRONG_PASSWORD')
-                return res.render('login', { warning: 'Invalid password' });
+                return res.render('login', { warning: 'Invalid password', recaptchaKey: config.RECAPTCHA_SITE_KEY });
             if (err === 'INVALID_OTP') {
                 var warning = otp ? 'Invalid one-time password' : undefined;
                 return res.render('login-mfa', { username: username, password: password, warning: warning, recaptchaKey: config.RECAPTCHA_SITE_KEY });
