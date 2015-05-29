@@ -7,6 +7,7 @@ define([
     _,
     AppConstants
 ){
+
     //TODO: Clean this file
 
     function Graph(width, height) {
@@ -26,8 +27,12 @@ define([
     }
 
     Graph.prototype.resize = function(width, height) {
+
         this.canvasWidth = width;
         this.canvasHeight = height;
+
+        this.canvas.width = this.canvasWidth;
+        this.canvas.height = this.canvasHeight;
 
         //Plotting Settings
         this.plotWidth = this.canvasWidth - 30;
@@ -60,7 +65,7 @@ define([
         this.startTime = engine.startTime;
 
         this.currentTime = Clib.getElapsedTimeWithLag(engine);
-        this.lastBalance = Clib.calcGamePayout(this.currentTime);
+        this.currentGamePayout = Clib.calcGamePayout(this.currentTime);
     };
 
     Graph.prototype.calculatePlotValues = function() {
@@ -76,8 +81,8 @@ define([
             this.XAxisPlotValue = this.currentTime;
 
         //Adjust Y Plot's Axis
-        if(this.lastBalance > this.YAxisPlotMinValue)
-            this.YAxisPlotValue = this.lastBalance;
+        if(this.currentGamePayout > this.YAxisPlotMinValue)
+            this.YAxisPlotValue = this.currentGamePayout;
 
         //We start counting from cero to plot
         this.YAxisPlotValue-=1;
@@ -165,7 +170,7 @@ define([
 
         //Calculate Y Axis
         this.YAxisPlotMaxValue = this.YAxisPlotMinValue;
-        this.payoutSeparation = stepValues(!this.lastBalance ? 1 : this.lastBalance);
+        this.payoutSeparation = stepValues(!this.currentGamePayout ? 1 : this.currentGamePayout);
 
         this.ctx.lineWidth=1;
         this.ctx.strokeStyle = "Black";
@@ -209,7 +214,24 @@ define([
         this.ctx.stroke();
     };
 
+
+
     Graph.prototype.drawGameData = function() {
+
+        //Percentage of canvas width
+        var onePercent = this.canvasWidth/100;
+        function fontSizeNum(times) {
+            return onePercent * times;
+        }
+        function fontSizePx(times) {
+            var fontSize = fontSizeNum(times);
+            return fontSize.toFixed(2) + 'px';
+        }
+
+
+        this.ctx.textAlign="center";
+        this.ctx.textBaseline = 'middle';
+
 
         if(this.engine.gameState === 'IN_PROGRESS') {
             var pi = (this.engine.username)? this.engine.playerInfo[this.engine.username]: null; //TODO: Abstract this on engine virtual store?
@@ -218,19 +240,17 @@ define([
                 this.ctx.fillStyle = '#7cba00';
             else
                 this.ctx.fillStyle = "black";
-            this.ctx.font="80px Verdana";
-            this.ctx.fillText(parseFloat(this.lastBalance).toFixed(2) + 'x', this.canvasWidth/4, 150);
+
+            this.ctx.font = fontSizePx(20) + " Verdana";
+            this.ctx.fillText(parseFloat(this.currentGamePayout).toFixed(2) + 'x', this.canvasWidth/2, this.canvasHeight/2);
         }
 
         //If the engine enters in the room @ ENDED it doesn't have the crash value, so we don't display it
         if(this.engine.gameState === 'ENDED') {
-            if(this.canvasWidth > 500)
-                this.ctx.font="60px Verdana";
-            else
-                this.ctx.font="40px Verdana";
+            this.ctx.font = fontSizePx(15) + " Verdana";
             this.ctx.fillStyle = "red";
-            this.ctx.fillText('Busted', this.canvasWidth/5, 100);
-            this.ctx.fillText('@ ' + Clib.formatDecimals(this.engine.tableHistory[0].game_crash/100, 2) + 'x', this.canvasWidth/5, 180);
+            this.ctx.fillText('Busted', this.canvasWidth/2, this.canvasHeight/2 - fontSizeNum(15)/2);
+            this.ctx.fillText('@ ' + Clib.formatDecimals(this.engine.tableHistory[0].game_crash/100, 2) + 'x', this.canvasWidth/2, this.canvasHeight/2 + fontSizeNum(15)/2);
         }
 
         //if(this.lag) {

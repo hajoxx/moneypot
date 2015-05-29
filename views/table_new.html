@@ -10,6 +10,8 @@
         //  var OTT =  {{=it.ott}};
     </script>
     <!--RequireJs-->
-    <script data-main="../scripts/main-game" src="{{? it.buildConfig }}{{=it.buildConfig.jsHashNew}}.js{{??}}../scripts/lib/require.js{{?}}"></script>
+    <script data-main="../scripts/main" src="{{? it.buildConfig }}{{=it.buildConfig.jsHashNew}}.js{{??}}../scripts/lib/require.js{{?}}"></script>
+
+    <div id="handheld-detection"></div>
 #}}
 {{#def.include('./template/main-game')}}

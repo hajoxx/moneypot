@@ -32,32 +32,6 @@ define([
                 this.setState(getState());
         },
 
-        componentWillMount: function() {
-            //window.onresize=function() {
-            //    if (window.innerWidth > 767) {
-            //        if((window.innerWidth) < 1000) {
-            //            width = Math.floor(window.innerWidth * 0.58);
-            //        } else {
-            //            width = 600;
-            //        }
-            //    } else {
-            //        width = window.innerWidth * 0.9;
-            //    }
-            //    self.graph = new Graph(width, 300);
-            //};
-            //
-            //if (window.innerWidth > 767) {
-            //    if((window.innerWidth) < 1000) {
-            //        width = Math.floor(window.innerWidth * 0.58);
-            //    } else {
-            //        width = 600;
-            //    }
-            //} else {
-            //    width = window.innerWidth * 0.9;
-            //}
-            //
-        },
-
         componentWillUnmount: function() {
             Engine.off({
                 game_started: this._onChange,
@@ -67,11 +41,10 @@ define([
             });
 
             this.mounted = false;
+            window.removeEventListener("resize", this._resizeGraph)
         },
 
         componentDidMount: function() {
-            var self = this;
-
             Engine.on({
                 game_started: this._onChange,
                 game_crash: this._onChange,
@@ -88,12 +61,14 @@ define([
             this.animRequest = window.requestAnimationFrame(this._draw);
             this.setState({ width: width, height: height });
 
-            window.onresize=function() {
-                var node = self.getDOMNode();
-                var height = node.clientHeight;
-                var width = node.clientWidth;
-                self.graph.resize(width, height);
-            }
+            window.addEventListener("resize", this._resizeGraph);
+        },
+
+        _resizeGraph: function() {
+            var node = this.getDOMNode();
+            var height = node.clientHeight;
+            var width = node.clientWidth;
+            this.graph.resize(width, height);
         },
 
         _draw: function() {

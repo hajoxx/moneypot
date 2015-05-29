@@ -32,6 +32,7 @@
 
   "scripts": {
     "start-dev": "env $(cat .env | xargs) nodemon src/server/index",
+    "start-dev-new":"NEW_VIEW=yes env $(cat .env | xargs) nodemon src/server/index" ,
     "start": "node src/server/index"
   }
 }

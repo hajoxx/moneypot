@@ -22,6 +22,10 @@ define([
     return React.createClass({
         displayName: 'ControlsSelector',
 
+        propTypes: {
+            isMobileOrSmall: React.PropTypes.bool.isRequired
+        },
+
         getInitialState: function () {
             return getState();
         },
@@ -67,7 +71,9 @@ define([
 
                 D.div({ className: 'controls-widget-container' },
                     this.state.selectedControl === 'manual'?
-                        Controls() :
+                        Controls({
+                            isMobileOrSmall: this.props.isMobileOrSmall
+                        }) :
                         StrategyEditor()
                 )
             )

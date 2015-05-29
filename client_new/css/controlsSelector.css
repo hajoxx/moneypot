@@ -13,6 +13,13 @@
     background: rgba(249, 249, 249, 1);
 }
 
+@media handheld, only screen and (max-width: 767px) {
+    #controls-selector-container .buttons-container {
+        display: none;
+    }
+}
+
+
 #controls-selector-container .button-holder {
     display: table-cell;
     width: 50%;
@@ -47,11 +54,16 @@
     /*z-index: 50002;*/
 /*}*/
 
-#controls-selector-container .controls-widget-container{
+#controls-selector-container .controls-widget-container {
     position: absolute;
-
     top: 1.5rem;
     right: 0;
     left: 0;
     bottom: 0;
+}
+
+@media handheld, only screen and (max-width: 767px) {
+    #controls-selector-container .controls-widget-container {
+        top: 0;
+    }
 }

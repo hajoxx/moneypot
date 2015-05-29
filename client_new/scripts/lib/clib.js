@@ -189,6 +189,10 @@ define([
         //Just calculates the elapsed time
         getElapsedTime: function(startTime) {
             return Date.now() - startTime;
+        },
+
+        isMobileOrSmall: function() {
+            return window.getComputedStyle(document.getElementById('handheld-detection'), null).display == 'none';
         }
 
     };

@@ -486,22 +486,16 @@ define([
 
     /**
      * Request the server to cash out
-     * @param {function} callback - The callback to handle cash_out request errors
      */
-    Engine.prototype.cashOut = function(callback) {
+    Engine.prototype.cashOut = function() {
         var self = this;
         this.cashingOut = true;
-        this.ws.emit('cash_out', function(error) { //TODO: Deprecate callback
+        this.ws.emit('cash_out', function(error) {
             if (error) {
                 self.cashingOut = false;
                 console.warn('Cashing out error: ', error);
-                if(callback)
-                    return callback(error);
-
-                this.trigger('cashing_out');
+                self.trigger('cashing_out_error'); //TODO: This is not listened anywhere, check if a component needs to listen to it.
             }
-            if(callback)
-                return callback(null);
         });
         this.trigger('cashing_out');
     };

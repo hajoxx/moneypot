@@ -1,0 +1,46 @@
+#chart-controls-inner-container {
+    min-height: 20rem;
+    height: 100%;
+}
+@media handheld, only screen and (max-width: 767px) {
+    #chart-controls-inner-container {
+        min-height: 50%;
+    }
+}
+
+#chart-container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 40%;
+    margin: 0.5rem;
+}
+
+#controls-container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 61%;
+    right: 0;
+    border-left: 1px solid #ddd;
+}
+
+@media handheld, only screen and (max-width: 767px) {
+    
+    #chart-container {
+        top: 0;
+        bottom: 4.6rem;
+        left: 0;
+        right: 0;
+        margin: 0.5rem;
+    }
+
+    #controls-container{
+        top: calc(100% - 4.6rem);
+        bottom: 0;
+        left: 0;
+        right: 0;
+        border-left: 1px solid #ddd;
+    }
+}

@@ -10,6 +10,7 @@
 @import url("strategy.css");
 @import url("betBar.css");
 @import url("chart.css");
+@import url("chartControls.css");
 
 /**
 Quick Guidelines:
@@ -89,6 +90,11 @@ i {
     right: 0;
     left: 0;
 }
+@media handheld, only screen and (max-width: 767px) {
+    .page-content {
+        top: 0;
+    }
+}
 
 /* Overwrite the native focus outline */
 input:focus {
@@ -98,6 +104,32 @@ input:focus {
     box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
 }
 
+
+@media handheld, only screen and (max-width: 767px) {
+    #handheld-detection {
+        display: none;
+    }
+}
+
+
+/* ==========================================================================
+   Header Overwrite
+   ========================================================================== */
+
+@media handheld, only screen and (max-width: 767px) {
+    .nav-top-bar {
+        border-bottom: none;
+        z-index: 999999;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+    }
+
+    .nav-top-bar .username a {
+        font-weight: bold;
+    }
+}
 
 
 /* ==========================================================================
@@ -180,15 +212,14 @@ input:focus {
 }
 
 #game-left-container {
-    /* position: absolute; */
-    /* top: 0; */
-    /* bottom: 0; */
-    /* left: 0; */
-    /* right: 30%; */
     display: table;
     height: 100%;
     width: 70%;
     position: relative;
+}
+
+#game-left-container.small-window {
+    width: 100%;
 }
 
 #game-right-container {
@@ -197,32 +228,21 @@ input:focus {
     bottom: 0;
     left: 70%;
     right: 0;
-    /* display: table; */
     border-left: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
     border-right: 1px solid #ddd;
 }
+
 
 /* ==========================================================================
    Tabs container
    ========================================================================== */
 
 #tabs-container {
-    /* position: absolute; */
-    /* top: 50%; */
-    /* bottom: 0; */
-    /* left: 0; */
-    /* right: 0; */
     border-left: 1px solid #ddd;
     border-top: 1px solid #ddd;
     display: table-row;
-    /* max-height: 50%; */
-    /* height: 50%; */
-    /* width: 100%; */
-    /* position: relative; */
 }
-
-
 
 
 /* ==========================================================================
@@ -247,511 +267,6 @@ input:focus {
     position: relative;
 }
 
-#chart-controls-inner-container {
-    min-height: 20rem;
-}
-
-#chart-container {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 40%;
-    overflow: hidden; /* TODO: Remove */
-    margin: 0.5rem;
-}
-
-#controls-container {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 61%;
-    right: 0;
-    border-left: 1px solid #ddd;
-}
-
-
-
-
-
-
-/* Button Styles ??
-   ========================================================================== */
-
-/*.sticky {*/
-    /*margin-left: -4px;*/
-    /*color: #9C9696;*/
-/*}*/
-
-/*.cashout input{*/
-    /*width: 18px;*/
-    /*margin-left: -5px;*/
-/*}*/
-
-/*.cashout {*/
-    /*font-size: 13px;*/
-    /*display: inline;*/
-    /*line-height: 2rem;*/
-/*}*/
-/*.bet-grows {*/
-    /*font-size: 25px;*/
-    /*text-align: center;*/
-    /*margin-top: -5px;*/
-/*}*/
-
-/*.big {*/
-    /*text-align: center;*/
-    /*font-size: 40px;*/
-    /*margin: 5px;*/
-    /*font-weight: bold;*/
-/*}*/
-
-/*.center {*/
-    /*text-align: center;*/
-/*}*/
-
-/*.place-bet {*/
-    /*margin-top: 30px;*/
-/*}*/
-
-/*.left-side {*/
-    /*margin-top: 29px;*/
-/*}*/
-
-/*.bet-span {*/
-    /*padding-right: 20px;*/
-    /*font-size: 25px;*/
-    /*padding-top: 6px;*/
-    /*width: 64px;*/
-    /*float:left;*/
-    /*margin-top: 8px;*/
-    /*line-height: 12px;*/
-    /*text-align: center;*/
-    /*margin-left: 9px;*/
-    /*font-weight: bold;*/
-/*}*/
-
-/*.cash-out input{*/
-    /*margin-left: 10px;*/
-/*}*/
-
-/*.cash-out .information {*/
-    /*margin-top: -10px;*/
-    /*margin-bottom: 10px;*/
-/*}*/
-
-/*.hash-text {*/
-     /*-webkit-border-radius: 4px 0 0 4px;*/
-     /*-moz-border-radius: 4px 0 0 4px;*/
-     /*border-radius: 4px 0 0 4px;*/
-     /*margin-right: -1px;*/
-     /*vertical-align: top;*/
-     /*display: inline-block;*/
-     /*width: auto;*/
-     /*height: 20px;*/
-     /*min-width: 16px;*/
-     /*padding: 0 5px;*/
-     /*font-size: 11px;*/
-     /*font-weight: normal;*/
-     /*line-height: 20px;*/
-     /*text-align: center;*/
-     /*text-shadow: 0 1px 0 #ffffff;*/
-     /*background-color: #eeeeee;*/
-     /*border: 1px solid #ccc;*/
-     /*white-space: nowrap;*/
-     /*color: #333333;*/
- /*}*/
-
-/*.hash-input {*/
-     /*width: 40em;*/
-     /*position: relative;*/
-     /*margin-bottom: 0;*/
-     /*vertical-align: top;*/
-     /*-webkit-border-radius: 0;*/
-     /*-moz-border-radius: 0;*/
-     /*border-radius: 0;*/
-     /*font-size: 14px;*/
-     /*float: none;*/
-     /*margin-left: 0;*/
-     /*background-color: #ffffff;*/
-     /*border: 1px solid #cccccc;*/
-     /*-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);*/
-     /*-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);*/
-     /*box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);*/
-     /*-webkit-transition: border linear .2s, box-shadow linear .2s;*/
-     /*-moz-transition: border linear .2s, box-shadow linear .2s;*/
-     /*-o-transition: border linear .2s, box-shadow linear .2s;*/
-     /*transition: border linear .2s, box-shadow linear .2s;*/
-     /*height: 20px;*/
-     /*padding: 4px 6px;*/
-     /*line-height: 20px;*/
-     /*color: #555555;*/
-     /*margin: 0;*/
- /*}*/
-
-/*@media handheld, only screen and (max-width: 767px) {*/
-    /*.hash-input {*/
-            /*width: 16em;*/
-        /*}*/
-/*}*/
-
-/*.hash-copy-cont{*/
-     /*display: inline-block;*/
-     /*cursor: pointer;*/
- /*}*/
-
-/*.hash-copy {*/
-     /*-webkit-border-radius: 0 4px 4px 0;*/
-     /*-moz-border-radius: 0 4px 4px 0;*/
-     /*border-radius: 0 4px 4px 0;*/
-     /*margin-left: -1px;*/
-     /*vertical-align: top;*/
-     /*display: inline-block;*/
-     /*width: auto;*/
-     /*height: 20px;*/
-     /*min-width: 16px;*/
-     /*padding: 0 5px;*/
-     /*font-size: 11px;*/
-     /*font-weight: normal;*/
-     /*line-height: 20px;*/
-     /*text-align: center;*/
-     /*text-shadow: 0 1px 0 #ffffff;*/
-     /*background-color: #eeeeee;*/
-     /*border: 1px solid #ccc;*/
-     /*white-space: nowrap;*/
-     /*color: #333333;*/
- /*}*/
-
-/*@media handheld, only screen and (max-width: 767px) {*/
-    /*.hash-copy {*/
-       /*width: 5em;*/
-    /*}*/
-/*}*/
-
-/*.green {*/
-    /*color: #7cba00;*/
-/*}*/
-
-/*.information {*/
-    /*text-align: center;*/
-    /*overflow-x: hidden;*/
-/*}*/
-
-/*.information .small {*/
-    /*font-size: 14px;*/
-    /*font-weight: 600;*/
-/*}*/
-
-/*.red {*/
-    /*color: #ba3c12;*/
-/*}*/
-
-/*.auto-cash-out-span {*/
-    /*font-size: 12px;*/
-    /*width: 64px;*/
-    /*float:left;*/
-    /*margin-top: 8px;*/
-    /*line-height: 12px;*/
-    /*text-align: center;*/
-    /*margin-left: 9px;*/
-    /*font-weight: bold;*/
-/*}*/
-
-/*.hint {*/
-    /*font-size: 12px;*/
-    /*float: left;*/
-    /*margin-top: 19px;*/
-    /*background: rgba(0, 142, 253, 0.79);*/
-    /*color: white;*/
-    /*font-weight: 500;*/
-    /*padding: 0 6px;*/
-    /*text-align: center;*/
-/*}*/
-
-/*.cancel {*/
-    /*margin-top: 5px;*/
-    /*font-size: 12px;*/
-    /*font-weight: 500;*/
-    /*text-align: right;*/
-/*}*/
-
-/*.invalid {*/
-    /*float: right;*/
-    /*color: red;*/
-    /*position: absolute;*/
-/*}*/
-
-/*.boxes {*/
-    /*float: right;*/
-    /*width: 100px;*/
-    /*display: inline;*/
-    /*margin-top: 10px;*/
-/*}*/
-
-/*.boxes label:hover {*/
-    /*cursor: pointer;*/
-/*}*/
-
-/*.auto-bet-cont label:hover, .auto-bet-cont input:hover {*/
-     /*cursor: pointer;*/
- /*}*/
-
-
-/* ? (Organizing)
-   ========================================================================== */
-
-/*.login-container {*/
-    /*min-width: 0;*/
-    /*padding-left: 2em;*/
-/*}*/
-
-/*.login {*/
-
-/*}*/
-
-/*.game {*/
-    /*margin-top: -19px;*/
-/*}*/
-
-/*.split-button {*/
-    /*display: block;*/
-    /*height: 100%;*/
-    /*width: 2.75rem;*/
-    /*position: absolute;*/
-    /*right: 0;*/
-    /*top: 0;*/
-    /*border-left: solid 1px;*/
-    /*border-left-color: rgba(255,255,255,0.5);*/
-    /*font-size: 30px;*/
-    /*font-weight: 900;*/
-/*}*/
-
-/*.playing {*/
-    /*background-color: #368a55;*/
-/*}*/
-
-/*.will-join {*/
-    /*background-color: rgba(69, 34, 126, 0.82);*/
-/*}*/
-
-/*.time-out {*/
-    /*background-color: #ba3c12;*/
-/*}*/
-
-/*.not-enough-money {*/
-    /*background-color: grey;*/
-/*}*/
-
-/*.not-logged {*/
-    /*background-color: grey;*/
-/*}*/
-
-
-/* Advanced options button */
-
-/*.advanced-options {*/
-    /*height: 4rem;*/
-    /*font-size: 16px;*/
-    /*text-align: center;*/
-    /*border-bottom-right-radius: 3px;*/
-    /*border-bottom-left-radius: 3px;*/
-    /*margin-right: 2.75rem;*/
-/*}*/
-
-/*.adv-opt-playing {*/
-    /*border: #368a55 2px solid;*/
-/*}*/
-
-/*.adv-opt-place-bet {*/
-    /*border: #ff8100 2px solid;*/
-/*}*/
-
-/*.adv-opt-will-join {*/
-    /*border: rgba(69, 34, 126, 0.82) 2px solid;*/
-/*}*/
-
-/*.adv-opt-time-out {*/
-    /*border: #ba3c12 2px solid;*/
-/*}*/
-
-/*.adv-opt-not-enough-balance {*/
-    /*border: grey 2px solid;*/
-/*}*/
-
-/*.adv-opt-not-logged {*/
-    /*border: grey 2px solid;*/
-/*}*/
-
-/*.advanced-options > div, .advanced-options > input {*/
-    /*display: inline-block;*/
-    /*height: 2rem;*/
-/*}*/
-
-/*@media only screen and (max-width: 40em) {*/
-    /*.advanced-options {*/
-        /*height: 8rem;*/
-    /*}*/
-/*}*/
-
-/*.game-button {*/
-    /*text-align: center;*/
-    /*display: block;*/
-    /*min-width: 100%;*/
-    /*color: white;*/
-    /*position: relative;*/
-    /*cursor: pointer;*/
-    /*padding: 7px;*/
-    /*font-weight: 500;*/
-    /*-webkit-border-radius: 3px;*/
-    /*-moz-border-radius: 3px;*/
-    /*border-radius: 3px;*/
-/*}*/
-
-/*.game-button:hover {*/
-    /*font-weight: 300;*/
-/*}*/
-
-/*.split-button {*/
-    /*display: block;*/
-    /*height: 100%;*/
-    /*width: 2.75rem;*/
-    /*position: absolute;*/
-    /*right: 0;*/
-    /*top: 0;*/
-    /*border-left: solid 1px;*/
-    /*border-left-color: rgba(255,255,255,0.5);*/
-    /*font-size: 30px;*/
-    /*font-weight: 900;*/
-/*}*/
-
-/*.playing {*/
-    /*background-color: #368a55;*/
-/*}*/
-
-/*.will-join {*/
-    /*background-color: rgba(69, 34, 126, 0.82);*/
-/*}*/
-
-/*.time-out {*/
-    /*background-color: #ba3c12;*/
-/*}*/
-
-/*.not-enough-money {*/
-    /*background-color: grey;*/
-/*}*/
-
-/*.not-logged {*/
-    /*background-color: grey;*/
-/*}*/
-
-
-/*/!* Advanced options button *!/*/
-
-/*.advanced-options {*/
-    /*height: 4rem;*/
-    /*font-size: 16px;*/
-    /*text-align: center;*/
-    /*border-bottom-right-radius: 3px;*/
-    /*border-bottom-left-radius: 3px;*/
-    /*margin-right: 2.75rem;*/
-/*}*/
-
-/*.adv-opt-playing {*/
-    /*border: #368a55 2px solid;*/
-/*}*/
-
-/*.adv-opt-place-bet {*/
-    /*border: #ff8100 2px solid;*/
-/*}*/
-
-/*.adv-opt-will-join {*/
-    /*border: rgba(69, 34, 126, 0.82) 2px solid;*/
-/*}*/
-
-/*.adv-opt-time-out {*/
-    /*border: #ba3c12 2px solid;*/
-/*}*/
-
-/*.adv-opt-not-enough-balance {*/
-    /*border: grey 2px solid;*/
-/*}*/
-
-/*.adv-opt-not-logged {*/
-    /*border: grey 2px solid;*/
-/*}*/
-
-/*.advanced-options > div, .advanced-options > input {*/
-    /*display: inline-block;*/
-    /*height: 2rem;*/
-/*}*/
-
-/*@media only screen and (max-width: 40em) { */
-    /*.advanced-options {*/
-        /*height: 8rem;*/
-    /*}*/
-/*}*/
-
-
-/* Auto Cash Out */
-
-/*.tabs {*/
-    /*margin-top: -33px;*/
-/*}*/
-
-/*.autocash-selector-container {*/
-    /*float: right;*/
-/*}*/
-
-/*.autocash-selector {*/
-    /*display: inline-block;*/
-    /*text-align: right;*/
-/*}*/
-
-/*.selector-qty {*/
-    /*margin-right: .5rem;*/
-/*}*/
-
-/*.autocash-selector > span, .autocash-selector > a{*/
-    /*line-height: 2rem;*/
-/*}*/
-
-/*.cash-selector-btn {*/
-    /*cursor: pointer;*/
-    /*margin-right: 0.5rem;*/
-/*}*/
-
-/*.selector-qty {*/
-
-/*}*/
-
-/*.selector-input {*/
-    /*width: 10rem;*/
-/*}*/
-
-/*.selector-slider {*/
-    /*vertical-align: middle;*/
-    /*width: 10rem;*/
-/*}*/
-
-/*.btn-disabled {*/
-    /*opacity: 0.5;*/
-/*}*/
-
-/*.register {*/
-    /*float:right;*/
-    /*margin-top: 6px;*/
-    /*font-size: 15px;*/
-/*}*/
-
-/*@media only screen and (max-width: 40em) { */
-    /*.selector-input {*/
-        /*width: 5rem;*/
-    /*}*/
-
-    /*.selector-slider {*/
-        /*width: 5rem;*/
-    /*}*/
-/*}*/
 
 /* ==========================================================================
    Players List
@@ -825,6 +340,7 @@ input:focus {
     max-width: 3rem;
 }
 
+
 /* Playing/Lost/Cashed/Won Colors
    ========================================================================== */
 
@@ -867,5 +383,3 @@ tr.user-cashed.me {
     /*color: black;*/
     /*margin-bottom: 1em;*/
 /*}*/
-
-

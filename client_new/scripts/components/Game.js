@@ -6,18 +6,20 @@
  */
 define([
     'lib/react',
-    'components/Chart-Controls',
+    'components/ChartControls',
     'components/TabsSelector',
     'components/Players',
     'components/BetBar',
-    'game-logic/engine'
+    'game-logic/engine',
+    'lib/clib'
 ], function(
     React,
     ChartControlsClass,
     TabsSelectorClass,
     PlayersClass,
     BetBarClass,
-    Engine
+    Engine,
+    Clib
 ){
     var ChartControls = React.createFactory(ChartControlsClass);
     var TabsSelector = React.createFactory(TabsSelectorClass);
@@ -32,7 +34,8 @@ define([
         getInitialState: function () {
             return {
                 isConnected: Engine.isConnected,
-                showMessage: true
+                showMessage: true,
+                isMobileOrSmall: Clib.isMobileOrSmall()
             }
         },
 
@@ -41,6 +44,8 @@ define([
                 'connected': this._onChange,
                 'disconnected': this._onChange
             });
+
+            window.addEventListener("resize", this._onWindowResize);
         },
 
         componentWillUnmount: function() {
@@ -53,6 +58,12 @@ define([
         _onChange: function() {
             if(this.state.isConnected != Engine.isConnected)
                 this.setState({ isConnected: Engine.isConnected });
+        },
+
+        _onWindowResize: function() {
+            var isMobileOrSmall = Clib.isMobileOrSmall();
+            if(this.state.isMobileOrSmall !== isMobileOrSmall)
+                this.setState({ isMobileOrSmall: isMobileOrSmall });
         },
 
         _hideMessage: function() {
@@ -115,16 +126,23 @@ define([
                 containerClass = '';
             }
 
+            var rightContainer = !this.state.isMobileOrSmall?
+                D.div({ id: 'game-right-container' },
+                    Players(),
+                    BetBar()
+                ) : null;
 
             return D.div({ id: 'game-inner-container' },
 
                 messageContainer,
 
                 D.div({ id: 'game-playable-container', className: containerClass },
-                    D.div({ id: 'game-left-container' },
+                    D.div({ id: 'game-left-container', className: this.state.isMobileOrSmall? ' small-window' : '' },
                         D.div({ id: 'chart-controls-row' },
                             D.div({ id: 'chart-controls-col' },
-                                ChartControls()
+                                ChartControls({
+                                    isMobileOrSmall: this.state.isMobileOrSmall
+                                })
                             )
 
                         ),
@@ -135,34 +153,10 @@ define([
                         )
 
                     ),
-                    D.div({ id: 'game-right-container' },
-                        Players(),
-                        BetBar()
-                    )
+                    rightContainer
                 )
 
             );
-
-            //return D.div({ className: 'content' },
-            //    D.div({ className: 'grid grid-pad' },
-            //        D.div({ className: 'col-7-12 game' },
-            //            Chart(),
-            //            Controls()
-            //        ),
-            //        D.div({ className: 'col-5-12 tabs' },
-            //            D.div({ className: 'players' },
-            //                Players()
-            //            ),
-            //            D.div({ className: 'bet-bar' },
-            //                BetBar()
-            //            ),
-            //            D.div({ className: 'log-chat' },
-            //                TabsSelector()
-            //            )
-            //        )
-            //
-            //    )
-            //)
         }
     });
 

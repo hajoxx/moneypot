@@ -2,7 +2,7 @@ define([
     'lib/react',
     'lib/clib',
     'lib/lodash',
-    'components/Countdown',
+    //'components/Countdown',
     'components/BetButton',
     'actions/ControlsActions',
     'stores/ControlsStore',
@@ -11,14 +11,14 @@ define([
     React,
     Clib,
     _,
-    CountDownClass,
+    //CountDownClass,
     BetButtonClass,
     ControlsActions,
     ControlsStore,
     Engine
 ){
 
-    var Countdown = React.createFactory(CountDownClass);
+    //var Countdown = React.createFactory(CountDownClass);
     var BetButton = React.createFactory(BetButtonClass);
 
     var D = React.DOM;
@@ -36,17 +36,19 @@ define([
     return React.createClass({
         displayName: 'Controls',
 
+        propTypes: {
+            isMobileOrSmall: React.PropTypes.bool.isRequired
+        },
+
         getInitialState: function () {
             return getState();
         },
-
 
         componentDidMount: function() {
             ControlsStore.addChangeListener(this._onChange);
             Engine.on({
                 game_started: this._onChange,
                 game_crash: this._onChange,
-                game_crash: this._onGameCrash,
                 game_starting: this._onChange,
                 player_bet: this._onChange,
                 cashed_out: this._onChange,
@@ -63,7 +65,6 @@ define([
             Engine.off({
                 game_started: this._onChange,
                 game_crash: this._onChange,
-                game_crash: this._onGameCrash,
                 game_starting: this._onChange,
                 player_bet: this._onChange,
                 cashed_out: this._onChange,
@@ -80,14 +81,6 @@ define([
             //and the views unregister their events before the event dispatcher dispatch them with the disconnect event
             if(this.isMounted())
                 this.setState(getState());
-        },
-
-        _onGameCrash: function() {
-
-        },
-
-        onGameCrash: function(fun) {
-
         },
 
         _placeBet: function () {
@@ -157,8 +150,9 @@ define([
             /** Control Inputs: Bet & AutoCash@  **/
             var controlInputs = [];
             controlInputs.push(D.div({ className: 'bet-container col-1-1' , key: 'ci-1' },
-                D.span({ className: '' }, 'Bet'),
+
                 D.div({ className: 'bet-input-group' + (this.state.betInvalid? ' error' : '') },
+                    D.span({ className: '' }, 'Bet'),
                     D.input({
                         type: 'text',
                         name: 'bet-size',
@@ -167,12 +161,13 @@ define([
                             self._setBetSize(e.target.value);
                         }
                     }),
-                    D.span({ className: '' }, 'Bits')
+                    D.span({ className: '' }, 'bits')
                 )
             ));
             controlInputs.push(D.div({ className: 'autocash-container col-1-1', key: 'ci-2' },
-                D.span({ className: '' }, 'Auto Cash Out'),
+
                 D.div({ className: 'bet-input-group' + (this.state.cashOutInvalid? ' error' : '') },
+                    D.span({ className: '' }, 'Auto Cash Out'),
                     D.input({
                         min: 1,
                         step: 0.01,
@@ -188,7 +183,6 @@ define([
 
             ));
 
-
             //If the user is logged in render the controls
             return D.div({ id: 'controls-inner-container' },
 
@@ -201,7 +195,8 @@ define([
                         invalidBet: this._invalidBet,
                         placeBet: this._placeBet,
                         cancelBet: this._cancelBet,
-                        cashOut: this._cashOut
+                        cashOut: this._cashOut,
+                        isMobileOrSmall: this.props.isMobileOrSmall
                     })
                 )
             );

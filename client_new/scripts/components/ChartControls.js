@@ -15,13 +15,19 @@ define([
     return React.createClass({
         displayName: 'Chart-Controls',
 
+        propTypes: {
+            isMobileOrSmall: React.PropTypes.bool.isRequired
+        },
+
         render: function() {
             return D.div({ id: 'chart-controls-inner-container' },
                 D.div({ id: 'chart-container' },
                     Chart()
                 ),
                 D.div({ id: 'controls-container' },
-                    ControlsSelector()
+                    ControlsSelector({
+                        isMobileOrSmall: this.props.isMobileOrSmall
+                    })
                 )
             );
         }

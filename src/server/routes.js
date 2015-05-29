@@ -92,7 +92,7 @@ function table() {
 
 function tableNew() {
     return function(req, res) {
-        res.render('tableNew', {
+        res.render('table_new', {
             user: req.user,
             table: true,
             buildConfig: config.BUILD
