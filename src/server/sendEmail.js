@@ -10,8 +10,8 @@ function send(details, callback) {
     assert(details, callback);
 
     var transport = nodemailer.createTransport(sesTransport({
-        AWSAccessKeyID: config.get('AWS_SES_KEY'),
-        AWSSecretKey: config.get('AWS_SES_SECRET')
+        AWSAccessKeyID: config.AWS_SES_KEY,
+        AWSSecretKey: config.AWS_SES_SECRET
     }));
 
     transport.sendMail(details, function(err) {
