@@ -1,0 +1,135 @@
+.space-wrap {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    overflow: hidden;
+    z-index: -1;
+}
+.space-wrap.flying .space-container {
+    -webkit-animation: spacebg 1s infinite linear;
+    -moz-animation: spacebg 1s infinite linear;
+    -o-animation: spacebg 1s infinite linear;
+    -ms-animation: spacebg 1s infinite linear;
+    animation: spacebg 1s infinite linear;
+    -webkit-animation-delay: 1s;
+    -moz-animation-delay: 1s;
+    -o-animation-delay: 1s;
+    -ms-animation-delay: 1s;
+    animation-delay: 1s;
+}
+.space-wrap.waiting .space-container-wrap {
+    -webkit-animation-play-state: running;
+    -moz-animation-play-state: running;
+    -o-animation-play-state: running;
+    -ms-animation-play-state: running;
+    animation-play-state: running;
+}
+.space-gradient {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background: -webkit-linear-gradient(rgba(0,0,0,0.5), transparent);
+    background: -moz-linear-gradient(rgba(0,0,0,0.5), transparent);
+    background: -o-linear-gradient(rgba(0,0,0,0.5), transparent);
+    background: -ms-linear-gradient(rgba(0,0,0,0.5), transparent);
+    background: linear-gradient(rgba(0,0,0,0.5), transparent);
+    z-index: -1;
+}
+.space-container-wrap {
+    z-index: -2;
+    position: absolute;
+    top: -480px;
+    right: -320px;
+    left: 0;
+    bottom: 0;
+    -webkit-animation: spacebg 15s infinite linear;
+    -moz-animation: spacebg 15s infinite linear;
+    -o-animation: spacebg 15s infinite linear;
+    -ms-animation: spacebg 15s infinite linear;
+    animation: spacebg 15s infinite linear;
+    -webkit-animation-play-state: paused;
+    -moz-animation-play-state: paused;
+    -o-animation-play-state: paused;
+    -ms-animation-play-state: paused;
+    animation-play-state: paused;
+}
+.space-container {
+    z-index: -2;
+    position: absolute;
+    top: -480px;
+    right: -320px;
+    left: 0;
+    bottom: 0;
+    background: #21242a url("/img/stars.png");
+}
+
+
+
+@-moz-keyframes spacebg {
+    0% {
+        -webkit-transform: translate3D(0, 0, 0);
+        -moz-transform: translate3D(0, 0, 0);
+        -o-transform: translate3D(0, 0, 0);
+        -ms-transform: translate3D(0, 0, 0);
+        transform: translate3D(0, 0, 0);
+    }
+    100% {
+        -webkit-transform: translate3D(-320px, 480px, 0);
+        -moz-transform: translate3D(-320px, 480px, 0);
+        -o-transform: translate3D(-320px, 480px, 0);
+        -ms-transform: translate3D(-320px, 480px, 0);
+        transform: translate3D(-320px, 480px, 0);
+    }
+}
+@-webkit-keyframes spacebg {
+    0% {
+        -webkit-transform: translate3D(0, 0, 0);
+        -moz-transform: translate3D(0, 0, 0);
+        -o-transform: translate3D(0, 0, 0);
+        -ms-transform: translate3D(0, 0, 0);
+        transform: translate3D(0, 0, 0);
+    }
+    100% {
+        -webkit-transform: translate3D(-320px, 480px, 0);
+        -moz-transform: translate3D(-320px, 480px, 0);
+        -o-transform: translate3D(-320px, 480px, 0);
+        -ms-transform: translate3D(-320px, 480px, 0);
+        transform: translate3D(-320px, 480px, 0);
+    }
+}
+@-o-keyframes spacebg {
+    0% {
+        -webkit-transform: translate3D(0, 0, 0);
+        -moz-transform: translate3D(0, 0, 0);
+        -o-transform: translate3D(0, 0, 0);
+        -ms-transform: translate3D(0, 0, 0);
+        transform: translate3D(0, 0, 0);
+    }
+    100% {
+        -webkit-transform: translate3D(-320px, 480px, 0);
+        -moz-transform: translate3D(-320px, 480px, 0);
+        -o-transform: translate3D(-320px, 480px, 0);
+        -ms-transform: translate3D(-320px, 480px, 0);
+        transform: translate3D(-320px, 480px, 0);
+    }
+}
+@keyframes spacebg {
+    0% {
+        -webkit-transform: translate3D(0, 0, 0);
+        -moz-transform: translate3D(0, 0, 0);
+        -o-transform: translate3D(0, 0, 0);
+        -ms-transform: translate3D(0, 0, 0);
+        transform: translate3D(0, 0, 0);
+    }
+    100% {
+        -webkit-transform: translate3D(-320px, 480px, 0);
+        -moz-transform: translate3D(-320px, 480px, 0);
+        -o-transform: translate3D(-320px, 480px, 0);
+        -ms-transform: translate3D(-320px, 480px, 0);
+        transform: translate3D(-320px, 480px, 0);
+    }
+}

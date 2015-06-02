@@ -135,7 +135,7 @@ table {
 }
 
 .sub-title {
-    margin: 0 0 25px;
+    margin: 25px 0 25px 25px;
     font-size: 45px;
     line-height: 44px;
     font-weight: 700;

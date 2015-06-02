@@ -29,10 +29,12 @@
     "timeago": "^0.1.0",
     "uuid": "~1.4.1"
   },
-
   "scripts": {
     "start-dev": "env $(cat .env | xargs) nodemon src/server/index",
-    "start-dev-new":"NEW_VIEW=yes env $(cat .env | xargs) nodemon src/server/index" ,
+    "start-dev-new": "NEW_VIEW=yes env $(cat .env | xargs) nodemon src/server/index",
     "start": "node src/server/index"
+  },
+  "devDependencies": {
+    "curlrequest": "^0.5.2"
   }
 }

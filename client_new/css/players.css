@@ -1,0 +1,145 @@
+/*.players {*/
+/*height: 100%;*/
+/*}*/
+
+/*@media handheld, only screen and (max-width: 767px) {*/
+/*.players {*/
+/*margin-top: 2em;*/
+/*}*/
+/*}*/
+
+#players-container {
+    text-align: center;
+    /* border-left: 1px solid rgba(94, 94, 94, 0.2); */
+    /* overflow-y: scroll; */
+    /* height: 100%; */
+    /* display: table-row; */
+    width: 100%;
+    /* position: absolute; */
+    /* top: 0; */
+    /* right: 0; */
+    /* left: 0; */
+    /* bottom: 15rem; */
+    height: 100%;
+    padding-top: 1.5rem;
+    overflow: hidden;
+}
+
+#players-container .header-bg {
+    height: 1.5rem;
+    right: 0;
+    left: 0;
+    position: absolute;
+    top: 0;
+    background: #292d35;
+}
+
+#players-container table .th-inner {
+    position: absolute;
+    top: 0;
+    line-height: 1.5rem;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    text-align: left;
+    border-left: 1px solid rgba(0, 0, 0, 0.15);
+    -webkit-box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.03);
+    box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.03);
+    color: #b0b3c1;
+    font-weight: 600;
+    padding-left: 10px;
+    margin-left: -10px;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+
+}
+
+#players-container table th:first-child .th-inner {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border: 0;
+}
+
+/* table */
+#players-container .users-playing, #players-container .users-summary {
+    width: 100%;
+    font-weight: 500;
+    table-layout: fixed;
+    /* max-width: 100%; */
+    /* height: 100%; */
+}
+
+#players-container .users-playing thead, #players-container .users-summary thead {
+    /* border-bottom: 1px solid rgba(94, 94, 94, 0.2); */
+
+}
+
+#players-container .users-playing thead tr, #players-container .users-summary thead tr {
+}
+
+#players-container .users-playing tbody, #players-container .users-summary tbody {
+    /* overflow: auto; */
+    height: 100%;
+}
+
+#players-container .users-playing tbody tr, #players-container .users-summary tbody tr {
+    width: 100%;
+    /* margin-top: 0.5rem; */
+}
+
+#players-container .users-playing td, .users-playing th, #players-container .users-summary td, .users-summary th{
+    /* height: 1rem; */
+    overflow: hidden;
+    text-align: left;
+    font-weight: 400;
+    font-size: 0.8rem;
+    line-height: 1.2rem;
+}
+
+#players-container .bonus-projection {
+    opacity: 0.5;
+}
+
+#players-container .users-summary tr:nth-of-type(even), #players-container .users-playing tr:nth-of-type(even) {
+    /* background: #f9f9f9; */
+}
+
+
+#players-container .users-playing td, #players-container .users-playing th, #players-container .users-summary td, #players-container .users-summary th {
+    padding-left: 6px;
+    /* max-width: 20%; */
+    /* width: 20%; */
+}
+
+
+/* Playing/Lost/Cashed/Won Colors
+   ========================================================================== */
+
+tr.user-won.me {
+    background-color: rgba(12, 203, 30, .2);
+}
+.user-won td, .user-won td a {
+    color: #408609;
+}
+
+tr.user-lost.me {
+    background-color: rgba(224, 62, 62, .2);
+}
+.user-lost td, .user-lost td a {
+    color: #e03e3e;
+}
+
+tr.user-playing.me {
+    background-color: rgba(255, 129, 0 , .2);
+}
+.user-playing td, .user-playing td a {
+    color: #ff8100;
+}
+
+tr.user-cashed.me {
+    background-color: rgba(12, 203, 30, .2);
+}
+.user-cashed td, .user-cashed td a {
+    color: #408609;
+}

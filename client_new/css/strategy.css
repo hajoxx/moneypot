@@ -42,11 +42,11 @@
 }
 
 #strategy-container .stra-base-bet {
-    background-color: #ffffff;
+    /* background-color: #ffffff; */
 }
 
 #strategy-container .stra-cash-out-at {
-    background-color: whitesmoke;
+    /* background-color: whitesmoke; */
 }
 
 #strategy-container .stra-base-bet, #strategy-container .stra-cash-out-at, #strategy-container .stra-max-bet-stop {
@@ -58,7 +58,7 @@
     padding-left: 1em;
     padding-top: .3em;
     padding-bottom: .3em;
-    background-color: whitesmoke;
+    /* background-color: whitesmoke; */
 }
 
 #strategy-container .stra-on-loss:first-child {
@@ -69,7 +69,7 @@
     padding-left: 1em;
     padding-top: .3em;
     padding-bottom: .3em;
-    background-color: #ffffff;
+    /* background-color: #ffffff; */
 }
 
 #strategy-container .stra-on-win:first-child {
@@ -77,7 +77,7 @@
 }
 
 #strategy-container .stra-max-bet-stop {
-    background-color: #ffffff;
+    /* background-color: #ffffff; */
 }
 
 #strategy-container .stra-on-loss-return-to-base-radio, #strategy-container .stra-on-loss-increase-bet-by, #strategy-container .stra-on-win-return-to-base-radio, #strategy-container .stra-on-win-increase_bet_by {
@@ -96,8 +96,32 @@
     resize: none;
 }
 
-#strategy-container .strategy-start {
+#strategy-container .strategy-start, #strategy-container .strategy-stop, #strategy-container .strategy-select {
+    background-color: #292d35;
+    border: 1px solid #292d35;
+    color: white;
+    border-radius: 0;
+    display: inline-block;
+    height: 1rem;
+    /* line-height: 1rem; */
+    cursor: pointer;
+    outline: none;
+}
 
+#strategy-container .strategy-start:disabled, #strategy-container .strategy-stop:disabled, #strategy-container .strategy-select:disabled {
+    color: #181a1e;
+}
+
+#strategy-container .strategy-start {
+    margin-right: 0.2rem;
+}
+
+#strategy-container .strategy-stop {
+    margin-right: 0.2rem;
+}
+
+#strategy-container .strategy-select {
+    margin-right: 0.2rem;
 }
 
 #strategy-container .bet-title {
@@ -115,6 +139,7 @@
     width: 5em;
     font-size: .8em;
     font-weight: 500;
+    color: white;
 }
 
 

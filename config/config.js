@@ -5,6 +5,7 @@ var fs = require('fs');
 var production = process.env.NODE_ENV === 'production';
 
 module.exports = {
+  "PRODUCTION": production,
   "DATABASE_URL": process.env.DATABASE_URL || "postgres://localhost:5432/bustabitdb",
   "BIP32_DERIVED": process.env.BIP32_DERIVED_KEY,
   "AWS_SES_KEY": process.env.AWS_SES_KEY,
@@ -16,7 +17,6 @@ module.exports = {
   "BANKROLL_OFFSET": parseInt(process.env.BANKROLL_OFFSET) || 0,
   "RECAPTCHA_PRIV_KEY": process.env.RECAPTCHA_PRIV_KEY,
   "RECAPTCHA_SITE_KEY": process.env.RECAPTCHA_SITE_KEY,
-  "PRODUCTION": process.env.NODE_ENV === 'production',
   "BITCOIND_HOST": process.env.BITCOIND_HOST,
   "BITCOIND_PORT": process.env.BITCOIND_PORT || 8332,
   "BITCOIND_USER": process.env.BITCOIND_USER,

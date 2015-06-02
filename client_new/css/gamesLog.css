@@ -23,6 +23,7 @@
 
 .games-log th:nth-child(1) {
     width: 15%;
+    padding-left: 0.2rem;
 }
 
 .games-log th:nth-child(2) {
@@ -49,6 +50,7 @@
 
 .games-log td:nth-child(1) {
     width: 15%;
+    padding-left: 0.2rem;
 }
 
 .games-log td:nth-child(2) {
@@ -98,7 +100,7 @@
 }
 
 .games-log tr:nth-of-type(even) {
-    background: #f9f9f9;
+    background: #1a1c21;
 }
 
 
@@ -110,7 +112,7 @@
 
 .games-log tbody tr:hover {
     color: black;
-    background: #FFCC99;
+    background: rgba(255, 129, 0 , .4);
 }
 
 .games-log a {
@@ -126,7 +128,13 @@
 }
 
 .games-log-hash {
-    width: 3em;
+    background-color: transparent;
+    border: 0;
+    color: white;
+}
+
+.games-log tbody tr:hover .games-log-hash {
+    color: black;
 }
 
 .game-details {
@@ -143,6 +151,8 @@
 .hash-copy-cont{
     display: inline-block;
     cursor: pointer;
+    /* border-bottom-color: rgb(213, 43, 43); */
+    /* background-color: aqua; */
 }
 
 .hash-copy {
@@ -161,10 +171,10 @@
     line-height: 20px;
     text-align: center;
     text-shadow: 0 1px 0 #ffffff;
-    background-color: #eeeeee;
-    border: 1px solid #ccc;
+    background-color: #676363;
+    border: 1px solid #1F1E1E;
     white-space: nowrap;
-    color: #333333;
+    color: #FAF4F4;
 }
 
 @media handheld, only screen and (max-width: 767px) {

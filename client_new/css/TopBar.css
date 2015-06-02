@@ -1,0 +1,79 @@
+#top-bar {
+    position: absolute;
+
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 2rem;
+    background-color: #292d35;
+}
+
+#top-bar .title {
+    float: left;
+
+}
+
+#top-bar .title h1 {
+    color: #e58929;
+
+    line-height: 2rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding-left: 1rem;
+    font-family: "Courier New";
+}
+
+#top-bar .user-login {
+    float: right;
+
+}
+
+
+/** User logged **/
+
+#top-bar .user-login .balance-bits {
+    display: inline-block;
+
+    padding-right: 0.5rem;
+}
+
+#top-bar .user-login .balance-bits span{
+    line-height: 2rem;
+
+}
+
+#top-bar .user-login .username {
+    display: inline-block;
+
+    padding-right: 2rem;
+}
+
+#top-bar .user-login .username a {
+    line-height: 2rem;
+
+    font-weight: bold;
+}
+
+
+/** Not logged user **/
+
+#top-bar .user-login .register {
+    display: inline-block;
+
+    padding-right: 1rem;
+}
+
+#top-bar .user-login .register a {
+
+}
+
+#top-bar .user-login .login {
+    display: inline-block;
+
+    padding-right: 2rem;
+}
+
+#top-bar .user-login .login a {
+    line-height: 2rem;
+
+}

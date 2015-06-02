@@ -6,16 +6,11 @@
 
 #tabs-inner-container, #tabs-inner-container .log-chat-container {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    /* z-index: 1003; */
-    /* border-bottom: 1px solid #ddd; */
-    border-top: 1px solid #ddd;
-    /* display: table-cell; */
-    /* position: relative; */
-    /* height: 100%; */
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    border: 1px solid #292d35;
 }
 
 /* Tabs */
@@ -61,7 +56,7 @@
     display: table-row;
     height: 50%;
     width: 1.5rem;
-    background: rgba(249, 249, 249, 1);
+    background: #292d35;
     cursor: pointer;
 }
 
@@ -86,14 +81,25 @@
     vertical-align: middle;   
     line-height: 1.5rem;   
     height: 1.5rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
     white-space: nowrap;
     transform: rotate(270deg);
     max-width: 1.5rem;
-    color: black;
+    color: #b0b3c1;
     display: block;
     transform-origin: 50% 50%;
     position: absolute;
     top: 50%;
+}
+
+#tabs-inner-container .tab-container li.chat-log-tab {
+
+}
+
+#tabs-inner-container .tab-container li.chat-log-tab.tab-active {
+    background-color: #181a1e;
+
 }
 
 #tabs-inner-container .tab-container li.chat-log-tab.tab-active a{
@@ -125,4 +131,5 @@
     right: 0;
     left: 1.5rem;
     bottom: 0;
+    background-color: #181a1e;
 }

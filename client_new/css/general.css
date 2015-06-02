@@ -1,0 +1,280 @@
+/*@font-face {*/
+    /*font-family: tale;*/
+    /*src: url(fonts/tale.otf);*/
+/*}*/
+
+/*@font-face {*/
+    /*font-family: rbn;*/
+    /*src: url(fonts/RBN.otf);*/
+/*}*/
+
+html, body {
+    -webkit-font-smoothing: antialiased;
+    font: 14px "Verlag A", "Verlag B", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 300;
+    line-height: 20px;
+    /*background-color: #21242a;*/
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+body {
+    background: #21242a;
+}
+
+a {
+    color: #e58929;
+    text-decoration: none;
+    line-height: inherit;
+    cursor: pointer;
+}
+
+a:hover {
+    -webkit-transition: all 0.1s linear;
+    -moz-transition: all 0.1s linear;
+    -o-transition: all 0.1s linear;
+    -ms-transition: all 0.1s linear;
+    transition: all 0.1s linear;
+    color: #c87629;
+}
+
+b {
+    font-weight: bold;
+}
+
+i {
+    font-style: italic;
+}
+
+::-webkit-scrollbar-corner {
+    background-color: #1c1c1f;
+}
+::-webkit-scrollbar-track {
+    background-color: #181a1e;
+}
+::-webkit-scrollbar-thumb {
+    border: 1px solid #1c1c1f;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background-color: #2a2c36;
+}
+::-webkit-scrollbar {
+    width: 10px;
+    background-color: #1c1c1f;
+}
+
+.strong {
+    font-weight: 600;
+}
+
+.grid-pad {
+    padding-left:0;
+    padding-right: 0;
+}
+
+@media handheld, only screen and (max-width: 767px) {
+    [class*='col-'] {
+        padding-right: 0;
+        margin-bottom: 0;
+    }
+
+    .hide-for-small-only {
+        display: none !important;
+    }
+}
+
+.wrap {
+    width: 100%;
+    height: 100%;
+}
+
+.page-content {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+@media handheld, only screen and (max-width: 767px) {
+    .page-content {
+        top: 0;
+    }
+}
+
+/* Overwrite the native focus outline */
+input:focus {
+    border-color: #dddddd;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+}
+
+
+@media handheld, only screen and (max-width: 767px) {
+    #handheld-detection {
+        display: none;
+    }
+}
+
+
+/* ==========================================================================
+   Header Overwrite
+   ========================================================================== */
+
+@media handheld, only screen and (max-width: 767px) {
+    .nav-top-bar {
+        border-bottom: none;
+        z-index: 999999;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+    }
+
+    .nav-top-bar .username a {
+        font-weight: bold;
+    }
+}
+
+
+/* ==========================================================================
+   Game container
+   ========================================================================== */
+
+#game-container {
+    width: 100%;
+    height: 100%;
+}
+
+/* Message bar */
+
+#game-message-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    /* line-height: 1.2rem; */
+    bottom: calc(100% - 1.2rem);
+    background-color: green;
+}
+
+#game-message-container.hide {
+    display: none;
+}
+
+#game-message-container>span {
+    overflow-y: hidden;
+
+}
+
+#game-message-container span>span, #game-message-container span>a {
+    color: white;
+    font-size: 0.8rem;
+    line-height: 1.2rem;
+}
+
+#game-message-container div{
+
+}
+
+/* Playable container (The game) */
+#game-playable-container {
+    position: absolute;
+    top: 2rem;
+    right: 0;
+    left: 0;
+    bottom: 0;
+}
+
+#game-playable-container.show-message {
+    top: 1.2rem;
+}
+
+#game-message-container .close-message{
+    position: absolute;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+}
+
+#game-message-container .close-message i{
+    color: white;
+
+    font-size: 0.8rem;
+    line-height: 1.2rem;
+    padding-right: 0.2rem;
+}
+
+#game-message-container {
+    text-align: center;
+
+}
+
+#game-inner-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#game-left-container {
+    display: table;
+    height: 100%;
+    width: 70%;
+    position: relative;
+}
+
+#game-left-container.small-window {
+    width: 100%;
+}
+
+#game-right-container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 70%;
+    right: 0;
+    /* border-left: 1px solid #ddd; */
+    /* border-bottom: 1px solid #ddd; */
+    /* border-right: 1px solid #ddd; */
+    border: 1px solid #292d35;
+    margin: 5px;
+}
+
+
+/* ==========================================================================
+   Tabs container
+   ========================================================================== */
+
+#tabs-container {
+    border-left: 1px solid #ddd;
+    border-top: 1px solid #ddd;
+    display: table-row;
+}
+
+
+/* ==========================================================================
+   Chart-Controls container
+   ========================================================================== */
+
+#chart-controls-container {
+    border-left: 1px solid #ddd;
+    min-height: 400px;
+    display: table-row;
+    height: 50%;
+}
+
+#chart-controls-row, #tabs-controls-row {
+    display: table-row;
+
+}
+
+#chart-controls-col, #tabs-controls-col {
+    display: table-cell;
+    height: 50%;
+    position: relative;
+}
+
+

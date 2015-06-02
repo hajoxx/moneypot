@@ -353,7 +353,8 @@ define([
                     }
                 }
 
-                self.ws.emit('join', { ott: ott },
+                //If there is a Dev ott use it
+                self.ws.emit('join', { ott: window.DEV_OTT? window.DEV_OTT : ott },
                     function(err, resp) {
                         if (err) {
                             console.error('Error when joining the game...', err);

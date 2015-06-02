@@ -6,21 +6,26 @@
  */
 define([
     'lib/react',
+    'components/TopBar',
     'components/ChartControls',
     'components/TabsSelector',
     'components/Players',
     'components/BetBar',
+    'components/SpaceWrap',
     'game-logic/engine',
     'lib/clib'
 ], function(
     React,
+    TopBar,
     ChartControlsClass,
     TabsSelectorClass,
     PlayersClass,
     BetBarClass,
+    SpaceWrapClass,
     Engine,
     Clib
 ){
+    var SpaceWrap = React.createFactory(SpaceWrapClass);
     var ChartControls = React.createFactory(ChartControlsClass);
     var TabsSelector = React.createFactory(TabsSelectorClass);
     var Players = React.createFactory(PlayersClass);
@@ -133,6 +138,10 @@ define([
                 ) : null;
 
             return D.div({ id: 'game-inner-container' },
+
+                TopBar(),
+
+                SpaceWrap(),
 
                 messageContainer,
 

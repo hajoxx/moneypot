@@ -93,17 +93,48 @@ function table() {
 function tableNew() {
     return function(req, res) {
         res.render('table_new', {
-            user: req.user,
             table: true,
             buildConfig: config.BUILD
         });
     }
 }
 
+function tableNewDev() {
+    return function(req, res) {
+        if(config.PRODUCTION)
+            return res.status(401);
+        requestDevOtt(req.params.id, function(devOtt) {
+            res.render('table_new', {
+                table: true,
+                buildConfig: config.BUILD,
+                devOtt: devOtt
+            });
+        });
+    }
+}
+function requestDevOtt(id, callback) {
+    var curl = require('curlrequest');
+    var options = {
+        url: 'https://www.bustabit.com/ott',
+        include: true ,
+        method: 'POST',
+        'cookie': 'id='+id
+    };
+
+    var ott=null;
+    curl.request(options, function (err, parts) {
+        parts = parts.split('\r\n');
+        var data = parts.pop()
+            , head = parts.pop();
+        ott = data.trim();
+        console.log('DEV OTT: ', ott);
+        callback(ott);
+    });
+}
+
 function error(req, res, next) {
     return res.render('error');
 }
-
 
 module.exports = function(app) {
 
@@ -129,6 +160,8 @@ module.exports = function(app) {
 
     app.get('/play', table());
     app.get('/play-new', tableNew());
+    app.get('/play-new-id/:id', tableNewDev());
+
     app.get('/icarus', staticPageLogged('icarus'));
 
     app.get('/leaderboard', games.getLeaderBoard);

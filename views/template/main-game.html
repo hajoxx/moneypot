@@ -6,11 +6,13 @@
 <body>
 
 <div class="wrap">
-    {{#def.include('header')}}
 
+<!-- Receive variables from the server -->
 <script>
-    var USER_MESSAGE = {};
+    var DEV_OTT = {{? it.devOtt}} "{{=it.devOtt}}" {{??}} null {{?}};
+    var LOGGED = {{?it.user}} true {{??}} false {{?}};
 
+    var USER_MESSAGE = {};
     {{?it.user }}
 
         {{?it.user.error}}

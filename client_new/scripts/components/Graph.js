@@ -1,11 +1,9 @@
 define([
     'lib/clib',
-    'lib/lodash',
-    'constants/AppConstants'
+    'lib/lodash'
 ], function(
     Clib,
-    _,
-    AppConstants
+    _
 ){
 
     //TODO: Clean this file
@@ -18,7 +16,7 @@ define([
 
         //Plotting Settings
         this.plotWidth = this.canvasWidth - 30;
-        this.plotHeight = this.canvasHeight - 20; //280
+        this.plotHeight = this.canvasHeight - 20;
         this.xStart = this.canvasWidth - this.plotWidth;
         this.yStart = this.canvasHeight - this.plotHeight;
         this.XAxisPlotMinValue = 10000;    //10 Seconds
@@ -100,14 +98,15 @@ define([
     Graph.prototype.drawGraph = function() {
 
         /* Style the line depending on the game states */
-        this.ctx.strokeStyle = "Black";
+        //this.ctx.strokeStyle = "Black";
+        this.ctx.strokeStyle = "#b0b3c1";
         //if(this.lastGameWon) {
         if(this.engine.currentlyPlaying()) { //playing and not cashed out
             this.ctx.lineWidth=6;
             this.ctx.strokeStyle = '#7cba00';
         } else if(this.cashingOut) {
             this.ctx.lineWidth=6;
-            this.ctx.strokeStyle = "Grey";
+            //this.ctx.strokeStyle = "Grey";
         } else {
             this.ctx.lineWidth=4;
         }
@@ -173,15 +172,19 @@ define([
         this.payoutSeparation = stepValues(!this.currentGamePayout ? 1 : this.currentGamePayout);
 
         this.ctx.lineWidth=1;
-        this.ctx.strokeStyle = "Black";
+        //this.ctx.strokeStyle = "Black";
+        this.ctx.strokeStyle = "#b0b3c1";
         this.ctx.font="10px Verdana";
-        this.ctx.fillStyle = 'black';
+        //this.ctx.fillStyle = 'black';
+        this.ctx.fillStyle = "#b0b3c1";
+
+        this.ctx.textAlign="center";
 
         //Draw Y Axis Values
         var heightIncrement =  this.plotHeight/(this.YAxisPlotValue);
         for(var payout = this.payoutSeparation, i = 0; payout < this.YAxisPlotValue; payout+= this.payoutSeparation, i++) {
             var y = this.plotHeight - (payout*heightIncrement);
-            this.ctx.fillText((payout+1)+'x', 0, y);
+            this.ctx.fillText((payout+1)+'x', 10, y);
 
             this.ctx.beginPath();
             this.ctx.moveTo(this.xStart, y);
@@ -239,7 +242,8 @@ define([
             if (pi && pi.bet && !pi.stopped_at)
                 this.ctx.fillStyle = '#7cba00';
             else
-                this.ctx.fillStyle = "black";
+                //this.ctx.fillStyle = "black";
+                this.ctx.fillStyle = "#b0b3c1";
 
             this.ctx.font = fontSizePx(20) + " Verdana";
             this.ctx.fillText(parseFloat(this.currentGamePayout).toFixed(2) + 'x', this.canvasWidth/2, this.canvasHeight/2);

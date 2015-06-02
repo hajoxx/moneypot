@@ -68,8 +68,8 @@ define([
 
             var tBody;
 
-            var containerClass;
-            var tableClass;
+            //var containerClass;
+            //var tableClass;
 
             var game = self.state.engine;
 
@@ -169,8 +169,8 @@ define([
                     trUsersWonCashed
                 );
 
-                containerClass = 'users-playing-container';
-                tableClass = 'users-playing';
+                //containerClass = 'users-playing-container';
+                //tableClass = 'users-playing';
 
                 //Users Lost and users Won
             } else if(game.gameState === 'ENDED') {
@@ -238,29 +238,31 @@ define([
                     );
                 });
 
-
                 tBody = D.tbody({ className: '' },
                     trUsersLostPlaying,
                     trUsersWonCashed
                 );
 
-                containerClass = 'users-cashed-container';
-                tableClass = 'users-summary';
+                //containerClass = 'users-cashed-container';
+                //tableClass = 'users-summary';
             }
 
-            return D.div({ className: containerClass },
-                D.table({ className: tableClass },
+            return D.div({ id: 'players-container' },
+                D.div({ className: 'header-bg' }),
+                D.div({ className: 'table-inner' },
+                D.table({ className: 'users-playing' },
                     D.thead(null,
                         D.tr(null,
-                            D.th(null, 'User'),
-                            D.th(null, '@'),
-                            D.th(null, 'Bet'),
-                            D.th(null, 'Bonus'),
-                            D.th(null, 'Profit')
+                            D.th(null, D.div({ className: 'th-inner' }, 'User')),
+                            D.th(null, D.div({ className: 'th-inner' }, '@')),
+                            D.th(null, D.div({ className: 'th-inner' }, 'Bet')),
+                            D.th(null, D.div({ className: 'th-inner' }, 'Bonus')),
+                            D.th(null, D.div({ className: 'th-inner' }, 'Profit'))
                         )
                     ),
                     tBody
                 )
+            )
             );
         }
 

@@ -1,7 +1,6 @@
 
 .messages-container {
     height: 100%;
-    /* border: 1px solid rgba(94, 94, 94, 0.2); */
     position: relative;
     z-index: 1004;
 }
@@ -9,21 +8,20 @@
 .messages {
     overflow-wrap: break-word;
     overflow-y: scroll;
-    /* width: 100%; */
     font-size: 1rem;
-    /* padding: 2px 3px; */
-    /* resize: vertical; */  /* Allow user to resize element */
+    padding-left: 0.2rem;  /* Allow user to resize element */
     position: absolute;
     top: 0rem;
     right: 0;
     left: 0;
     bottom: 1.8rem;
     z-index: 1005;
+    /* background-color: #181a1e; */
 }
 
 .chat-input {
     width: 100%;
-    border: 4px solid #dddddd;
+    border: 4px solid #ADADAD;
     background: rgba(255,255,255,0.7);
     margin: 0;
     padding: 5px;
@@ -33,15 +31,31 @@
     right: 0;
 }
 
+::-webkit-input-placeholder {
+    color: rgba(0, 0, 0, 0.7);
+}
+
+:-moz-placeholder { /* Firefox 18- */
+    color: rgba(0, 0, 0, 0.7);
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+    color: rgba(0, 0, 0, 0.7);
+}
+
+:-ms-input-placeholder {
+    color: rgba(0, 0, 0, 0.7);
+}
+
 .msg-chat-message {
-    color: #000000;
+    color: white;
     line-height: 17px;
     font-size: 14px;
     z-index: 1006;
 }
 
 .msg-chat-message a {
-    color: #000000;
+    color: white;
     font-size: 13px;
     font-weight: 600;
     font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
