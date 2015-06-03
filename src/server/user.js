@@ -262,7 +262,7 @@ exports.giveawayRequest = function(req, res, next) {
     var user = req.user;
     assert(user);
 
-    var privatekey = config.RECAPTCHA_PRIV_KEY
+    var privatekey = config.RECAPTCHA_PRIV_KEY;
     var remoteip;
 
     var ips = req.ips;
@@ -285,18 +285,18 @@ exports.giveawayRequest = function(req, res, next) {
 
     request(uri , function(error, response, body) {
 
-            if (error) return res.render('request', {user: user, warning: 'Unable to validate captcha. please try it later...'});
+            if (error) return res.render('request', { user: user, warning: 'Unable to validate captcha. please try it later...', recaptchaKey: config.RECAPTCHA_SITE_KEY });
 
             if (response.statusCode == 200) {
                 assert(body);
                 var validCaptcha = body.split(/\s+/g)[0];
                 if (validCaptcha !== 'true')
-                    return res.render('request', { user: user, warning: 'Invalid Captcha please try it again...' });
+                    return res.render('request', { user: user, warning: 'Invalid Captcha please try it again...', recaptchaKey: config.RECAPTCHA_SITE_KEY });
 
                 database.addGiveaway(user.id, function(err) {
                     if (err) {
                         if (err.message === 'NOT_ELIGIBLE') {
-                            return res.render('request', { user: user, warning: 'You have to wait <b>' + err.time + '</b> minutes for your next give away.'});
+                            return res.render('request', { user: user, warning: 'You have to wait <b>' + err.time + '</b> minutes for your next give away.', recaptchaKey: config.RECAPTCHA_SITE_KEY });
                         } else if(err === 'USER_DOES_NOT_EXIST') {
                             return res.render('error', { error: 'User does not exist.' });
                         }
