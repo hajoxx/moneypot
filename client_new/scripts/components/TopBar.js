@@ -1,25 +1,32 @@
 define([
    'lib/react',
     'game-logic/engine',
+    'stores/GameSettingsStore',
+    'actions/GameSettingsActions',
     'lib/clib'
 ], function(
     React,
     Engine,
+    GameSettingsStore,
+    GameSettingsActions,
     Clib
 ) {
     var D = React.DOM;
 
-    var themeFileName = 'css/' + window.THEME_FILE_NAME; //Global var sent by the server
+    function getState() {
+        return {
+            balanceBitsFormatted: Clib.formatSatoshis(Engine.balanceSatoshis),
+            theme: GameSettingsStore.getCurrentTheme()//black || white
+        }
+    }
 
     return React.createClass({
         displayName: 'TopBar',
 
         getInitialState: function() {
-            return {
-                username: Engine.username, //Falsy value if not logged in
-                balanceBitsFormatted: Clib.formatSatoshis(Engine.balanceSatoshis),
-                theme: 'white' //black || white
-            }
+            var state = getState();
+            state.username = Engine.username;
+            return state;
         },
 
         componentDidMount: function() {
@@ -28,6 +35,7 @@ define([
                 game_crash: this._onChange,
                 cashed_out: this._onChange
             });
+            GameSettingsStore.on('all', this._onChange);
         },
 
         componentWillUnmount: function() {
@@ -36,22 +44,15 @@ define([
                 game_crash: this._onChange,
                 cashed_out: this._onChange
             });
+            GameSettingsStore.off('all', this._onChange);
         },
 
         _onChange: function() {
-            this.setState({
-                balanceBitsFormatted: Clib.formatSatoshis(Engine.balanceSatoshis)
-            });
+            this.setState(getState());
         },
 
         _toggleTheme: function() {
-            if(this.state.theme === 'black') {
-                Clib.loadCss(themeFileName, 'css-theme-white');
-                this.setState({theme: 'white'});
-            } else {
-                Clib.removeCss('css-theme-white');
-                this.setState({theme: 'black'});
-            }
+            GameSettingsActions.toggleTheme();
         },
 
         render: function() {

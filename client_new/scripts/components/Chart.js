@@ -1,11 +1,13 @@
 define([
     'lib/react',
     'lib/clib',
+    'stores/GameSettingsStore',
     'components/Graph',
     'game-logic/engine'
 ], function(
     React,
     Clib,
+    GameSettingsStore,
     Graph,
     Engine
 ){
@@ -14,7 +16,8 @@ define([
 
     function getState(){
         return {
-            engine: Engine
+            engine: Engine,
+            theme: GameSettingsStore.getCurrentTheme() //black || white
         }
     }
 
@@ -41,6 +44,7 @@ define([
                 game_starting: this._onChange,
                 lag_change: this._onChange
             });
+            GameSettingsStore.on('all', this._onChange);
 
             this.mounted = false;
             window.removeEventListener("resize", this._resizeGraph)
@@ -53,6 +57,7 @@ define([
                 game_starting: this._onChange,
                 lag_change: this._onChange
             });
+            GameSettingsStore.on('all', this._onChange);
 
             this.mounted = true;
 
@@ -82,7 +87,7 @@ define([
                 }
                 var ctx = canvas.getContext('2d');
 
-                var currentPayout = this.graph.setData(ctx, canvas, this.state.engine);
+                var currentPayout = this.graph.setData(ctx, canvas, this.state.engine, this.state.theme);
                 this.graph.calculatePlotValues();
                 this.graph.clean();
                 this.graph.drawGraph();

@@ -21,7 +21,8 @@ function staticPageLogged(page, loggedGoTo) {
         if (loggedGoTo) return res.redirect(loggedGoTo);
 
         res.render(page, {
-            user: user
+            user: user,
+            page: page
         });
     }
 }

@@ -42,11 +42,13 @@ define([
         this.YAxisInitialPlotValue = "zero"; //"zero", "betSize"
     };
 
-    Graph.prototype.setData = function(ctx, canvas, engine) {
+    Graph.prototype.setData = function(ctx, canvas, engine, theme) {
         this.ctx = ctx;
         this.canvas = canvas;
         this.engine = engine;
         this.gameState = engine.gameState;
+        this.theme = theme;
+        this.themeWhite = (theme === 'white');
 
         this.cashingOut = engine.cashingOut;
         //this.lastWinnings = lastWinnings; //The payout of the last game
@@ -100,8 +102,7 @@ define([
     Graph.prototype.drawGraph = function() {
 
         /* Style the line depending on the game states */
-        //this.ctx.strokeStyle = "Black";
-        this.ctx.strokeStyle = "#b0b3c1";
+        this.ctx.strokeStyle = (this.themeWhite? "Black" : "#b0b3c1");
         //if(this.lastGameWon) {
         if(this.engine.currentlyPlaying()) { //playing and not cashed out
             this.ctx.lineWidth=6;
@@ -174,12 +175,9 @@ define([
         this.payoutSeparation = stepValues(!this.currentGamePayout ? 1 : this.currentGamePayout);
 
         this.ctx.lineWidth=1;
-        //this.ctx.strokeStyle = "Black";
-        this.ctx.strokeStyle = "#b0b3c1";
+        this.ctx.strokeStyle = (this.themeWhite? "Black" : "#b0b3c1");
         this.ctx.font="10px Verdana";
-        //this.ctx.fillStyle = 'black';
-        this.ctx.fillStyle = "#b0b3c1";
-
+        this.ctx.fillStyle = (this.themeWhite? 'black' : "#b0b3c1");
         this.ctx.textAlign="center";
 
         //Draw Y Axis Values
@@ -244,8 +242,7 @@ define([
             if (pi && pi.bet && !pi.stopped_at)
                 this.ctx.fillStyle = '#7cba00';
             else
-                //this.ctx.fillStyle = "black";
-                this.ctx.fillStyle = "#b0b3c1";
+                this.ctx.fillStyle = (this.themeWhite? "black" : "#b0b3c1");
 
             this.ctx.font = fontSizePx(20) + " Verdana";
             this.ctx.fillText(parseFloat(this.currentGamePayout).toFixed(2) + 'x', this.canvasWidth/2, this.canvasHeight/2);

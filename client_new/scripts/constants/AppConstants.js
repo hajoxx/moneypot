@@ -32,7 +32,10 @@ define(['lib/key-mirror'], function(KeyMirror){
 
             //Chat
             SET_CHAT_INPUT_TEXT: null,
-            SET_CHAT_HEIGHT: null
+            SET_CHAT_HEIGHT: null,
+
+            //Game Settings
+            TOGGLE_THEME: null
         }),
 
         PayloadSources: KeyMirror({
