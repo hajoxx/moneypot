@@ -9,6 +9,8 @@ define([
 ) {
     var D = React.DOM;
 
+    var themeFileName = 'css/' + window.THEME_FILE_NAME; //Global var sent by the server
+
     return React.createClass({
         displayName: 'TopBar',
 
@@ -16,7 +18,7 @@ define([
             return {
                 username: Engine.username, //Falsy value if not logged in
                 balanceBitsFormatted: Clib.formatSatoshis(Engine.balanceSatoshis),
-                theme: 'black' //black || white
+                theme: 'white' //black || white
             }
         },
 
@@ -44,7 +46,7 @@ define([
 
         _toggleTheme: function() {
             if(this.state.theme === 'black') {
-                Clib.loadCss('css/whiteTheme.css', 'css-theme-white');
+                Clib.loadCss(themeFileName, 'css-theme-white');
                 this.setState({theme: 'white'});
             } else {
                 Clib.removeCss('css-theme-white');

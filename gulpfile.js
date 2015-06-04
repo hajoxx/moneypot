@@ -49,8 +49,9 @@ var oldClientOpts = {
     include: 'main',
     insertRequire: ['main'],
     removeCombined: false,
-    optimize: "none", //TODO: "uglify2"
-    generateSourceMaps: true
+    optimize: "uglify2", //none
+    generateSourceMaps: false, //TODO: true
+    preserveLicenseComments: false
 };
 
 /** Minify the Javascript with requireJs optizer **/
@@ -171,8 +172,9 @@ var newClientOptions = {
     include: 'main',
     insertRequire: ['main'],
     removeCombined: false,
-    optimize: "none", //TODO: "uglify2"
-    generateSourceMaps: true
+    optimize: "uglify2", //none
+    generateSourceMaps: false, //TODO: true
+    preserveLicenseComments: false
 };
 
 /** Minify the Javascript with requireJs optizer **/
@@ -195,13 +197,19 @@ gulp.task('minify-css-new', function() {
         .pipe(rename('css/game-new.css'))
         .pipe(gulp.dest('build/'));
 
+    //Game white theme css
+    var themeStream = gulp.src('client_new/css/whiteTheme.css')
+        .pipe(minifyCss({ compatibility: 'ie8' }))
+        .pipe(rename('css/game-theme-new.css'))
+        .pipe(gulp.dest('build/'));
+
     //Landing css
     var landingStream = gulp.src('client_new/css/app.css')
         .pipe(minifyCss({ compatibility: 'ie8' }))
         .pipe(rename('css/app-new.css'))
         .pipe(gulp.dest('build/'));
 
-    return merge(appStream, landingStream);
+    return merge(appStream, landingStream, themeStream);
 });
 
 /** Copy the necessary files to prod folder **/
@@ -225,12 +233,20 @@ var hashOptions = {
     template: '<%= name %>-<%= hash %><%= ext %>'
 };
 gulp.task('hash-files-new', function(callback) {
-    runSequence('hash-css-game-new', 'hash-css-app-new', 'hash-js-new', callback);
+    runSequence('hash-css-game-new', 'hash-css-game-theme-new', 'hash-css-app-new', 'hash-js-new', callback);
 });
 
 gulp.task('hash-css-game-new', function() {
     return addToManifest(
         gulp.src('./build/css/game-new.css')
+            .pipe(hash(hashOptions))
+            .pipe(gulp.dest('build/css'))
+    );
+});
+
+gulp.task('hash-css-game-theme-new', function() {
+    return addToManifest(
+        gulp.src('./build/css/game-theme-new.css')
             .pipe(hash(hashOptions))
             .pipe(gulp.dest('build/css'))
     );
