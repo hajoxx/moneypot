@@ -127,9 +127,11 @@ html, body {
 }
 
 .msg-chat-message {
+    color: black;
 }
 
 .msg-chat-message a {
+    color: black;
 }
 
 
