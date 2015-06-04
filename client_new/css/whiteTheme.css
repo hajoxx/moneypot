@@ -1,0 +1,238 @@
+html, body {
+    /* background-color: white; */
+    /* z-index: -2; */
+}
+
+::-webkit-scrollbar-corner {
+    background-color: white;
+}
+::-webkit-scrollbar-track {
+    background-color: white;
+}
+::-webkit-scrollbar-thumb {
+    border: 1px solid #ddd;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background-color: #ddd;
+}
+::-webkit-scrollbar {
+    width: 10px;
+    background-color: #ddd;
+}
+
+
+/* ==========================================================================
+   topBar.css
+   ========================================================================== */
+
+#top-bar {
+    background-color: white;
+    border-bottom: 1px solid #ddd;
+}
+
+#top-bar .user-login .balance-bits span {
+    color: black;
+}
+
+
+/* ==========================================================================
+   general.css
+   ========================================================================== */
+
+#game-right-container {
+    border-color: #ddd;
+}
+
+.users-playing thead, .users-summary thead {
+}
+
+#chart-controls-row {
+}
+
+.users-playing-container, .users-cashed-container{
+}
+
+
+/* ==========================================================================
+   header.css
+   ========================================================================== */
+.nav-top-bar {
+}
+
+.balance-bits, .user-login a {
+}
+
+.title h1, .title a {
+}
+
+
+/* ==========================================================================
+   controlsSelector.css
+   ========================================================================== */
+
+#controls-selector-container {;
+}
+
+#controls-selector-container .buttons-container {
+}
+
+#controls-selector-container .button-holder {
+    background-color: #ddd;
+    
+}
+
+#controls-selector-container .button-holder a {
+    color: black;
+}
+
+#controls-selector-container .controls-widget-container{
+    background-color: transparent;
+}
+
+#controls-selector-container .buttons-container > div:first-child {
+}
+
+#controls-selector-container .button-holder.tab-active {
+    background-color: white;
+    
+}
+
+
+/* ==========================================================================
+   chartControls.css
+   ========================================================================== */
+
+#controls-container {
+    border-color: #ddd;
+}
+
+
+/* ==========================================================================
+   controls.css
+   ========================================================================== */
+
+#controls-inner-container {
+}
+
+#controls-inner-container .bet-input-group>input, #controls-inner-container .bet-input-group>span {
+    color: #181a1e;
+}
+
+
+/* ==========================================================================
+   chat.css
+   ========================================================================== */
+
+.messages {
+}
+
+.msg-chat-message {
+}
+
+.msg-chat-message a {
+}
+
+
+/* ==========================================================================
+   tabs.css
+   ========================================================================== */
+
+#tabs-inner-container .widget-container {
+    background-color: transparent;
+    
+}
+
+#tabs-inner-container, #tabs-inner-container .log-chat-container {
+    border-color: #ddd;
+    color: black;
+}
+
+#tabs-inner-container .tab-container li.chat-log-tab.tab-active {
+    background-color: transparent;
+    
+}
+
+#tabs-inner-container .tab-container li.chat-log-tab {
+    background-color: #ddd;
+}
+
+#tabs-inner-container .tab-container li.chat-log-tab a {
+    color: black;
+}
+
+
+/* ==========================================================================
+   strategy.css
+   ========================================================================== */
+
+#strategy-container .auto-bet-container {
+    color: black;
+}
+
+#strategy-container .strategy-start, #strategy-container .strategy-stop, #strategy-container .strategy-select {
+    background-color: #ddd;
+    border-color: #ddd;
+    color: black;
+}
+
+#strategy-container .strategy-start:disabled, #strategy-container .strategy-stop:disabled, #strategy-container .strategy-select:disabled {
+    color: grey;
+}
+
+
+/* ==========================================================================
+   players.css
+   ========================================================================== */
+
+#players-container .header-bg {
+    background-color: #ddd;
+}
+
+#players-container table .th-inner {
+    color: black;
+}
+
+
+/* ==========================================================================
+   gamesLog.css
+   ========================================================================== */
+
+#games-log-container table .th-inner{
+    color: black;
+}
+
+#games-log-container table th:first-child .th-inner {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border: 0;
+}
+
+#games-log-container .games-log tr:nth-of-type(even){
+    background-color: #f9f9f9;
+}
+
+
+#games-log-container .games-log-hash {
+    color: black;
+}
+
+
+/* ==========================================================================
+   animations.css
+   ========================================================================== */
+
+.space-container {
+    background: white;
+}
+
+.space-wrap.flying .space-container {
+    -webkit-animation: none;
+    -moz-animation: none;
+    -o-animation: none;
+    -ms-animation: none;
+    animation: none;
+}
+
+.space-gradient {
+    background: transparent;
+}

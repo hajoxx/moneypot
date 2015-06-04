@@ -68,9 +68,6 @@ define([
 
             var tBody;
 
-            //var containerClass;
-            //var tableClass;
-
             var game = self.state.engine;
 
             /** Separate and sort the users depending on the game state **/
@@ -169,9 +166,6 @@ define([
                     trUsersWonCashed
                 );
 
-                //containerClass = 'users-playing-container';
-                //tableClass = 'users-playing';
-
                 //Users Lost and users Won
             } else if(game.gameState === 'ENDED') {
 
@@ -242,9 +236,6 @@ define([
                     trUsersLostPlaying,
                     trUsersWonCashed
                 );
-
-                //containerClass = 'users-cashed-container';
-                //tableClass = 'users-summary';
             }
 
             return D.div({ id: 'players-container' },

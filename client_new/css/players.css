@@ -1,28 +1,9 @@
-/*.players {*/
-/*height: 100%;*/
-/*}*/
-
-/*@media handheld, only screen and (max-width: 767px) {*/
-/*.players {*/
-/*margin-top: 2em;*/
-/*}*/
-/*}*/
-
 #players-container {
     text-align: center;
-    /* border-left: 1px solid rgba(94, 94, 94, 0.2); */
-    /* overflow-y: scroll; */
-    /* height: 100%; */
-    /* display: table-row; */
     width: 100%;
-    /* position: absolute; */
-    /* top: 0; */
-    /* right: 0; */
-    /* left: 0; */
-    /* bottom: 15rem; */
     height: 100%;
     padding-top: 1.5rem;
-    overflow: hidden;
+    overflow-y: auto;
 }
 
 #players-container .header-bg {
@@ -66,30 +47,23 @@
     width: 100%;
     font-weight: 500;
     table-layout: fixed;
-    /* max-width: 100%; */
-    /* height: 100%; */
 }
 
 #players-container .users-playing thead, #players-container .users-summary thead {
-    /* border-bottom: 1px solid rgba(94, 94, 94, 0.2); */
-
 }
 
 #players-container .users-playing thead tr, #players-container .users-summary thead tr {
 }
 
 #players-container .users-playing tbody, #players-container .users-summary tbody {
-    /* overflow: auto; */
     height: 100%;
 }
 
 #players-container .users-playing tbody tr, #players-container .users-summary tbody tr {
     width: 100%;
-    /* margin-top: 0.5rem; */
 }
 
 #players-container .users-playing td, .users-playing th, #players-container .users-summary td, .users-summary th{
-    /* height: 1rem; */
     overflow: hidden;
     text-align: left;
     font-weight: 400;
@@ -102,14 +76,33 @@
 }
 
 #players-container .users-summary tr:nth-of-type(even), #players-container .users-playing tr:nth-of-type(even) {
-    /* background: #f9f9f9; */
 }
 
 
-#players-container .users-playing td, #players-container .users-playing th, #players-container .users-summary td, #players-container .users-summary th {
+#players-container .users-playing td, #players-container .users-playing th {
     padding-left: 6px;
-    /* max-width: 20%; */
-    /* width: 20%; */
+    width: 20%;
+}
+
+#players-container .users-playing td, #players-container .users-playing th {
+    padding-left: 6px;
+    width: 20%;
+    line-height: 1.3rem;
+}
+
+
+/* Adjust head columns */
+
+#players-container .users-playing th:nth-child(1) {
+    width: 25%;
+    padding-left: 0.2rem;
+}
+
+/* Adjust body columns */
+
+#players-container .users-playing td:nth-child(1) {
+    width: 25%;
+    padding-left: 0.2rem;
 }
 
 

@@ -22,7 +22,9 @@ define([
         displayName: 'Chart',
 
         getInitialState: function () {
-            return getState();
+            var state = getState();
+            state.nyan = false;
+            return state;
         },
 
         _onChange: function() {
@@ -80,12 +82,24 @@ define([
                 }
                 var ctx = canvas.getContext('2d');
 
-                this.graph.setData(ctx, canvas, this.state.engine);
+                var currentPayout = this.graph.setData(ctx, canvas, this.state.engine);
                 this.graph.calculatePlotValues();
                 this.graph.clean();
                 this.graph.drawGraph();
                 this.graph.drawAxes();
                 this.graph.drawGameData();
+
+                //Animations
+                var NYAN_TRIGGER = 1000;
+
+                if(Engine.gameState === 'IN_PROGRESS') {
+                    if(currentPayout >= NYAN_TRIGGER && this.state.nyan === false)
+                        this.setState({ nyan: true });
+                    else if(currentPayout < NYAN_TRIGGER && this.state.nyan === true)
+                        this.setState({ nyan: false });
+                } else if(this.state.nyan === true) {
+                    this.setState({ nyan: false });
+                }
 
                 this.animRequest = window.requestAnimationFrame(this._draw);
             }
@@ -100,6 +114,11 @@ define([
             }) : null;
 
             return D.div({ id: 'chart-inner-container', ref: 'container' },
+                D.div({ className: 'anim-cont' },
+                    D.div({ className: 'nyan' + (this.state.nyan? ' show' : '') },
+                        D.img({ src: 'img/nyan.gif' })
+                    )
+                ),
                 D.div({ style: { position: 'absolute', bottom: '27px', right: '30px', fontSize: '55%' }},
                     'Max profit: ', (this.state.engine.maxWin/1e8).toFixed(4), ' BTC'),
                 graph

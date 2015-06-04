@@ -7,5 +7,6 @@
     include: 'main',
     mainConfigFile: 'scripts/main.js',
     insertRequire: ['main'],
-    optimizeCss: "standard"
-})
+    optimizeCss: "standard",
+    removeCombined: false
+}

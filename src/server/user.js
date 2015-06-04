@@ -83,24 +83,24 @@ exports.login = function(req, res, next) {
 
     if (!recaptcha) {
         console.warn('No recaptca found');
-        return res.render('login', { warning: 'Invalid or missing recaptcha', recaptchaKey: config.RECAPTCHA_SITE_KEY });
+        return res.render('login', { warning: 'Invalid or missing recaptcha' });
     }
     console.log('Login with recaptcha: ', recaptcha);
 
     if (!username || !password)
-        return res.render('login', { warning: 'no username or password', recaptchaKey: config.RECAPTCHA_SITE_KEY });
+        return res.render('login', { warning: 'no username or password' });
 
 
     database.validateUser(username, password, otp, function(err, userId) {
         console.log('Attempted login for user: ', username, ' result: ', err);
         if (err) {
             if (err === 'NO_USER')
-                return res.render('login',{ warning: 'Username does not exist', recaptchaKey: config.RECAPTCHA_SITE_KEY });
+                return res.render('login',{ warning: 'Username does not exist' });
             if (err === 'WRONG_PASSWORD')
-                return res.render('login', { warning: 'Invalid password', recaptchaKey: config.RECAPTCHA_SITE_KEY });
+                return res.render('login', { warning: 'Invalid password' });
             if (err === 'INVALID_OTP') {
                 var warning = otp ? 'Invalid one-time password' : undefined;
-                return res.render('login-mfa', { username: username, password: password, warning: warning, recaptchaKey: config.RECAPTCHA_SITE_KEY });
+                return res.render('login-mfa', { username: username, password: password, warning: warning });
             }
             return next(new Error('Unable to validate user ' + username + ': \n' + err));
         }
@@ -250,7 +250,7 @@ exports.request = function(req, res) {
     var user = req.user; //Login var
     assert(user);
 
-    res.render('request', { user: user, recaptchaKey: config.RECAPTCHA_SITE_KEY });
+    res.render('request', { user: user });
 };
 
 /**
@@ -350,7 +350,7 @@ exports.account = function(req, res, next) {
         user.net_profit = net.profit;
         user.deposit_address = lib.deriveAddress(user.id);
 
-        res.render('account', {user: user});
+        res.render('account', { user: user });
     });
 };
 

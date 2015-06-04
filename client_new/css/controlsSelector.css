@@ -8,9 +8,7 @@
 
 #controls-selector-container .buttons-container {
     width: 100%;
-    /* z-index: 5001; */
     display: table;
-    /* background: rgba(249, 249, 249, 1); */
 }
 
 @media handheld, only screen and (max-width: 767px) {
@@ -74,5 +72,6 @@
 @media handheld, only screen and (max-width: 767px) {
     #controls-selector-container .controls-widget-container {
         top: 0;
-    }
+    
+}
 }

@@ -2,5 +2,31 @@
     position: relative;
     height: 100%;
     width: 100%;
-    /* margin: 0.5rem; */
+}
+
+#chart-inner-container .anim-cont {
+    position: absolute;
+    right: 0;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: -1;
+}
+
+#chart-inner-container .anim-cont .nyan{
+    width: 100%;
+    height: 100%;
+    display: none;
+}
+
+#chart-inner-container .anim-cont .nyan.show{
+    display: inherit;
+}
+
+#chart-inner-container .anim-cont .nyan img {
+    display: block;
+    max-width: 90%;
+    max-height: 40%;
+    width: auto;
+    height: auto;
 }

@@ -193,6 +193,22 @@ define([
 
         isMobileOrSmall: function() {
             return window.getComputedStyle(document.getElementById('handheld-detection'), null).display == 'none';
+        },
+
+        loadCss: function(url, id) {
+            var link = document.createElement("link");
+            link.type = "text/css";
+            link.rel = "stylesheet";
+            link.href = url;
+            link.id = id;
+            document.getElementsByTagName("head")[0].appendChild(link);
+        },
+
+        removeCss: function(id) {
+            var el = document.getElementById(id);
+            if (el && el.parentNode) {
+                el.parentNode.removeChild(el);
+            }
         }
 
     };

@@ -16,11 +16,13 @@ function staticPageLogged(page, loggedGoTo) {
     return function(req, res) {
         var user = req.user;
         if (!user){
-            return res.render(page, { recaptchaKey: config.RECAPTCHA_SITE_KEY });
+            return res.render(page);
         }
         if (loggedGoTo) return res.redirect(loggedGoTo);
 
-        res.render(page, { user: user, recaptchaKey: config.RECAPTCHA_SITE_KEY });
+        res.render(page, {
+            user: user
+        });
     }
 }
  
@@ -84,8 +86,7 @@ function table() {
     return function(req, res) {
         res.render('table', {
             user: req.user,
-            table: true,
-            buildConfig: config.BUILD
+            table: true
         });
     }
 }
@@ -106,7 +107,6 @@ function tableNewDev() {
         requestDevOtt(req.params.id, function(devOtt) {
             res.render('table_new', {
                 table: true,
-                buildConfig: config.BUILD,
                 devOtt: devOtt
             });
         });

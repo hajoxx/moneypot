@@ -14,8 +14,6 @@
     bottom: 10px;
     left: 10px;
     right: calc(40% + 10px);
-    /* margin: 0.5rem; */
-    /* overflow: visible; */
 }
 
 #controls-container {

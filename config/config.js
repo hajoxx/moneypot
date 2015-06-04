@@ -4,6 +4,12 @@
 var fs = require('fs');
 var production = process.env.NODE_ENV === 'production';
 
+var prodConfig;
+if(production) {
+  prodConfig = JSON.parse(fs.readFileSync(__dirname + '/build-config.json'));
+  console.log('Build config loaded: ', prodConfig);
+}
+
 module.exports = {
   "PRODUCTION": production,
   "DATABASE_URL": process.env.DATABASE_URL || "postgres://localhost:5432/bustabitdb",
@@ -23,5 +29,8 @@ module.exports = {
   "BITCOIND_PASS": process.env.BITCOIND_PASS,
   "BITCOIND_CERT": process.env.BITCOIND_CERT  || '',
   "PORT":  process.env.PORT || 3841,
-  "BUILD": production? JSON.parse(fs.readFileSync('./config/buildConfig.js')) : null
+  "BUILD": prodConfig,
+
+  //DEVELOPMENT
+  "NEW_VIEW": process.env.NEW_VIEW === 'yes'
 };

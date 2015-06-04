@@ -1,6 +1,8 @@
 var assert = require('assert');
 var crypto = require('crypto');
 var exec = require('child_process').exec;
+
+
 var fs = require('fs');
 
 var todo = [];
@@ -26,17 +28,21 @@ buildConfig.gameCssHash = gameCssHash;
 
 
 /**************** NEW Client ****************/
+//Cant put them in the same folder because the css file names
 
 var jsHash = hash('./build2/main-built.js').substring(0, 8);
 var cssHash = hash('./build2/css/app.css').substring(0, 8);
 var gameCssHash = hash('./build2/css/game.css').substring(0, 8);
+var cssThemeHash = hash('./build2/css/whiteTheme.css').substring(0, 8);
 
 console.log('Hash of new js: ', jsHash);
 console.log('Hash of new css: ', cssHash);
 console.log('Hash of new game css: ', gameCssHash);
+console.log('Hash of new css Theme: ', cssThemeHash);
 
 execute('cp ./build2/main-built.js ./build/' + jsHash + '.js');
 execute('cp ./build2/css/app.css ./build/css/' + cssHash + '.css');
+execute('cp ./build2/css/game.css ./build/css/' + gameCssHash + '.css');
 execute('cp ./build2/css/game.css ./build/css/' + gameCssHash + '.css');
 
 buildConfig.jsHashNew = jsHash;

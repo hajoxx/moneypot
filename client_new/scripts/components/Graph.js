@@ -64,6 +64,8 @@ define([
 
         this.currentTime = Clib.getElapsedTimeWithLag(engine);
         this.currentGamePayout = Clib.calcGamePayout(this.currentTime);
+
+        return this.currentGamePayout;
     };
 
     Graph.prototype.calculatePlotValues = function() {

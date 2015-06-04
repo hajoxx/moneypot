@@ -1,24 +1,23 @@
+var fs = require('fs');
+
+var express = require('express');
+var http = require('http');
 var assert = require('assert');
 var compression = require('compression');
-var express = require('express');
-var fs = require('fs');
-var http = require('http');
 var path = require('path');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
+var _ = require('lodash');
 var app = express();
 
 var config = require('../../config/config');
 var routes = require('./routes');
 var database = require('./database');
 var lib = require('./lib');
-var dotCaching = true;
 
-var newView = process.env.NEW_VIEW === 'yes';
-
-var _ = require('lodash');
-
-// Simplify and de-verbosify timeago output.
+/** TimeAgo Settings:
+ * Simplify and de-verbosify timeago output.
+ **/
 var timeago = require('timeago');
 var timeago_strings = _.extend(timeago.settings.strings, {
   seconds: '< 1 min',
@@ -35,12 +34,18 @@ var timeago_strings = _.extend(timeago.settings.strings, {
 });
 timeago.settings.strings = timeago_strings;
 
-app.use(bodyParser());
-app.use(cookieParser());
 
+/** Render Engine
+ *
+ * Put here render engine global variable trough app.locals
+ * **/
 app.set("views", path.join(__dirname, '/../../views'));
 
-if (config.PRODUCTION) {
+app.locals.recaptchaKey = config.RECAPTCHA_SITE_KEY;
+app.locals.buildConfig = config.BUILD;
+
+var dotCaching = true;
+if (!config.PRODUCTION) {
     app.locals.pretty = true;
     dotCaching = false;
 }
@@ -56,15 +61,29 @@ app.engine("html", require("dot-emc").init(
         }
     }
 ).__express);
+
+
+/** Middleware **/
+app.use(bodyParser());
+app.use(cookieParser());
+app.use(compression());
+
+
+/** App settings **/
 app.set("view engine", "html");
 app.disable('x-powered-by');
 app.enable('trust proxy');
 
-app.use(compression());
 
+/** Serve Static content **/
 var twoWeeksInSeconds = 1209600;
-app.use(express.static(path.join(__dirname, config.BUILD? '/../../build' : (newView? '/../../client_new' : '/../../client')), { maxAge: twoWeeksInSeconds * 1000 }));
+app.use(express.static(path.join(__dirname, config.BUILD? '/../../build' : (config.NEW_VIEW? '/../../client_new' : '/../../client')), { maxAge: twoWeeksInSeconds * 1000 }));
 
+
+/** Login middleware
+ *
+ * If the user is logged append the user object to the request
+ */
 app.use(function(req, res, next) {
     var sessionId = req.cookies.id;
 
@@ -106,7 +125,8 @@ app.use(function(req, res, next) {
 
 });
 
-/**
+/** Error Middleware
+ *
  * How to handle the errors:
  * If the error is a string: Send it to the client.
  * If the error is an actual: error print it to the server log.
@@ -138,6 +158,7 @@ routes(app);
 app.use(errorHandler);
 
 
+/** Server **/
 var server = http.createServer(app).listen(config.PORT, function() {
     console.log('Listening on port ', config.PORT);
 });

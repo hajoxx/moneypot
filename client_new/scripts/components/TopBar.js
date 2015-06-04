@@ -15,7 +15,8 @@ define([
         getInitialState: function() {
             return {
                 username: Engine.username, //Falsy value if not logged in
-                balanceBitsFormatted: Clib.formatSatoshis(Engine.balanceSatoshis)
+                balanceBitsFormatted: Clib.formatSatoshis(Engine.balanceSatoshis),
+                theme: 'black' //black || white
             }
         },
 
@@ -41,6 +42,16 @@ define([
             });
         },
 
+        _toggleTheme: function() {
+            if(this.state.theme === 'black') {
+                Clib.loadCss('css/whiteTheme.css', 'css-theme-white');
+                this.setState({theme: 'white'});
+            } else {
+                Clib.removeCss('css-theme-white');
+                this.setState({theme: 'black'});
+            }
+        },
+
         render: function() {
 
             var userLogin;
@@ -48,7 +59,7 @@ define([
                 userLogin = D.div({ className: 'user-login' },
                     D.div({ className: 'balance-bits' },
                         D.span(null, 'Bits: '),
-                        D.span({ className: 'balance-bits' }, this.state.balanceBitsFormatted )
+                        D.span({ className: 'balance' }, this.state.balanceBitsFormatted )
                     ),
                     D.div({ className: 'username' },
                         D.a({ href: '/account'}, this.state.username
@@ -71,8 +82,12 @@ define([
                         D.h1(null, 'bustabit')
                     )
                 ),
-                userLogin
-
+                userLogin,
+                D.div({ className: 'toggle-view noselect' + ((this.state.theme === 'white')? ' black' : ' white'), onClick: this._toggleTheme },
+                    D.a(null,
+                        (this.state.theme === 'white')? 'Go black' : 'Go back'
+                    )
+                )
             )
         }
     });

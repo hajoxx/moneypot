@@ -15,8 +15,6 @@
     right: 0;
     left: 0;
     bottom: 1.8rem;
-    z-index: 1005;
-    /* background-color: #181a1e; */
 }
 
 .chat-input {
@@ -84,7 +82,7 @@
 }
 
 .msg-highlight-message {
-    background: #ADD8E6;
+    background-color: rgba(0, 61, 255, 0.2);
 }
 
 .msg-mute-message {

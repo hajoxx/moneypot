@@ -1,8 +1,7 @@
-node_modules
-build/
-build2/
-.*.swp
-config/local.json
-config/production.json
 .env
-config/buildConfig.js
+config/build-config.json
+build/
+node_modules
+.*.swp
+
+

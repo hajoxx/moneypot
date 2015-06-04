@@ -5,5 +5,6 @@
     name: 'lib/almond',
     mainConfigFile: 'scripts/main.js',
     include: 'main',
-    insertRequire: ['main']
+    insertRequire: ['main'],
+    removeCombined: false
 })

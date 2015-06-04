@@ -121,21 +121,27 @@ define([
                 );
             });
 
-            return D.table({ className: 'games-log' },
-                D.thead(null,
-                    D.tr(null,
+            return D.div({ id: 'games-log-container' },
+                D.div({ className: 'header-bg' }),
+                D.div({ className: 'table-inner' },
+                    D.table({ className: 'games-log' },
+                        D.thead(null,
+                            D.tr(null,
 
-                        D.th(null, 'Crash'),
-                        D.th(null, '@'),
-                        D.th(null, 'Bet'),
-                        D.th(null, 'Bonus'),
-                        D.th(null, 'Profit'),
-                        D.th(null, 'Hash')
+                                D.th(null, D.div({ className: 'th-inner'}, 'Crash')),
+                                D.th(null, D.div({ className: 'th-inner'}, '@')),
+                                D.th(null, D.div({ className: 'th-inner'}, 'Bet')),
+                                D.th(null, D.div({ className: 'th-inner'}, 'Bonus')),
+                                D.th(null, D.div({ className: 'th-inner'}, 'Profit')),
+                                D.th(null, D.div({ className: 'th-inner'}, 'Hash'))
+                            )
+                        ),
+                        D.tbody(null,
+                            rows
+                        )
                     )
-                ),
-                D.tbody(null,
-                    rows
                 )
+
             );
         }
 

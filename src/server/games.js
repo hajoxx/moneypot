@@ -63,4 +63,3 @@ exports.show = function(req, res, next) {
         res.render('leaderboard', { user: user, leaders: leaders, sortBy: byDb, order: order });
      });
  };
-

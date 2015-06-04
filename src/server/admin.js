@@ -10,7 +10,6 @@ var config = require('../../config/config');
 exports.giveAway = function(req, res) {
     var user = req.user;
     assert(user.admin);
-
     res.render('giveaway', { user: user });
 };
 

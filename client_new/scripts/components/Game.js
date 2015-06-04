@@ -16,7 +16,7 @@ define([
     'lib/clib'
 ], function(
     React,
-    TopBar,
+    TopBarClass,
     ChartControlsClass,
     TabsSelectorClass,
     PlayersClass,
@@ -25,6 +25,7 @@ define([
     Engine,
     Clib
 ){
+    var TopBar = React.createFactory(TopBarClass);
     var SpaceWrap = React.createFactory(SpaceWrapClass);
     var ChartControls = React.createFactory(ChartControlsClass);
     var TabsSelector = React.createFactory(TabsSelectorClass);
