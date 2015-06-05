@@ -224,8 +224,10 @@ gulp.task('copy:assets-new', function() {
         .pipe(gulp.dest('build/sounds'));
     var libStream = gulp.src('client_new/lib/**/*.*')
         .pipe(gulp.dest('build/lib'));
+    var amchartsStream = gulp.src('client_new/amcharts/**/*.*')
+        .pipe(gulp.dest('build/amcharts'));
 
-    return merge(imgStream, fontsStream, soundsStream,cssFontsStream,libStream);
+    return merge(imgStream, fontsStream, soundsStream,cssFontsStream,libStream, amchartsStream);
 });
 
 /** Hash the config.js and the app.css files  **/
