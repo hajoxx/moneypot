@@ -10,7 +10,6 @@ var config = require('../../config/config');
 
 var production = process.env.NODE_ENV === 'production';
 
-
 function staticPageLogged(page, loggedGoTo) {
 
     return function(req, res) {
@@ -34,9 +33,9 @@ function contact(origin) {
         var from = req.body.email;
         var message = req.body.message;
 
-        if (!from ) return res.render(origin, { user: user, warning: 'email required'});
+        if (!from ) return res.render(origin, { user: user, warning: 'email required' });
 
-        if (!message) return res.render(origin, { user: user, warning: 'message required'});
+        if (!message) return res.render(origin, { user: user, warning: 'message required' });
 
         if (user) message = 'user_id: ' + req.user.id + '\n' + message;
 

@@ -91,15 +91,15 @@
     font-weight: bold;
     top: -1rem;
     border: 0;
-    background-color: transparent !important;
-    border-color: transparent !important;
+    background-color: transparent;
+    border-color: transparent;
 }
 
 @media handheld, only screen and (max-width: 767px) {
     #controls-inner-container .bet-input-group>span:first-child  {
         color: #555;
         text-align: center;
-        background-color: #eee !important;
+        background-color: #eee;
         border: 1px solid #ccc;
         border-radius: 2px;
         font-size: 0.8em;
@@ -160,7 +160,14 @@
 
 #controls-inner-container .bet-input-group.error>span:first-child {
     color: #a94442;
-    
+    border: none;
+    background-color: transparent;
+}
+@media handheld, only screen and (max-width: 767px) {
+    #controls-inner-container .bet-input-group.error>span:first-child {
+    background-color: #a94442;
+    color: white;
+    }
 }
 
 

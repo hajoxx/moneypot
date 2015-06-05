@@ -39,15 +39,9 @@ define([
         },
 
         _onChange: function() {
-            //Check if its mounted because when Game view receives the disconnect event from EngineVirtualStore unmounts all views
-            //and the views unregister their events before the event dispatcher dispatch them with the disconnect event
             if(this.isMounted())
                 this.setState(getState());
         },
-
-        //_toggleControl: function() {
-        //    ControlsSelectorActions.toggleControl();
-        //},
 
         _selectControl: function(controlName) {
             return function() {
@@ -56,8 +50,6 @@ define([
         },
 
         render: function() {
-
-            //var tabText = this.state.selectedControl === 'manual'? 'Strategy' : 'Controls';
 
             return D.div({ id: 'controls-selector-container' },
                 D.div({ className: 'buttons-container' },

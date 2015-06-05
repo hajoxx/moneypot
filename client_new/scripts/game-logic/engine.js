@@ -77,6 +77,9 @@ define([
          */
         self.startTime = null;
 
+        /** time from the game_starting event to game_started event **/
+        self.timeTillStart = null;
+
         /** If you are currently placing a bet
          * True if the bet is queued
          * True if the bet was sent to the server but the server has not responded yet
@@ -102,6 +105,11 @@ define([
 
         /** Tell if the game is lagging but only  when the game is in progress **/
         self.lag = false;
+
+        /** Animation Events triggers**/
+        self.nyan = false;
+
+
 
         /**
          * Events triggered by the engine
@@ -141,6 +149,7 @@ define([
             self.startTime = Date.now();
             self.lastGameTick = self.startTime;
             self.placingBet = false;
+            self.timeTillStart = null;
 
 
             self.nextBetAmount = null;
@@ -160,8 +169,7 @@ define([
 
         /**
          * Event called each 150ms telling the client the game is still alive
-         * @param {object} data - JSON payload
-         * @param {number} data.elapsed - Time elapsed since game_started
+         * @param {number} data - elapsed time
          */
         self.ws.on('game_tick', function(data) {
             /** Time of the last tick received */
@@ -175,6 +183,13 @@ define([
                 clearTimeout(self.tickTimer);
 
             self.tickTimer = setTimeout(self.checkForLag.bind(self), AppConstants.Engine.STOP_PREDICTING_LAPSE);
+
+            //Check for animation triggers
+            if(data > AppConstants.Animations.NYAN_CAT_TRIGGER_MS && !self.nyan) {
+                self.nyan = true;
+                self.trigger('nyan_cat_animation');
+            }
+
         });
 
         /** Socket io errors */
@@ -236,6 +251,9 @@ define([
             self.cashingOut = false;
             self.lag = false;
 
+            //Clear Animation trigger flags
+            self.nyan = false;
+
             self.trigger('game_crash', data);
         });
 
@@ -251,6 +269,7 @@ define([
 
             self.gameState = 'STARTING';
             self.gameId = info.game_id;
+            self.timeTillStart = info.time_till_start;
             self.startTime = new Date(Date.now() + info.time_till_start);
             self.maxWin = info.max_win;
 

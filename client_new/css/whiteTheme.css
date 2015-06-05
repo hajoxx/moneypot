@@ -1,6 +1,10 @@
 html, body {
 }
 
+body {
+    background: white;
+}
+
 ::-webkit-scrollbar-corner {
     background-color: white;
 }
@@ -114,6 +118,7 @@ html, body {
 
 #controls-inner-container .bet-input-group>input, #controls-inner-container .bet-input-group>span {
     color: #181a1e;
+    background-color: white;
 }
 
 
@@ -235,4 +240,13 @@ html, body {
 
 .space-gradient {
     background: transparent;
+}
+
+
+/* ==========================================================================
+   chart.css
+   ========================================================================== */
+
+#chart-inner-container .max-profit {
+    color: black;
 }

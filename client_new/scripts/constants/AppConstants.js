@@ -54,6 +54,10 @@ define(['lib/key-mirror'], function(KeyMirror){
 
         Chat: {
             MAX_LENGTH: 500
+        },
+
+        Animations: {
+            NYAN_CAT_TRIGGER_MS: 115129 //115129ms ~ 1000x // 11552ms ~ 2x
         }
 
     }

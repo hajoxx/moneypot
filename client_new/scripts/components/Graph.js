@@ -1,73 +1,98 @@
+/**
+ * This is not a react component but we will try to make it work like one
+ */
+
 define([
+    'stores/GameSettingsStore',
     'lib/clib',
-    'lib/lodash'
+    'lib/lodash',
+    'game-logic/engine'
 ], function(
+    GameSettingsStore,
     Clib,
-    _
+    _,
+    Engine
 ){
 
-    //TODO: Clean this file
+    function Graph() {
+        this.rendering = false;
+        this.animRequest = null;
+        this.getParentNodeFunc = null;
 
-    function Graph(width, height) {
-        //Canvas settings
-        console.assert(width && height);
-        this.canvasWidth = width;
-        this.canvasHeight = height;
-
-        //Plotting Settings
-        this.plotWidth = this.canvasWidth - 30;
-        this.plotHeight = this.canvasHeight - 20;
-        this.xStart = this.canvasWidth - this.plotWidth;
-        this.yStart = this.canvasHeight - this.plotHeight;
-        this.XAxisPlotMinValue = 10000;    //10 Seconds
-        this.YAxisSizeMultiplier = 2;    //YAxis is x times
-        this.YAxisInitialPlotValue = "zero"; //"zero", "betSize"
+        this.onWindowResizeBinded = this.onWindowResize.bind(this);
+        this.onChangeBinded = this.onChange.bind(this);
     }
 
-    Graph.prototype.resize = function(width, height) {
+    Graph.prototype.startRendering = function(canvasNode, getParentNodeFunc) {
+        this.rendering = true;
+        this.getParentNodeFunc = getParentNodeFunc;
 
-        this.canvasWidth = width;
-        this.canvasHeight = height;
+        if (!canvasNode.getContext)
+            return console.error('No canvas');
 
+        this.ctx = canvasNode.getContext('2d');
+        var parentNode = this.getParentNodeFunc();
+        this.canvasWidth = parentNode.clientWidth;
+        this.canvasHeight = parentNode.clientHeight;
+        this.canvas = canvasNode;
+        this.theme = GameSettingsStore.getCurrentTheme();
+        this.configPlotSettings();
+
+        this.animRequest = window.requestAnimationFrame(this.render.bind(this));
+
+        GameSettingsStore.on('all', this.onChangeBinded);
+        window.addEventListener('resize', this.onWindowResizeBinded);
+    };
+
+    Graph.prototype.stopRendering = function() {
+        this.rendering = false;
+
+        GameSettingsStore.off('all', this.onChangeBinded);
+        window.removeEventListener('resize', this.onWindowResizeBinded);
+    };
+
+    Graph.prototype.onChange = function() {
+        this.theme = GameSettingsStore.getCurrentTheme();
+        this.configPlotSettings();
+    };
+
+    Graph.prototype.render = function() {
+        if(!this.rendering)
+            return;
+
+        this.calcGameData();
+        this.calculatePlotValues();
+        this.clean();
+        this.drawGraph();
+        this.drawAxes();
+        this.drawGameData();
+        this.animRequest = window.requestAnimationFrame(this.render.bind(this));
+    };
+
+    /** On windows resize adjust the canvas size to the canvas parent size */
+    Graph.prototype.onWindowResize = function() {
+        var parentNode = this.getParentNodeFunc();
+        this.canvasWidth = parentNode.clientWidth;
+        this.canvasHeight = parentNode.clientHeight;
+        this.configPlotSettings();
+    };
+
+    Graph.prototype.configPlotSettings = function() {
         this.canvas.width = this.canvasWidth;
         this.canvas.height = this.canvasHeight;
-
-        //Plotting Settings
+        this.themeWhite = (this.theme === 'white');
         this.plotWidth = this.canvasWidth - 30;
         this.plotHeight = this.canvasHeight - 20; //280
         this.xStart = this.canvasWidth - this.plotWidth;
         this.yStart = this.canvasHeight - this.plotHeight;
         this.XAxisPlotMinValue = 10000;    //10 Seconds
         this.YAxisSizeMultiplier = 2;    //YAxis is x times
-        this.YAxisInitialPlotValue = "zero"; //"zero", "betSize"
+        this.YAxisInitialPlotValue = "zero"; //"zero", "betSize" //TODO: ???
     };
 
-    Graph.prototype.setData = function(ctx, canvas, engine, theme) {
-        this.ctx = ctx;
-        this.canvas = canvas;
-        this.engine = engine;
-        this.gameState = engine.gameState;
-        this.theme = theme;
-        this.themeWhite = (theme === 'white');
-
-        this.cashingOut = engine.cashingOut;
-        //this.lastWinnings = lastWinnings; //The payout of the last game
-
-        //this.lostConnection = lostConnection; //Changed to lag
-
-        this.lag = engine.lag;
-
-        //this.crashedAt = crashedAt; //Text displaying the crashed amount
-        //this.currentCash = currentCash; // Text displaying the current payout
-
-        //this.playersCashedOut = playersCashedOut; //Array to render circles in the players cash out positions
-
-        this.startTime = engine.startTime;
-
-        this.currentTime = Clib.getElapsedTimeWithLag(engine);
+    Graph.prototype.calcGameData = function() {
+        this.currentTime = Clib.getElapsedTimeWithLag(Engine);
         this.currentGamePayout = Clib.calcGamePayout(this.currentTime);
-
-        return this.currentGamePayout;
     };
 
     Graph.prototype.calculatePlotValues = function() {
@@ -103,21 +128,22 @@ define([
 
         /* Style the line depending on the game states */
         this.ctx.strokeStyle = (this.themeWhite? "Black" : "#b0b3c1");
-        //if(this.lastGameWon) {
-        if(this.engine.currentlyPlaying()) { //playing and not cashed out
-            this.ctx.lineWidth=6;
+
+        //Playing and not cashed out
+        if(Engine.currentlyPlaying()) {
+            this.ctx.lineWidth = 6;
             this.ctx.strokeStyle = '#7cba00';
-        } else if(this.cashingOut) {
+
+        //Cashing out
+        } else if(Engine.cashingOut) {
             this.ctx.lineWidth=6;
             //this.ctx.strokeStyle = "Grey";
+
         } else {
             this.ctx.lineWidth=4;
         }
 
-        //var greenSetted = false;
-
         this.ctx.beginPath();
-        //this.ctx.moveTo(this.xStart, this.plotHeight - (this.betSizeAdj * this.heightIncrement));
         Clib.seed(1);
 
         /* Draw the graph */
@@ -147,7 +173,6 @@ define([
             if(i > 5000) {console.log("For 1 too long!");break;}
         }
         this.ctx.stroke();
-
     };
 
     Graph.prototype.drawAxes = function() {
@@ -218,7 +243,6 @@ define([
     };
 
 
-
     Graph.prototype.drawGameData = function() {
 
         //Percentage of canvas width
@@ -226,18 +250,17 @@ define([
         function fontSizeNum(times) {
             return onePercent * times;
         }
+
         function fontSizePx(times) {
             var fontSize = fontSizeNum(times);
             return fontSize.toFixed(2) + 'px';
         }
 
-
         this.ctx.textAlign="center";
         this.ctx.textBaseline = 'middle';
 
-
-        if(this.engine.gameState === 'IN_PROGRESS') {
-            var pi = (this.engine.username)? this.engine.playerInfo[this.engine.username]: null; //TODO: Abstract this on engine virtual store?
+        if(Engine.gameState === 'IN_PROGRESS') {
+            var pi = (Engine.username)? Engine.playerInfo[Engine.username]: null; //TODO: Abstract this on engine virtual store?
 
             if (pi && pi.bet && !pi.stopped_at)
                 this.ctx.fillStyle = '#7cba00';
@@ -249,11 +272,20 @@ define([
         }
 
         //If the engine enters in the room @ ENDED it doesn't have the crash value, so we don't display it
-        if(this.engine.gameState === 'ENDED') {
+        if(Engine.gameState === 'ENDED') {
             this.ctx.font = fontSizePx(15) + " Verdana";
             this.ctx.fillStyle = "red";
             this.ctx.fillText('Busted', this.canvasWidth/2, this.canvasHeight/2 - fontSizeNum(15)/2);
-            this.ctx.fillText('@ ' + Clib.formatDecimals(this.engine.tableHistory[0].game_crash/100, 2) + 'x', this.canvasWidth/2, this.canvasHeight/2 + fontSizeNum(15)/2);
+            this.ctx.fillText('@ ' + Clib.formatDecimals(Engine.tableHistory[0].game_crash/100, 2) + 'x', this.canvasWidth/2, this.canvasHeight/2 + fontSizeNum(15)/2);
+        }
+
+        if(Engine.gameState === 'STARTING') {
+            this.ctx.font = fontSizePx(5) + " Verdana";
+            this.ctx.fillStyle = "grey";
+
+            var timeLeft = ((Engine.startTime - Date.now())/1000).toFixed(1);
+
+            this.ctx.fillText('Next round in '+timeLeft+'s', this.canvasWidth/2, this.canvasHeight/2);
         }
 
         //if(this.lag) {

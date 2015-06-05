@@ -30,3 +30,11 @@
     width: auto;
     height: auto;
 }
+
+#chart-inner-container .max-profit {
+    position: absolute;
+    bottom: 27px;
+    right: 30px;
+    font-size: 0.6rem;
+    color: white;
+}
