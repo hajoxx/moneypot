@@ -184,6 +184,10 @@ body {
     color: grey;
 }
 
+#strategy-container .auto-bet-container input[type="text"] {
+    color: black;
+}
+
 
 /* ==========================================================================
    players.css
