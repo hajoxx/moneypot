@@ -21,8 +21,7 @@ function staticPageLogged(page, loggedGoTo) {
         if (loggedGoTo) return res.redirect(loggedGoTo);
 
         res.render(page, {
-            user: user,
-            page: page
+            user: user
         });
     }
 }
@@ -95,7 +94,6 @@ function table() {
 function tableNew() {
     return function(req, res) {
         res.render('table_new', {
-            table: true,
             buildConfig: config.BUILD
         });
     }
@@ -107,7 +105,6 @@ function tableNewDev() {
             return res.status(401);
         requestDevOtt(req.params.id, function(devOtt) {
             res.render('table_new', {
-                table: true,
                 devOtt: devOtt
             });
         });
