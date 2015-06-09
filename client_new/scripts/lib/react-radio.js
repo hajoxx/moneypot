@@ -1,8 +1,9 @@
 define([
-    'lib/react',
-    'lib/lodash'
+    'react',
+    'lodash'
 ], function(
-    React, _
+    React,
+    _
 ){
 
     var D = React.DOM;

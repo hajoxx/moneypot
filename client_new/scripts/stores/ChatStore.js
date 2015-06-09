@@ -1,5 +1,5 @@
 define([
-    'lib/lodash',
+    'lodash',
     'lib/events',
     'constants/AppConstants',
     'dispatcher/AppDispatcher'

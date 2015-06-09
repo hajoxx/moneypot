@@ -1,4 +1,4 @@
-define(['lib/lodash'], function(_){
+define(['lodash'], function(_){
 
     // Stolen from backbone 1.1.2
 

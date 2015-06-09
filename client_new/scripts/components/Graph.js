@@ -4,8 +4,8 @@
 
 define([
     'stores/GameSettingsStore',
-    'lib/clib',
-    'lib/lodash',
+    'game-logic/clib',
+    'lodash',
     'game-logic/engine'
 ], function(
     GameSettingsStore,

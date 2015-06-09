@@ -1,7 +1,7 @@
 /** Todo: If we send the Store and the actions maybe is better to just send the state, this looks like not fluxy **/
 
 define([
-    'lib/react',
+    'react',
     'lib/react-radio'
 ], function(
     React,

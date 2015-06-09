@@ -3,7 +3,7 @@ define([
     'components/StrategyEditor',
     'stores/controlsSelectorStore',
     'actions/ControlsSelectorActions',
-    'lib/react'
+    'react'
 ], function(
     ControlsClass,
     StrategyEditorClass,

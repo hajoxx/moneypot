@@ -77,7 +77,10 @@ app.enable('trust proxy');
 
 /** Serve Static content **/
 var twoWeeksInSeconds = 1209600;
-app.use(express.static(path.join(__dirname, config.BUILD? '/../../build' : (config.NEW_VIEW? '/../../client_new' : '/../../client')), { maxAge: twoWeeksInSeconds * 1000 }));
+app.use(express.static(path.join(__dirname, config.BUILD? '/../../build' : (config.NEW_VIEW? '/../../client_new' : '/../../client_old')), { maxAge: twoWeeksInSeconds * 1000 }));
+
+if(!config.PRODUCTION)
+    app.use('/node_modules', express.static(path.join(__dirname, '../../node_modules')), { maxAge: twoWeeksInSeconds * 1000 });
 
 
 /** Login middleware

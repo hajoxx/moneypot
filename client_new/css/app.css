@@ -1,6 +1,6 @@
-@import url("../lib/foundation/css/foundation.css");
-@import url("../lib/foundation-icons/foundation-icons.css");
-@import url("../lib/font-awesome/css/font-awesome.css");
+@import url("../vendor/foundation/css/foundation.css");
+@import url("../vendor/foundation-icons/foundation-icons.css");
+@import url("../vendor/font-awesome/css/font-awesome.css");
 @import url("header.css");
 
 

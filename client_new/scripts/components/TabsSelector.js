@@ -1,5 +1,5 @@
 define([
-    'lib/react',
+    'react',
     'components/Chat',
     'components/GamesLog',
     'stores/TabsSelectorStore',

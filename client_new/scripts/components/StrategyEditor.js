@@ -1,8 +1,8 @@
 define([
-    'lib/react',
+    'react',
     'strategies/strategies',
-    'lib/lodash',
-    'lib/clib',
+    'lodash',
+    'game-logic/clib',
     'game-logic/engine',
     'stores/StrategyEditorStore',
     'actions/StrategyEditorActions'

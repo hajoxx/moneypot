@@ -1,7 +1,5 @@
 function CustomChart(startingFrom, cum, chartData) {
 
-    //console.log(data);
-
     chartData.reverse();
     chartData.forEach(function(entry, i) {
         var profit = (entry.cash_out ? entry.cash_out : 0) + (entry.bonus ? entry.bonus : 0) - entry.bet;
@@ -45,7 +43,7 @@ function CustomChart(startingFrom, cum, chartData) {
             "marginRight": 8,
             "marginTop": 10,
             "marginBottom": 26,
-            "pathToImages": "/amcharts/images/",
+            "pathToImages": "/vendor/amcharts/images/",
             "dataProvider": chartData,
             "valueAxes": [
                 {

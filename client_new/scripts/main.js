@@ -1,26 +1,16 @@
-define([
-    'lib/react',
-    'components/Game',
-    'lib/clib',
-    'game-logic/engine'
-], function(
-    React,
-    GameClass,
-    Clib,
-    Engine
-) {
+requirejs.config({
+    baseUrl: "scripts", //If no baseUrl is explicitly set in the configuration, the default value will be the location of the HTML page that loads require.js.
+    paths: {
+        autolinker: '../../node_modules/autolinker/dist/Autolinker',
+        classnames: '../../node_modules/index',
+        lodash: '../../node_modules/lodash/dist/lodash',
+        react: '../../node_modules/react/dist/react-with-addons',
+        seedrandom: '../../node_modules/seedrandom/seedrandom',
+        socketio: '../../node_modules/socket.io-client/socket.io'
+    },
+    shim: {
 
-    var Game = React.createFactory(GameClass);
-
-    React.render(
-        Game(),
-        document.getElementById('game-container')
-    );
-
-    //Update the balance in an ugly way TODO: Improve
-    Engine.on('all', function() {
-        var elem = document.getElementById('balance_bits');
-        if (elem)
-            elem.innerHTML = Clib.formatSatoshis(Engine.balanceSatoshis, 2);
-    });
+    }
 });
+
+require(['game']);

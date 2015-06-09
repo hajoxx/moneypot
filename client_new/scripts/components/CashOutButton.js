@@ -1,6 +1,6 @@
 define([
-    'lib/react',
-    'lib/clib',
+    'react',
+    'game-logic/clib',
     'components/Payout'
 ], function(
     React,

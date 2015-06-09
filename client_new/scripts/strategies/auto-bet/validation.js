@@ -1,4 +1,4 @@
-define(['lib/clib'], function(Clib){
+define(['game-logic/clib'], function(Clib){
 
     return function(settings) {
 

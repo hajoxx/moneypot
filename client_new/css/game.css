@@ -1,6 +1,6 @@
 @import url("reset.css");
-@import url("../lib/font-awesome/css/font-awesome.css");
-@import url("../lib/simplegrid/simplegrid.css");
+@import url("../vendor/font-awesome/css/font-awesome.css");
+@import url("../vendor/simplegrid/simplegrid.css");
 @import url("fonts.css");
 @import url("general.css");
 @import url("topBar.css");

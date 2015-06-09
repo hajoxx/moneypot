@@ -1,7 +1,7 @@
 define([
-    'lib/react',
-    'lib/clib',
-    'lib/Autolinker',
+    'react',
+    'game-logic/clib',
+    'autolinker',
     'stores/ChatStore',
     'actions/ChatActions',
     'game-logic/engine'

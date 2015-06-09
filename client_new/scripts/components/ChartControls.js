@@ -1,5 +1,5 @@
 define([
-    'lib/react',
+    'react',
     'components/Chart',
     'components/ControlsSelector'
 ], function(

@@ -2,8 +2,8 @@ define([
     'dispatcher/AppDispatcher',
     'constants/AppConstants',
     'lib/events',
-    'lib/lodash',
-    'lib/clib'
+    'lodash',
+    'game-logic/clib'
 ], function(
     AppDispatcher,
     AppConstants,

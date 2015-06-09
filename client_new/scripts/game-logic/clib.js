@@ -1,6 +1,6 @@
 define([
-    'lib/seedrandom',
-    'lib/lodash',
+    'seedrandom',
+    'lodash',
     'constants/AppConstants'
 ], function(
     Seedrandom,

@@ -3,7 +3,7 @@
  * and run the script that subscribe itself to the ScriptExecutor Events.
  **/
 define([
-    'lib/lodash',
+    'lodash',
     'game-logic/engine',
     'lib/events'
 ], function(

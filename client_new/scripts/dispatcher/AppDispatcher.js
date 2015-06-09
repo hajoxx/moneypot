@@ -1,4 +1,4 @@
-define(['dispatcher/Dispatcher', 'lib/lodash', 'constants/AppConstants'], function(Dispatcher, _, AppConstants){
+define(['dispatcher/Dispatcher', 'lodash', 'constants/AppConstants'], function(Dispatcher, _, AppConstants){
 
     var AppDispatcher = _.extend(new Dispatcher(), {
 

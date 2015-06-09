@@ -152,7 +152,6 @@ module.exports = function(app) {
     app.get('/forgot-password', staticPageLogged('forgot-password'));
     app.get('/calculator', staticPageLogged('calculator'));
     app.get('/guide', staticPageLogged('guide'));
-    app.get('/bitcoin-gambling', staticPageLogged('bitcoin-gambling'));
     app.get('/online-gambling-meets-bitcoin', staticPageLogged('online-gambling-meets-bitcoin'));
 
     app.get('/play', table());

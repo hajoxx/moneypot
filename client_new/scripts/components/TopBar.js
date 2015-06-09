@@ -1,9 +1,9 @@
 define([
-   'lib/react',
+   'react',
     'game-logic/engine',
     'stores/GameSettingsStore',
     'actions/GameSettingsActions',
-    'lib/clib'
+    'game-logic/clib'
 ], function(
     React,
     Engine,

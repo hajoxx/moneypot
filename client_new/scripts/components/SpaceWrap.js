@@ -1,5 +1,5 @@
 define([
-    'lib/react',
+    'react',
     'game-logic/engine'
 ], function(
     React,

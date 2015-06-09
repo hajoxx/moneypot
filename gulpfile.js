@@ -30,10 +30,15 @@ gulp.task('build', function(callback) {
     );
 });
 
-/** Delete build folder **/
+/** Delete build folder and config file if exist **/
 gulp.task('clean:build', function () {
-    return gulp.src('build')
+    var buildStream = gulp.src('build')
         .pipe(vinylPaths(del));
+
+    var configStream = gulp.src('config/build-config.json')
+        .pipe(vinylPaths(del));
+
+    return merge(buildStream, configStream);
 });
 
 
@@ -42,10 +47,10 @@ gulp.task('clean:build', function () {
 
 /** RequireJS Optimizer options **/
 var oldClientOpts = {
-    baseUrl: './client/scripts',
-    out: './build/scripts/main-old.js',
+    baseUrl: './client_old/scripts',
+    out: './build/old/scripts/main-old.js',
     name: 'lib/almond',
-    mainConfigFile: './client/scripts/main.js',
+    mainConfigFile: './client_old/scripts/main.js',
     include: 'main',
     insertRequire: ['main'],
     removeCombined: false,
@@ -69,32 +74,32 @@ gulp.task('minify-js-old', function(callback) {
 gulp.task('minify-css-old', function() {
 
     //Game css
-    var appStream = gulp.src('client/css/game.css')
+    var appStream = gulp.src('client_old/css/game.css')
         .pipe(minifyCss({ advanced: false, aggressiveMerging: false, restructuring: false, shorthandCompacting: false }))
         .pipe(rename('css/game-old.css'))
-        .pipe(gulp.dest('build/'));
+        .pipe(gulp.dest('build/old/'));
 
     //Landing css
-    var landingStream = gulp.src('client/css/app.css')
+    var landingStream = gulp.src('client_old/css/app.css')
         .pipe(minifyCss({ compatibility: 'ie8' }))
         .pipe(rename('css/app-old.css'))
-        .pipe(gulp.dest('build/'));
+        .pipe(gulp.dest('build/old/'));
 
     return merge(appStream, landingStream);
 });
 
 /** Copy the necessary files to prod folder **/
 gulp.task('copy:assets-old', function() {
-    var imgStream = gulp.src('client/img/**/*.*')
-        .pipe(gulp.dest('build/img'));
-    var fontsStream = gulp.src('client/fonts/**/*.*')
-        .pipe(gulp.dest('build/fonts'));
-    var cssFontsStream = gulp.src('client/css/fonts/*.*')
-        .pipe(gulp.dest('build/css/fonts'));
-    var soundsStream = gulp.src('client/sounds/**/*.*')
-        .pipe(gulp.dest('build/sounds'));
-    var libStream = gulp.src('client/lib/**/*.*')
-        .pipe(gulp.dest('build/lib'));
+    var imgStream = gulp.src('client_old/img/**/*.*')
+        .pipe(gulp.dest('build/old/img'));
+    var fontsStream = gulp.src('client_old/fonts/**/*.*')
+        .pipe(gulp.dest('build/old/fonts'));
+    var cssFontsStream = gulp.src('client_old/css/fonts/*.*')
+        .pipe(gulp.dest('build/old/css/fonts'));
+    var soundsStream = gulp.src('client_old/sounds/**/*.*')
+        .pipe(gulp.dest('build/old/sounds'));
+    var libStream = gulp.src('client_old/lib/**/*.*')
+        .pipe(gulp.dest('build/old/lib'));
 
     return merge(imgStream, fontsStream, soundsStream,cssFontsStream,libStream);
 });
@@ -109,25 +114,25 @@ gulp.task('hash-files-old', function(callback) {
 
 gulp.task('hash-css-game-old', function() {
     return addToManifest(
-        gulp.src('./build/css/game-old.css')
+        gulp.src('./build/old/css/game-old.css')
             .pipe(hash(hashOptions))
-            .pipe(gulp.dest('build/css'))
+            .pipe(gulp.dest('build/old/css'))
     );
 });
 
 gulp.task('hash-css-app-old', function() {
     return addToManifest(
-        gulp.src('./build/css/app-old.css')
+        gulp.src('./build/old/css/app-old.css')
             .pipe(hash(hashOptions))
-            .pipe(gulp.dest('build/css'))
+            .pipe(gulp.dest('build/old/css'))
     );
 });
 
 gulp.task('hash-js-old', function() {
     return addToManifest(
-        gulp.src('./build/scripts/main-old.js')
+        gulp.src('./build/old/scripts/main-old.js')
             .pipe(hash(hashOptions))
-            .pipe(gulp.dest('build/scripts'))
+            .pipe(gulp.dest('build/old/scripts'))
     );
 });
 
@@ -167,7 +172,7 @@ gulp.task('hash-js-old', function() {
 var newClientOptions = {
     baseUrl: './client_new/scripts',
     out: './build/scripts/main-new.js',
-    name: 'lib/almond',
+    name: '../../node_modules/almond/almond',
     mainConfigFile: './client_new/scripts/main.js',
     include: 'main',
     insertRequire: ['main'],
@@ -214,20 +219,21 @@ gulp.task('minify-css-new', function() {
 
 /** Copy the necessary files to prod folder **/
 gulp.task('copy:assets-new', function() {
-    var imgStream = gulp.src('client_new/img/**/*.*')
-        .pipe(gulp.dest('build/img'));
-    var fontsStream = gulp.src('client_new/fonts/**/*.*')
-        .pipe(gulp.dest('build/fonts'));
-    var cssFontsStream = gulp.src('client_new/css/fonts/*.*')
-        .pipe(gulp.dest('build/css/fonts'));
-    var soundsStream = gulp.src('client_new/sounds/**/*.*')
-        .pipe(gulp.dest('build/sounds'));
-    var libStream = gulp.src('client_new/lib/**/*.*')
-        .pipe(gulp.dest('build/lib'));
-    var amchartsStream = gulp.src('client_new/amcharts/**/*.*')
-        .pipe(gulp.dest('build/amcharts'));
+    //var imgStream = gulp.src('client_new/img/**/*.*')
+    //    .pipe(gulp.dest('build/img'));
+    //var fontsStream = gulp.src('client_new/fonts/**/*.*')
+    //    .pipe(gulp.dest('build/fonts'));
+    //var cssFontsStream = gulp.src('client_new/css/fonts/*.*')
+    //    .pipe(gulp.dest('build/css/fonts'));
+    //var soundsStream = gulp.src('client_new/sounds/**/*.*')
+    //    .pipe(gulp.dest('build/sounds'));
+    //var libStream = gulp.src('client_new/lib/**/*.*')
+    //    .pipe(gulp.dest('build/lib'));
+    //var amchartsStream = gulp.src('client_new/amcharts/**/*.*')
+    //    .pipe(gulp.dest('build/amcharts'));
 
-    return merge(imgStream, fontsStream, soundsStream,cssFontsStream,libStream, amchartsStream);
+    return gulp.src('client_new/**/*.*')
+        .pipe(gulp.dest('build/'));
 });
 
 /** Hash the config.js and the app.css files  **/

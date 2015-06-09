@@ -1,7 +1,7 @@
 define([
-    'lib/react',
-    'lib/lodash',
-    'lib/clib',
+    'react',
+    'lodash',
+    'game-logic/clib',
     'game-logic/engine'
 ], function(
     React,

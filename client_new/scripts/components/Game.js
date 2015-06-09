@@ -5,7 +5,7 @@
  * EngineVirtualStore independently.
  */
 define([
-    'lib/react',
+    'react',
     'components/TopBar',
     'components/ChartControls',
     'components/TabsSelector',
@@ -13,7 +13,7 @@ define([
     'components/BetBar',
     'components/SpaceWrap',
     'game-logic/engine',
-    'lib/clib'
+    'game-logic/clib'
 ], function(
     React,
     TopBarClass,

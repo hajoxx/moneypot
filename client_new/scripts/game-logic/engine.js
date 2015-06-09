@@ -1,8 +1,8 @@
 define([
-    'lib/socket.io-1.2.1',
+    'socketio',
     'lib/events',
-    'lib/lodash',
-    'lib/clib',
+    'lodash',
+    'game-logic/clib',
     'constants/AppConstants',
     'dispatcher/AppDispatcher'
 ], function(

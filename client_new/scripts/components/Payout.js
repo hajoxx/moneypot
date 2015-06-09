@@ -1,4 +1,4 @@
-define(['lib/react', 'lib/clib'], function(React, Clib) {
+define(['react', 'game-logic/clib'], function(React, Clib) {
 
     var D = React.DOM;
 

@@ -1,4 +1,4 @@
-define(['lib/react'], function(React){
+define(['react'], function(React){
 
     var D = React.DOM;
 

@@ -1,6 +1,6 @@
 define([
-    'lib/react',
-    'lib/clib',
+    'react',
+    'game-logic/clib',
     'constants/AppConstants',
     //'components/Payout',
     'game-logic/engine'

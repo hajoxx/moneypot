@@ -1,7 +1,7 @@
 define([
-    'lib/react',
-    'lib/clib',
-    'lib/lodash',
+    'react',
+    'game-logic/clib',
+    'lodash',
     //'components/Countdown',
     'components/BetButton',
     'actions/ControlsActions',
