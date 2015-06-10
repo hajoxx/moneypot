@@ -22,5 +22,7 @@ define([
         var elem = document.getElementById('balance_bits');
         if (elem)
             elem.innerHTML = Clib.formatSatoshis(Engine.balanceSatoshis, 2);
+        else
+            console.log('[main] No balance container');
     });
 });
