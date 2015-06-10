@@ -86,23 +86,31 @@
 
 #players-container .users-playing td, #players-container .users-playing th {
     padding-left: 6px;
-    width: 20%;
     line-height: 1.3rem;
 }
 
 
-/* Adjust head columns */
+/* Adjust columns */
 
-#players-container .users-playing th:nth-child(1) {
-    width: 25%;
+#players-container .users-playing th:nth-child(1), #players-container .users-playing td:nth-child(1) {
+    width: 28%;
     padding-left: 0.2rem;
 }
 
-/* Adjust body columns */
+#players-container .users-playing th:nth-child(2), #players-container .users-playing td:nth-child(2) {
+    width: 15%;
+}
 
-#players-container .users-playing td:nth-child(1) {
-    width: 25%;
-    padding-left: 0.2rem;
+#players-container .users-playing th:nth-child(3), #players-container .users-playing td:nth-child(3) {
+    width: 20%;
+}
+
+#players-container .users-playing th:nth-child(4), #players-container .users-playing td:nth-child(4) {
+    width: 17%;
+}
+
+#players-container .users-playing th:nth-child(5), #players-container .users-playing td:nth-child(5) {
+    width: 20%; 
 }
 
 
