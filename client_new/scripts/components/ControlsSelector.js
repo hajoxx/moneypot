@@ -52,7 +52,7 @@ define([
         render: function() {
 
             return D.div({ id: 'controls-selector-container' },
-                D.div({ className: 'buttons-container' },
+                D.div({ className: 'buttons-container noselect' },
                     D.div({ className: 'button-holder' + (this.state.selectedControl === 'manual'? ' tab-active' : ''), onClick: this._selectControl('manual') },
                         D.a(null,  'Manual' )
                     ),

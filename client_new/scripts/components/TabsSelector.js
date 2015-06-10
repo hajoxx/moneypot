@@ -66,13 +66,13 @@ define([
                 D.div({ className: 'tab-container unselect' },
                         D.ul({ className: '' },
                             D.li({
-                                    className: 'chat-log-tab ' + ((this.state.selectedTab === 'gamesLog') ? 'tab-active' : ''),
+                                    className: 'chat-log-tab noselect ' + ((this.state.selectedTab === 'gamesLog') ? 'tab-active' : ''),
                                     onClick: this._selectTab('gamesLog')
                                 },
                                 D.a(null, 'History')
                             ),
                             D.li({
-                                    className: 'chat-log-tab ' + ((this.state.selectedTab === 'chat') ? 'tab-active' : ''),
+                                    className: 'chat-log-tab noselect ' + ((this.state.selectedTab === 'chat') ? 'tab-active' : ''),
                                     onClick: this._selectTab('chat')
                                 },
                                 D.a(null, 'Chat')

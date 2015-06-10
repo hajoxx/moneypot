@@ -209,6 +209,10 @@ define([
             if (el && el.parentNode) {
                 el.parentNode.removeChild(el);
             }
+        },
+
+        localOrDef: function(name, defaultValue) {
+            return localStorage[name]? localStorage[name] : defaultValue;
         }
 
     };

@@ -184,9 +184,11 @@
 
 #controls-inner-container .bet-button {
     display: block;
+    padding: 0;
+    margin: 0;
     width: 100%;
+    height: 6rem;
     top: calc(100% - 3em);
-    line-height: 3em;
     text-align: center;
     color: white;
     background-color: rgba(243,150,47,1);
@@ -204,19 +206,46 @@
     border: 0;
     outline: none;
     font-family: inherit;
+    cursor: pointer;
 }
 @media handheld, only screen and (max-width: 767px) {
     #controls-inner-container .bet-button {
         top: inherit;
-        /* margin-top: 0.5rem; */
-        line-height: 1.7rem;
-    
+        height: 1.7rem;
         font-size: 1.2rem;
 }
 }
 
-#controls-inner-container .bet-button span{
+#controls-inner-container .bet-button > span {
+     white-space: nowrap;
+}
+
+#controls-inner-container .btn-content {
     white-space: nowrap;
+    /* height: 3rem; */
+}
+
+#controls-inner-container .btn-content .cashout-cont {
+    display: block;
+    line-height: 2rem;
+    /* padding-top: 0rem; */
+}
+@media handheld, only screen and (max-width: 767px) {
+    #controls-inner-container .btn-content .cashout-cont {
+        display: inline;
+        line-height: inherit;
+        padding-top: 0;
+    }
+}
+
+#controls-inner-container .btn-content .cashout-amount-cont {
+    display: block;
+    font-size: 1.5rem;
+}
+@media handheld, only screen and (max-width: 767px) {
+    #controls-inner-container .btn-content .cashout-amount-cont{
+        display: none;
+    }
 }
 
 #controls-inner-container .bet-button:active {

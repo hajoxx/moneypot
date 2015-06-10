@@ -36,7 +36,7 @@ define(['react', 'game-logic/clib'], function(React, Clib) {
         render: function() {
             var decimals = this.props.engine.currentPlay().bet < 10000 ? 2 : 0;
 
-            return D.span(null, Clib.formatSatoshis(this.state.payout, decimals));
+            return D.span({ id: 'payout' }, Clib.formatSatoshis(this.state.payout, decimals));
         }
     });
 

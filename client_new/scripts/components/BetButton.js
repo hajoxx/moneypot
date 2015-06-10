@@ -2,18 +2,18 @@ define([
     'react',
     'game-logic/clib',
     'constants/AppConstants',
-    //'components/Payout',
+    'components/Payout',
     'game-logic/engine'
 ], function(
     React,
     Clib,
     AppConstants,
-    //PayoutClass,
+    PayoutClass,
     Engine
 ){
 
     var D = React.DOM;
-    //var Payout = React.createFactory(PayoutClass);
+    var Payout = React.createFactory(PayoutClass);
 
     return React.createClass({
         displayName: 'BetButton',
@@ -104,7 +104,6 @@ define([
             btnClasses = 'bet-button';
 
             if(ableToBetOrBetting) {
-
                 //Betting
                 if(betting) {
                     btnClasses += ' disable';
@@ -151,10 +150,16 @@ define([
 
             //The user is playing
             } else {
-
-                btnContent.push('Cash out!');
-                //btnContent.push(Payout({ engine: this.props.engine }));
-                //btnContent.push(' bits');
+                btnContent.push(
+                    D.div({ className: 'btn-content', key: 'bc-6' },
+                        D.span({ className: 'cashout-cont' }, 'Cash out'),
+                        D.span({ className: 'cashout-amount-cont' },
+                            D.span(null, '@ '),
+                            Payout({ engine: this.props.engine }),
+                            D.span(null, 'bits')
+                        )
+                    )
+                );
 
                 //Cashing out
                 if (this.props.engine.cashingOut) {

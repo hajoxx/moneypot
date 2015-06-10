@@ -15,7 +15,10 @@ define([
 
     var _themeFileName = '/css/' + (window.THEME_FILE_NAME || 'blackTheme.css'); //Global var sent by the server
 
-    var _currentTheme = 'white'; //black || white
+    var _currentTheme = Clib.localOrDef('currentTheme', 'white'); //black || white
+
+    if(localStorage['currentTheme'] === 'black')
+        Clib.loadCss(_themeFileName, 'theme-black');
 
     //Singleton ControlsStore Object
     var GameSettingsStore = _.extend({}, Events, {
@@ -40,6 +43,7 @@ define([
                 Clib.removeCss('theme-black');
                 _currentTheme = 'white';
             }
+            localStorage['currentTheme'] = _currentTheme;
         },
 
         getCurrentTheme: function() {

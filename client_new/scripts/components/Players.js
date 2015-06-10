@@ -2,16 +2,17 @@ define([
     'react',
     'game-logic/clib',
     'lodash',
-    'game-logic/engine'
+    'game-logic/engine',
+    'classnames'
 ], function(
     React,
     Clib,
     _,
-    Engine
+    Engine,
+    CX
 ){
 
     var D = React.DOM;
-    var cx = React.addons.classSet;
 
     function calcProfit(bet, stoppedAt) {
         return ((stoppedAt - 100) * bet)/100;
@@ -118,7 +119,7 @@ define([
 
                     var user = usersLostPlaying[i];
                     var bonus = (game.gameState === 'IN_PROGRESS')? ( (user.bonus)? Clib.formatDecimals((user.bonus*100/user.bet), 2) + '%': '0%' ) : '-';
-                    var classes = cx({
+                    var classes = CX({
                         'user-playing': true,
                         'me': self.state.engine.username === user.username
                     });
@@ -144,7 +145,7 @@ define([
                     var user = usersWonCashed[i];
                     var profit = calcProfit(user.bet, user.stopped_at);
                     var bonus = (game.gameState === 'IN_PROGRESS')? ( (user.bonus)? Clib.formatDecimals((user.bonus*100/user.bet), 2) + '%': '0%' ) : '-';
-                    var classes = cx({
+                    var classes = CX({
                         'user-cashed': true,
                         'me': self.state.engine.username === user.username
                     });
@@ -182,7 +183,7 @@ define([
                         bonus = '0%';
                     }
 
-                    var classes = cx({
+                    var classes = CX({
                         'user-lost': true,
                         'me': self.state.engine.username === entry.username
                     });
@@ -213,7 +214,7 @@ define([
                         bonus = '0%';
                     }
 
-                    var classes = cx({
+                    var classes = CX({
                         'user-won': true,
                         'me': self.state.engine.username === entry.username
                     });
