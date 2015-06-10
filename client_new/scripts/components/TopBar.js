@@ -23,6 +23,10 @@ define([
     return React.createClass({
         displayName: 'TopBar',
 
+        propTypes: {
+            isMobileOrSmall: React.PropTypes.bool.isRequired
+        },
+
         getInitialState: function() {
             var state = getState();
             state.username = Engine.username;
@@ -82,7 +86,7 @@ define([
             return D.div({ id: 'top-bar' },
                 D.div({ className: 'title' },
                     D.a({ href: '/' },
-                        D.h1(null, 'bustabit')
+                        D.h1(null, this.props.isMobileOrSmall? 'BaB' : 'bustabit')
                     )
                 ),
                 userLogin,

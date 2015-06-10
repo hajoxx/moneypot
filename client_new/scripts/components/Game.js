@@ -41,7 +41,7 @@ define([
             return {
                 isConnected: Engine.isConnected,
                 showMessage: true,
-                isMobileOrSmall: Clib.isMobileOrSmall()
+                isMobileOrSmall: Clib.isMobileOrSmall() //bool
             }
         },
 
@@ -140,7 +140,9 @@ define([
 
             return D.div({ id: 'game-inner-container' },
 
-                TopBar(),
+                TopBar({
+                    isMobileOrSmall: this.state.isMobileOrSmall
+                }),
 
                 SpaceWrap(),
 
