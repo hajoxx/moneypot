@@ -1,5 +1,3 @@
-/* Controls */
-
 #controls-inner-container {
     position: relative;
     width: 100%;
@@ -75,10 +73,9 @@
 }
 
 #controls-inner-container .bet-input-group>input, #controls-inner-container .bet-input-group>span {
-    /* padding: 0.1em 0.1em; */
     font-size: 1rem;
     border: 1px solid #ccc;
-    background-color: rgb(240, 238, 238);
+    color: #181a1e;
 }
 @media handheld, only screen and (max-width: 767px) {
     #controls-inner-container .bet-input-group>input, #controls-inner-container .bet-input-group>span {

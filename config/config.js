@@ -29,8 +29,5 @@ module.exports = {
   "BITCOIND_PASS": process.env.BITCOIND_PASS,
   "BITCOIND_CERT": process.env.BITCOIND_CERT  || '',
   "PORT":  process.env.PORT || 3841,
-  "BUILD": prodConfig,
-
-  //DEVELOPMENT
-  "NEW_VIEW": process.env.NEW_VIEW === 'yes'
+  "BUILD": prodConfig
 };

@@ -71,7 +71,7 @@ exports.register  = function(req, res, next) {
 };
 
 /**
- * GET
+ * POST
  * Public API
  * Login a user
  */
@@ -92,7 +92,7 @@ exports.login = function(req, res, next) {
 
 
     database.validateUser(username, password, otp, function(err, userId) {
-        console.log('Attempted login for user: ', username, ' result: ', err);
+        console.log('Attempted login for user: ', username, ' err: ', err);
         if (err) {
             if (err === 'NO_USER')
                 return res.render('login',{ warning: 'Username does not exist' });

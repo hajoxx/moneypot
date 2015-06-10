@@ -13,7 +13,7 @@ define([
 ){
     var CHANGE_EVENT = 'change';
 
-    var _themeFileName = 'css/' + window.THEME_FILE_NAME; //Global var sent by the server
+    var _themeFileName = '/css/' + (window.THEME_FILE_NAME || 'blackTheme.css'); //Global var sent by the server
 
     var _currentTheme = 'white'; //black || white
 
@@ -33,12 +33,12 @@ define([
         },
 
         _toggleTheme: function() {
-            if(_currentTheme === 'black') {
-                Clib.loadCss(_themeFileName, 'css-theme-white');
-                _currentTheme = 'white';
-            } else {
-                Clib.removeCss('css-theme-white');
+            if(_currentTheme === 'white') {
+                Clib.loadCss(_themeFileName, 'theme-black');
                 _currentTheme = 'black';
+            } else {
+                Clib.removeCss('theme-black');
+                _currentTheme = 'white';
             }
         },
 

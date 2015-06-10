@@ -29,31 +29,15 @@
     right: 0;
 }
 
-::-webkit-input-placeholder {
-    color: rgba(0, 0, 0, 0.7);
-}
-
-:-moz-placeholder { /* Firefox 18- */
-    color: rgba(0, 0, 0, 0.7);
-}
-
-::-moz-placeholder {  /* Firefox 19+ */
-    color: rgba(0, 0, 0, 0.7);
-}
-
-:-ms-input-placeholder {
-    color: rgba(0, 0, 0, 0.7);
-}
-
 .msg-chat-message {
-    color: white;
+    color: black;
     line-height: 17px;
     font-size: 14px;
     z-index: 1006;
 }
 
 .msg-chat-message a {
-    color: white;
+    color: black;
     font-size: 13px;
     font-weight: 600;
     font-family: Menlo,Monaco,Consolas,"Courier New",monospace;

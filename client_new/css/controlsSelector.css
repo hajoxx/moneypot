@@ -24,7 +24,7 @@
     text-align: center;
     font-size: 0.8rem;
     cursor: pointer;
-    background-color: #292d35;
+    background-color: #ddd;
 }
 
 #controls-selector-container .button-holder:hover a{
@@ -32,7 +32,7 @@
 }
 
 #controls-selector-container .button-holder.tab-active {
-    background-color: #181a1e;
+    background-color: white;
 }
 
 #controls-selector-container .button-holder.tab-active a{
@@ -41,24 +41,12 @@
 
 #controls-selector-container .button-holder a{
     line-height: 1.5rem;
-    color: #b0b3c1;
+    color: black;
     cursor: pointer;
     font-weight: 800;
     text-transform: uppercase;
     font-size: 0.7rem;
 }
-
-/*#controls-selector-container .button-container button{*/
-    /*/!* float: right; *!/*/
-
-    /*position: absolute;*/
-    /*right: 0;*/
-    /*background-color: white;*/
-    /*border: 1px solid grey;*/
-    /*cursor: pointer;*/
-    /*outline: 0;*/
-    /*z-index: 50002;*/
-/*}*/
 
 #controls-selector-container .controls-widget-container {
     position: absolute;
@@ -66,7 +54,7 @@
     right: 0;
     left: 0;
     bottom: 0;
-    background-color: #181a1e;
+    background-color: transparent;
 }
 
 @media handheld, only screen and (max-width: 767px) {

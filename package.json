@@ -1,8 +1,12 @@
 {
   "name": "MoneyPot",
-  "version": "0.0.1",
+  "version": "2.0.0",
   "engines": {
     "node": "~0.12.0"
+  },
+  "scripts": {
+    "start-dev": "env $(cat .env | xargs) nodemon src/server/index",
+    "start": "node src/server/index"
   },
   "dependencies": {
     "async": "~0.8.0",
@@ -29,11 +33,6 @@
     "timeago": "^0.1.0",
     "uuid": "~1.4.1"
   },
-  "scripts": {
-    "start-dev": "env $(cat .env | xargs) nodemon src/server/index",
-    "start-dev-new": "NEW_VIEW=yes env $(cat .env | xargs) nodemon src/server/index",
-    "start": "node src/server/index"
-  },
   "devDependencies": {
     "almond": "^0.3.1",
     "autolinker": "^0.17.1",
@@ -47,7 +46,6 @@
     "gulp-minify-css": "^1.1.5",
     "gulp-rename": "^1.2.2",
     "gulp-replace": "^0.5.3",
-    "lodash": "^2.4.2",
     "merge-stream": "^0.1.7",
     "react": "^0.13.3",
     "run-sequence": "^1.1.0",

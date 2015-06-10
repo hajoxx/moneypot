@@ -12,7 +12,7 @@
     left: 0;
     position: absolute;
     top: 0;
-    background: #292d35;
+    background: #ddd;
 }
 
 #players-container table .th-inner {
@@ -27,7 +27,7 @@
     border-left: 1px solid rgba(0, 0, 0, 0.15);
     -webkit-box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.03);
     box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.03);
-    color: #b0b3c1;
+    color: black;
     font-weight: 600;
     padding-left: 10px;
     margin-left: -10px;

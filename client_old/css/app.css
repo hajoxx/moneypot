@@ -2,7 +2,7 @@
 @import url("../lib/foundation-icons/foundation-icons.css");
 @import url("../lib/font-awesome/css/font-awesome.css");
 @import url("header.css");
-
+@import url("fonts.css");
 
 @font-face {
     font-family: rbn;
@@ -63,10 +63,6 @@ table {
     color: #FDFDFD;
 }
 
-.user-login a {
-    margin-right: 5px;
-}
-
 .panel {
     background-color: #FFFFFF;
 }
@@ -105,9 +101,7 @@ table {
     text-shadow: 0px 2px 2px rgba(236, 105, 19, 0.40);
 }
 
-.register {
-    margin-left: 30%;
-}
+
 
 .input small {
     letter-spacing: 1px;

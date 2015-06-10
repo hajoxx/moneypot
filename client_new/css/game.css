@@ -1,7 +1,4 @@
 @import url("reset.css");
-@import url("../vendor/font-awesome/css/font-awesome.css");
-@import url("../vendor/simplegrid/simplegrid.css");
-@import url("fonts.css");
 @import url("general.css");
 @import url("topBar.css");
 @import url("chat.css");
@@ -14,37 +11,159 @@
 @import url("chart.css");
 @import url("chartControls.css");
 @import url("players.css");
-@import url("animations.css");
-/*@import url("whiteTheme.css");*/
-
 
 /**
- *
  * Header Background/ Widget Border Color: #292d35
  * Widget Background Color: #181a1e
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
  */
 
+html, body {
+    overflow: hidden;
+}
 
-/**
-Quick Guidelines:
-    - when there is a div just to hold a react component
-        - inner-container: is the div that the react components returns
-        - just-container: is the div that contains a react component
-    - when the component is a sibling on a bigger components the react component just returns a container
-**/
+
+/* ==========================================================================
+   Game container
+   ========================================================================== */
+
+#game-wrapper {
+    width: 100%;
+    height: 100%;
+}
+
+#game-content {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+
+#game-container {
+    width: 100%;
+    height: 100%;
+}
+
+/* Message bar */
+#game-message-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    /* line-height: 1.2rem; */
+    bottom: calc(100% - 1.2rem);
+    background-color: green;
+}
+
+#game-message-container.hide {
+    display: none;
+}
+
+#game-message-container>span {
+    overflow-y: hidden;
+
+}
+
+#game-message-container span>span, #game-message-container span>a {
+    color: white;
+    font-size: 0.8rem;
+    line-height: 1.2rem;
+}
+
+#game-message-container div{
+
+}
+
+/* Playable container (The game) */
+#game-playable-container {
+    position: absolute;
+    top: 2rem;
+    right: 0;
+    left: 0;
+    bottom: 0;
+}
+
+#game-playable-container.show-message {
+    top: 1.2rem;
+}
+
+#game-message-container .close-message{
+    position: absolute;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+}
+
+#game-message-container .close-message i{
+    color: white;
+
+    font-size: 0.8rem;
+    line-height: 1.2rem;
+    padding-right: 0.2rem;
+}
+
+#game-message-container {
+    text-align: center;
+
+}
+
+#game-inner-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#game-left-container {
+    display: table;
+    height: 100%;
+    width: 70%;
+    position: relative;
+}
+
+#game-left-container.small-window {
+    width: 100%;
+}
+
+#game-right-container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 70%;
+    right: 0;
+    border: 1px solid #ddd;
+    margin: 5px;
+}
+
+
+/* ==========================================================================
+   Tabs container
+   ========================================================================== */
+
+#tabs-container {
+    border-left: 1px solid #ddd;
+    border-top: 1px solid #ddd;
+    display: table-row;
+}
+
+
+/* ==========================================================================
+   Chart-Controls container
+   ========================================================================== */
+
+#chart-controls-container {
+    border-left: 1px solid #ddd;
+    min-height: 400px;
+    display: table-row;
+    height: 50%;
+}
+
+#chart-controls-row, #tabs-controls-row {
+    display: table-row;
+
+}
+
+#chart-controls-col, #tabs-controls-col {
+    display: table-cell;
+    height: 50%;
+    position: relative;
+}

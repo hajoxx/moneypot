@@ -34,10 +34,16 @@
     top: 0;
     line-height: 1rem;
     text-align: left;
-    color: #b0b3c1;
+    color: black;
     font-weight: 600;
     text-transform: uppercase;
     font-size: 0.7rem;
+}
+
+#games-log-container table th:first-child .th-inner {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border: 0;
 }
 
 #games-log-container .games-log tr {
@@ -122,18 +128,12 @@
 #games-log-container .games-log tbody {
     overflow-y: auto;
     height: 100%;
-    /* position: absolute; */
-    /* top: 1rem; */
-    /* right: 0; */
-    /* left: 0; */
     bottom: 4rem;
 }
 
 #games-log-container .games-log tr:nth-of-type(even) {
-    background: #1a1c21;
+    background: #f9f9f9;
 }
-
-
 
 #games-log-container .games-log tr td {
     font-size: 0.8rem;
@@ -160,7 +160,7 @@
 #games-log-container .games-log-hash {
     background-color: transparent;
     border: 0;
-    color: white;
+    color: black;
 }
 
 #games-log-container .games-log tbody tr:hover .games-log-hash {
@@ -178,8 +178,6 @@
 #games-log-container .hash-copy-cont{
     display: inline-block;
     cursor: pointer;
-    /* border-bottom-color: rgb(213, 43, 43); */
-    /* background-color: aqua; */
 }
 
 #games-log-container .hash-copy {
@@ -205,7 +203,7 @@
 }
 
 @media handheld, only screen and (max-width: 767px) {
-#games-log-container .hash-copy {
-    width: 5em;
-}
+    #games-log-container .hash-copy {
+        width: 5em;
+    }
 }

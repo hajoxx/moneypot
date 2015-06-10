@@ -203,7 +203,7 @@ gulp.task('minify-css-new', function() {
         .pipe(gulp.dest('build/'));
 
     //Game white theme css
-    var themeStream = gulp.src('client_new/css/whiteTheme.css')
+    var themeStream = gulp.src('client_new/css/blackTheme.css')
         .pipe(minifyCss({ compatibility: 'ie8' }))
         .pipe(rename('css/game-theme-new.css'))
         .pipe(gulp.dest('build/'));
@@ -217,21 +217,8 @@ gulp.task('minify-css-new', function() {
     return merge(appStream, landingStream, themeStream);
 });
 
-/** Copy the necessary files to prod folder **/
+/** Copy the files to prod folder **/
 gulp.task('copy:assets-new', function() {
-    //var imgStream = gulp.src('client_new/img/**/*.*')
-    //    .pipe(gulp.dest('build/img'));
-    //var fontsStream = gulp.src('client_new/fonts/**/*.*')
-    //    .pipe(gulp.dest('build/fonts'));
-    //var cssFontsStream = gulp.src('client_new/css/fonts/*.*')
-    //    .pipe(gulp.dest('build/css/fonts'));
-    //var soundsStream = gulp.src('client_new/sounds/**/*.*')
-    //    .pipe(gulp.dest('build/sounds'));
-    //var libStream = gulp.src('client_new/lib/**/*.*')
-    //    .pipe(gulp.dest('build/lib'));
-    //var amchartsStream = gulp.src('client_new/amcharts/**/*.*')
-    //    .pipe(gulp.dest('build/amcharts'));
-
     return gulp.src('client_new/**/*.*')
         .pipe(gulp.dest('build/'));
 });

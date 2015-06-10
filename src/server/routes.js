@@ -83,7 +83,7 @@ function adminRestrict(req, res, next) {
 
 function table() {
     return function(req, res) {
-        res.render('table', {
+        res.render('table_old', {
             user: req.user,
             table: true
         });
@@ -93,18 +93,20 @@ function table() {
 function tableNew() {
     return function(req, res) {
         res.render('table_new', {
-            buildConfig: config.BUILD
+            buildConfig: config.BUILD,
+            table: true
         });
     }
 }
 
-function tableNewDev() {
+function tableDev() {
     return function(req, res) {
         if(config.PRODUCTION)
             return res.status(401);
         requestDevOtt(req.params.id, function(devOtt) {
             res.render('table_new', {
-                devOtt: devOtt
+                devOtt: devOtt,
+                table: true
             });
         });
     }
@@ -154,9 +156,9 @@ module.exports = function(app) {
     app.get('/guide', staticPageLogged('guide'));
     app.get('/online-gambling-meets-bitcoin', staticPageLogged('online-gambling-meets-bitcoin'));
 
-    app.get('/play', table());
-    app.get('/play-new', tableNew());
-    app.get('/play-new-id/:id', tableNewDev());
+    app.get('/play-old', table());
+    app.get('/play', tableNew());
+    app.get('/play-id/:id', tableDev());
 
     app.get('/icarus', staticPageLogged('icarus'));
 

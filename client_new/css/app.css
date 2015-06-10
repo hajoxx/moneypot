@@ -1,12 +1,10 @@
-@import url("../vendor/foundation/css/foundation.css");
-@import url("../vendor/foundation-icons/foundation-icons.css");
-@import url("../vendor/font-awesome/css/font-awesome.css");
-@import url("header.css");
-
+@import url("general.css");
+@import url("../vendor/foundation/css/foundation.css"); /** The current theme of the page is based on foundation **/
+@import url("topBar.css");
 
 @font-face {
     font-family: rbn;
-    src: url(fonts/RBN.otf);
+    src: url("../fonts/RBN.otf");
 }
 
 body {
@@ -15,6 +13,113 @@ body {
     color: #000;
     overflow-x: hidden;
 }
+
+
+/* Top bar
+   ========================================================================== */
+
+#top-bar {
+    position: static;
+    top: inherit;
+    right: inherit;
+    left: inherit;
+    height: 40px;
+    font-size: 20px;
+}
+
+#top-bar .title h1 {
+    margin: 0;
+    padding: 0;
+    font-size: 30px;
+    line-height: 40px;
+    padding-left: 20px;
+}
+
+#top-bar .user-login .balance-bits span {
+    line-height: 40px;
+    color: black;
+}
+
+.page-content {
+    position: relative;
+    margin-top: 1rem;
+}
+
+
+/* Index Styles
+   ========================================================================== */
+
+.index .title {
+    text-align: center;
+    font-size: 4rem;
+    line-height: 4rem;
+    margin-top: 1.5rem;
+    font-family: rbn;
+    font-weight: bold;
+}
+
+.index .faucet {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.index .play-btn-cont {
+    width: 40%;
+    padding-top: 2rem;
+    margin: auto;
+    text-align: right;
+}
+
+.index .play-btn-cont .play {
+    /* padding-top: 2rem; */
+    display: block;
+    width: 100%;
+    /* top: calc(100% - 3em); */
+    line-height: 3em;
+    text-align: center;
+    color: white;
+    background-color: rgba(243,150,47,1);
+    position: relative;
+    text-decoration: none;
+    font-weight: 300;
+    font-size: 2em;
+    border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    -webkit-box-shadow: 0 6px 0 rgb(255,82,5),0px 9px 25px rgba(0,0,0,.1);
+    -moz-box-shadow: 0 6px 0 rgb(255,82,5),0px 9px 25px rgba(0,0,0,.1);
+    box-shadow: 0px 6px 0px rgb(255,81,20),0px 9px 25px rgba(0,0,0,0.1);
+    margin-bottom: 10px;
+    border: 0;
+    outline: none;
+    font-family: inherit;
+    margin: auto;
+}
+
+.index .play-btn-cont .play-old {
+    display: block;
+    margin-top: 1rem;
+}
+
+.index .features {
+    margin-top: 4rem;
+    text-align: center;
+}
+
+.index .features h4{
+    margin-top: 0.3rem;
+    font-weight: bold;
+}
+
+.index .features .text{
+    margin-top: 0.9rem;
+}
+
+.index .feature img{
+    height: 100px;
+    width: 100px;
+}
+
 
 /* Shared Stuff
    ========================================================================== */
@@ -97,10 +202,6 @@ table {
     text-shadow: 0px 2px 2px rgba(236, 105, 19, 0.40);
 }
 
-.register {
-    margin-left: 30%;
-}
-
 .input small {
     letter-spacing: 1px;
     font-size: 11px;
@@ -126,65 +227,65 @@ table {
 }
 
 
-/* Index Styles
-   ========================================================================== */
-.i-content {
-    position: relative;
-    margin: 0 auto;
-    text-align: center;
-}
+/*/!* Index Styles*/
+   /*========================================================================== *!/*/
+/*.i-content {*/
+    /*position: relative;*/
+    /*margin: 0 auto;*/
+    /*text-align: center;*/
+/*}*/
 
-.sub-title {
-    margin: 25px 0 25px 25px;
-    font-size: 45px;
-    line-height: 44px;
-    font-weight: 700;
-    font-family: rbn;
-}
+/*.sub-title {*/
+    /*margin: 25px 0 25px 25px;*/
+    /*font-size: 45px;*/
+    /*line-height: 44px;*/
+    /*font-weight: 700;*/
+    /*font-family: rbn;*/
+/*}*/
 
-.play {
-    font-size: 25px;
-    margin-top: -10px;
-}
+/*.play {*/
+    /*font-size: 25px;*/
+    /*margin-top: -10px;*/
+/*}*/
 
-.features {
-    margin-top: 100px;
-}
+/*.features {*/
+    /*margin-top: 100px;*/
+/*}*/
 
-.feature img {
-    height: 100px;
-    width: 100px;
-}
+/*.feature img {*/
+    /*height: 100px;*/
+    /*width: 100px;*/
+/*}*/
 
-.faucet {
-    margin-top: 50px;
-    color: #7cba00;
-    letter-spacing: 2px;
-}
+/*.faucet {*/
+    /*margin-top: 50px;*/
+    /*color: #7cba00;*/
+    /*letter-spacing: 2px;*/
+/*}*/
 
-/* Menus' Styles
-   ========================================================================== */
-.menu li {
-    cursor: pointer;
-}
+/*/!* Menus' Styles*/
+   /*========================================================================== *!/*/
+/*.menu li {*/
+    /*cursor: pointer;*/
+/*}*/
 
-.menu li:hover {
-    color: #ff5114;
-}
-.menu .active {
-    color: #ff5114;
-}
+/*.menu li:hover {*/
+    /*color: #ff5114;*/
+/*}*/
+/*.menu .active {*/
+    /*color: #ff5114;*/
+/*}*/
 
-nav .top-bar-title {
-    color: #000000;
-}
+/*nav .top-bar-title {*/
+    /*color: #000000;*/
+/*}*/
 
-.logo-text {
-    font-size: 60px;
-    color: #000000;
-    padding-top: 30px;
-    padding-left: 30px;
-}
+/*.logo-text {*/
+    /*font-size: 60px;*/
+    /*color: #000000;*/
+    /*padding-top: 30px;*/
+    /*padding-left: 30px;*/
+/*}*/
 
 /* FAQ styles
    ========================================================================== */
@@ -359,24 +460,3 @@ nav .top-bar-title {
         padding-right: 10px;
     }
 }
-
-@media only screen { } /* Define mobile styles */
-
-@media only screen and (max-width: 40em) { } /* max-width 640px, mobile-only styles, use when QAing mobile issues */
-
-
-@media only screen and (min-width: 40.063em) { } /* min-width 641px, medium screens */
-
-@media only screen and (min-width: 40.063em) and (max-width: 64em) { } /* min-width 641px and max-width 1024px, use when QAing tablet-only issues */
-
-
-@media only screen and (min-width: 64.063em) { } /* min-width 1025px, large screens */
-
-@media only screen and (min-width: 64.063em) and (max-width: 90em) { } /* min-width 1025px and max-width 1440px, use when QAing large screen-only issues */
-
-
-@media only screen and (min-width: 90.063em) { } /* min-width 1441px, xlarge screens */
-
-@media only screen and (min-width: 90.063em) and (max-width: 120em) { } /* min-width 1441px and max-width 1920px, use when QAing xlarge screen-only issues */
-
-@media only screen and (min-width: 120.063em) { } /* min-width 1921px, xxlarge screens */

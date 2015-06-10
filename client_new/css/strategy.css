@@ -39,6 +39,7 @@
 
 #strategy-container .auto-bet-container {
     padding-top: 1rem;
+    color: black;
 }
 
 #strategy-container .stra-base-bet {
@@ -97,19 +98,18 @@
 }
 
 #strategy-container .strategy-start, #strategy-container .strategy-stop, #strategy-container .strategy-select {
-    background-color: #292d35;
-    border: 1px solid #292d35;
-    color: white;
+    background-color: #ddd;
+    border: 1px solid #ddd;
+    color: black;
     border-radius: 0;
     display: inline-block;
     height: 1rem;
-    /* line-height: 1rem; */
     cursor: pointer;
     outline: none;
 }
 
 #strategy-container .strategy-start:disabled, #strategy-container .strategy-stop:disabled, #strategy-container .strategy-select:disabled {
-    color: #181a1e;
+    color: grey;
 }
 
 #strategy-container .strategy-start {
@@ -139,7 +139,7 @@
     width: 5em;
     font-size: .8em;
     font-weight: 500;
-    color: white;
+    color: black;
 }
 
 

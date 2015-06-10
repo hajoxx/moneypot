@@ -1,5 +1,6 @@
 @import url("reset.css");
 @import url("header.css");
+@import url("fonts.css");
 @import url("../lib/simplegrid/simplegrid.css");
 @import url("chat.css");
 @import url("../lib/font-awesome/css/font-awesome.css");
@@ -474,6 +475,8 @@ i {
     padding-left: 2em;
 }
 
+.login-container .controls
+
 .login {
 
 }
@@ -706,7 +709,7 @@ i {
     opacity: 0.5;
 }
 
-.register {
+.login-container .controls .register {
     float:right;
     margin-top: 6px;
     font-size: 15px;

@@ -1,9 +1,6 @@
-/* Top bar
-   ========================================================================== */
-
 /* Foundation Reset */
 .nav-top-bar h1{
-    line-height: inherit !important;
+    /* line-height: inherit !important; */
     margin: 0;
     padding: 0;
 }
@@ -11,74 +8,114 @@
 .nav-top-bar {
     text-align: center;
     border-bottom: 1px solid #ddd;
-    height: 45px;
-    line-height: 45px;
+    height: 40px;
+    line-height: 40px;
 }
 
 .nav-top-bar div {
-    display: inline-block;
-    vertical-align: middle;
+    font-family: "Verlag A", "Verlag B", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 20px;
+    /* padding: 0; */
+    /* margin: 0; */
 }
 
-.title {
+.nav-top-bar .title {
     float: left;
 }
 
-.title h1, .title img {
+.nav-top-bar .title h1, .title img {
     display: inline-block;
     vertical-align: middle;
 }
 
-.title h1, .title a {
-    color: black;
-    font-size: 25px;
-    font-family: "Courier New";
-    font-weight: 700;
+.nav-top-bar .title h1 {
+    /*color: black;*/
+    /*font-size: 25px;*/
+    /*font-family: "Courier New";*/
+    /*font-weight: 700;*/
     text-decoration: none;
-    padding-left: 5px;
+    color: #e58929;
+    line-height: 40px;   
+    font-size: 30px;
+    font-weight: bold;
+    padding-left: 20px;
+    font-family: "Courier New";
 }
 
-.table-title {
+.nav-top-bar .table-title {
     font-size: 25px;
     font-family: rbn;
 }
 
-.user-login {
+.nav-top-bar .user-login {
     float: right;
+    font-size: 20px;
 }
 
-.user-login a {
-    margin-left: 1rem;
+.nav-top-bar .user-login a {
+    /* margin-left: 1rem; */
 }
 
-.balance-bits {
+.nav-top-bar .balance-bits {
     color: black;
-    margin-right: 1rem;
-    font-size: 1rem;
+    /* margin-right: 1rem; */
+    font-size: 20px;
+    display: inline-block;
+    margin: 0;
+    padding-right: 10px;
 }
 
-.username {
-    margin-right: 1rem;
-    font-size: 0.8125rem;
-}
-
-
-.new-theme {
+.nav-top-bar .balance-bits span {
+    /* display: block; */
+    line-height: 40px;
 
 }
 
-.new-theme a {
+.nav-top-bar .username {
+    font-family: "Verlag A", "Verlag B", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    line-height: 40px;
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+    padding-right: 40px;
+    font-weight: bold;
+}
+
+.nav-top-bar .username a {
+    
+}
+
+.nav-top-bar .register {
+    display: inline-block;
+
+}
+
+.nav-top-bar .register a {
+
+}
+
+.nav-top-bar .login {
+    display: inline-block;
+
+    padding-right: 40px;
+}
+
+.nav-top-bar .login a {
+    
+}
+
+.nav-top-bar .new-theme a {
     border: 2px solid grey;
     padding: 2px;
     color: #e58929;
     font-weight: bold;
-    cursor: pointer;2
+    cursor: pointer;
 }
 
 
 /* Small screens */
 @media only screen and (max-width: 40em) {
-    .table-title {
+    .nav-top-bar .table-title {
         display: none !important;
     }
 }
@@ -110,26 +147,7 @@
     line-height: 1;
 }
 
-
-/* FOUNDATION MEDIA QUERIES */
-
-@media only screen { } /* Define mobile styles */
-
-@media only screen and (max-width: 40em) { } /* max-width 640px, mobile-only styles, use when QAing mobile issues */
-
-
-@media only screen and (min-width: 40.063em) { } /* min-width 641px, medium screens */
-
-@media only screen and (min-width: 40.063em) and (max-width: 64em) { } /* min-width 641px and max-width 1024px, use when QAing tablet-only issues */
-
-
-@media only screen and (min-width: 64.063em) { } /* min-width 1025px, large screens */
-
-@media only screen and (min-width: 64.063em) and (max-width: 90em) { } /* min-width 1025px and max-width 1440px, use when QAing large screen-only issues */
-
-
-@media only screen and (min-width: 90.063em) { } /* min-width 1441px, xlarge screens */
-
-@media only screen and (min-width: 90.063em) and (max-width: 120em) { } /* min-width 1441px and max-width 1920px, use when QAing xlarge screen-only issues */
-
-@media only screen and (min-width: 120.063em) { } /* min-width 1921px, xxlarge screens */
+.register {
+    /* margin-left: 30%; */
+    padding-right: 20px;
+}
