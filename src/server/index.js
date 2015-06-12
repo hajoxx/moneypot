@@ -167,3 +167,10 @@ app.use(errorHandler);
 var server = http.createServer(app).listen(config.PORT, function() {
     console.log('Listening on port ', config.PORT);
 });
+
+/** Log uncaught exceptions and kill the application **/
+process.on('uncaughtException', function (err) {
+    console.error((new Date).toUTCString() + ' uncaughtException:', err.message);
+    console.error(err.stack);
+    process.exit(1);
+});

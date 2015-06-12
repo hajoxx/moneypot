@@ -263,6 +263,7 @@ exports.giveawayRequest = function(req, res, next) {
     assert(user);
 
     var privatekey = config.RECAPTCHA_PRIV_KEY;
+    var recaptchaResponse = lib.removeNullsAndTrim(req.body['g-recaptcha-response']);
     var remoteip;
 
     var ips = req.ips;
@@ -273,30 +274,26 @@ exports.giveawayRequest = function(req, res, next) {
     else  // TODO: only if ips[-1] is equal to cloudfront...
         remoteip = ips[ips.length - 2];
 
-    var challenge = req.body.recaptcha_challenge_field;
-    var recaptchaResponse = req.body.recaptcha_response_field;
+    //var challenge = req.body.recaptcha_challenge_field;
+    //var recaptchaResponse = req.body.recaptcha_response_field;
 
-    if (!remoteip || !challenge || !recaptchaResponse) return res.redirect('request');
+    if (!remoteip || !recaptchaResponse) return res.redirect('request', { user: user, warning: 'Unable to validate captcha. please try it later...' });
 
-    var uri =  'https://www.google.com/recaptcha/api/verify?privatekey=' + encodeURIComponent(privatekey) +
+    var uri =  'https://www.google.com/recaptcha/api/siteverify?secret=' + encodeURIComponent(privatekey) +
         '&remoteip=' + encodeURIComponent(remoteip) +
-        '&challenge=' + encodeURIComponent(challenge) +
         '&response=' + encodeURIComponent(recaptchaResponse);
 
     request(uri , function(error, response, body) {
 
-            if (error) return res.render('request', { user: user, warning: 'Unable to validate captcha. please try it later...', recaptchaKey: config.RECAPTCHA_SITE_KEY });
+            if (error) return res.render('request', { user: user, warning: 'Unable to validate captcha. please try it later...' });
 
-            if (response.statusCode == 200) {
-                assert(body);
-                var validCaptcha = body.split(/\s+/g)[0];
-                if (validCaptcha !== 'true')
-                    return res.render('request', { user: user, warning: 'Invalid Captcha please try it again...', recaptchaKey: config.RECAPTCHA_SITE_KEY });
+            var resp = JSON.parse(body);
 
+            if (resp.success) {
                 database.addGiveaway(user.id, function(err) {
                     if (err) {
                         if (err.message === 'NOT_ELIGIBLE') {
-                            return res.render('request', { user: user, warning: 'You have to wait <b>' + err.time + '</b> minutes for your next give away.', recaptchaKey: config.RECAPTCHA_SITE_KEY });
+                            return res.render('request', { user: user, warning: 'You have to wait <b>' + err.time + '</b> minutes for your next give away.' });
                         } else if(err === 'USER_DOES_NOT_EXIST') {
                             return res.render('error', { error: 'User does not exist.' });
                         }
@@ -307,6 +304,8 @@ exports.giveawayRequest = function(req, res, next) {
                     user.balance_satoshis += 200;
                     return res.redirect('/play?m=received');
                 });
+            } else {
+                return res.render('request', { user: user, warning: 'Invalid Captcha please try it again...' });
             }
         }
     );

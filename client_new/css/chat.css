@@ -3,6 +3,7 @@
     height: 100%;
     position: relative;
     z-index: 1004;
+    font-family: Verdana, Tahoma, "Courier New", Arial;
 }
 
 .messages {
@@ -29,6 +30,12 @@
     right: 0;
 }
 
+.time-stamp {
+    margin-right: 0.4rem;
+    font-size: 0.6rem;
+    /* background-color: rgba(232, 232, 232, 0.7); */
+}
+
 .msg-chat-message {
     color: black;
     line-height: 17px;
@@ -40,7 +47,6 @@
     color: black;
     font-size: 13px;
     font-weight: 600;
-    font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
 }
 
 /* Links within the message */

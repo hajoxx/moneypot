@@ -9,6 +9,7 @@ define([
     AppConstants,
     AppDispatcher
 ) {
+    var MAX_MSG_LENGHT = 500;
 
     var CHANGE_EVENT = 'change';
 
@@ -30,7 +31,8 @@ define([
         },
 
         _setInputText: function(message) {
-            _inputText = message;
+            if(message.length < MAX_MSG_LENGHT)
+                _inputText = message;
         },
 
         _clearInputText: function() {

@@ -94,8 +94,6 @@ define([
         },
 
         _onChange: function() {
-            //Check if its mounted because when Game view receives the disconnect event from EngineVirtualStore unmounts all views
-            //and the views unregister their events before the event dispatcher dispatch them with the disconnect event
             if(this.isMounted())
                 this.setState(getState());
         },
@@ -164,22 +162,32 @@ define([
                 if (username && message.username != username && r.test(message.message)) {
                     pri += ' msg-highlight-message';
                 }
+
+                var msgDate = new Date(message.time);
+                var timeString = msgDate.getHours() + ':' + ((msgDate.getMinutes() < 10 )? ('0' + msgDate.getMinutes()) : msgDate.getMinutes());
+
                 return D.li({ className: pri , key: 'msg' + index },
+                    D.span({
+                        className: 'time-stamp'
+                    },
+                        timeString
+                    ),
                     D.a({
                             href: '/user/' + message.username,
                             target: '_blank'
                         },
-                        message.username, ':'),
-                        ' ',
-                        D.span({
-                          className: 'msg-body',
-                          dangerouslySetInnerHTML: {
-                            __html: Autolinker.link(
-                                      escapeHTML(message.message),
-                                      { truncate: 50, replaceFn: replaceUsernameMentions }
-                                    )
-                          }
-                        })
+                        message.username, ':'
+                    ),
+                    ' ',
+                    D.span({
+                      className: 'msg-body',
+                      dangerouslySetInnerHTML: {
+                        __html: Autolinker.link(
+                                  escapeHTML(message.message),
+                                  { truncate: 50, replaceFn: replaceUsernameMentions }
+                                )
+                      }
+                    })
                     );
             case 'mute':
                 pri = 'msg-mute-message';
