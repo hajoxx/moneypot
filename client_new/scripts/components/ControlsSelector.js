@@ -1,7 +1,7 @@
 define([
     'components/Controls',
     'components/StrategyEditor',
-    'stores/controlsSelectorStore',
+    'stores/ControlsSelectorStore',
     'actions/ControlsSelectorActions',
     'react'
 ], function(
