@@ -167,7 +167,6 @@ define([
                     ),
                     rightContainer
                 )
-
             );
         }
     });

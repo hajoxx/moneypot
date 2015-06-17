@@ -31,9 +31,8 @@
 }
 
 .time-stamp {
-    margin-right: 0.4rem;
+    margin-right: 0.1rem;
     font-size: 0.6rem;
-    /* background-color: rgba(232, 232, 232, 0.7); */
 }
 
 .msg-chat-message {

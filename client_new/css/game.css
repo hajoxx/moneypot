@@ -47,12 +47,13 @@ html, body {
 /* Message bar */
 #game-message-container {
     position: absolute;
-    top: 0;
+    top: 2rem;
     right: 0;
     left: 0;
     /* line-height: 1.2rem; */
-    bottom: calc(100% - 1.2rem);
+    /* bottom: calc(100% - 1.2rem); */
     background-color: green;
+    line-height: 1.2rem;
 }
 
 #game-message-container.hide {
@@ -68,6 +69,8 @@ html, body {
     color: white;
     font-size: 0.8rem;
     line-height: 1.2rem;
+    text-decoration: underline;
+    font-weight: 800;
 }
 
 #game-message-container div{
@@ -84,7 +87,8 @@ html, body {
 }
 
 #game-playable-container.show-message {
-    top: 1.2rem;
+    /* top: 1.2rem; */
+    top: 3.2rem;
 }
 
 #game-message-container .close-message{
@@ -96,7 +100,6 @@ html, body {
 
 #game-message-container .close-message i{
     color: white;
-
     font-size: 0.8rem;
     line-height: 1.2rem;
     padding-right: 0.2rem;

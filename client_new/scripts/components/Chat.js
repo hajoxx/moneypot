@@ -165,7 +165,7 @@ define([
                 }
 
                 var msgDate = new Date(message.time);
-                var timeString = msgDate.getHours() + ':' + ((msgDate.getMinutes() < 10 )? ('0' + msgDate.getMinutes()) : msgDate.getMinutes());
+                var timeString = msgDate.getHours() + ':' + ((msgDate.getMinutes() < 10 )? ('0' + msgDate.getMinutes()) : msgDate.getMinutes()) + ' ';
 
                 return D.li({ className: pri , key: 'msg' + index },
                     D.span({

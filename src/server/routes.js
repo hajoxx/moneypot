@@ -93,6 +93,7 @@ function table() {
 function tableNew() {
     return function(req, res) {
         res.render('table_new', {
+            user: req.user,
             buildConfig: config.BUILD,
             table: true
         });
@@ -105,6 +106,7 @@ function tableDev() {
             return res.status(401);
         requestDevOtt(req.params.id, function(devOtt) {
             res.render('table_new', {
+                user: req.user,
                 devOtt: devOtt,
                 table: true
             });

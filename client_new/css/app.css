@@ -46,6 +46,21 @@ body {
 }
 
 
+/* Message wrappers
+   ========================================================================== */
+
+.success-wrap {
+    text-align: center;
+    line-height: 1.2rem;
+}
+
+.success-wrap a {
+    color: green;
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+
 /* Index Styles
    ========================================================================== */
 

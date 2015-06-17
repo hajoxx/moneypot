@@ -10,27 +10,27 @@
     <!-- Receive variables from the server -->
     <script>
         var DEV_OTT = {{? it.devOtt}} "{{=it.devOtt}}" {{??}} null {{?}};
-        var LOGGED = {{?it.user}} true {{??}} false {{?}};
+        var LOGGED = {{? it.user}} true {{??}} false {{?}};
         var THEME_FILE_NAME = {{? it.buildConfig}}"{{=it.buildConfig['game-theme-new.css']}}"{{??}}null{{?}};
 
         var USER_MESSAGE = {};
-        {{?it.user}}
-    
-            {{?it.user.error}}
+        {{? it.user}}
+
+            {{? it.user.error}}
                 USER_MESSAGE.type = 'error';
                 USER_MESSAGE.text = "{{!it.user.error}}";
 
-            {{??it.user.advice == 'new'}}
+            {{?? it.user.advice == 'new'}}
                 USER_MESSAGE.type = 'newUser';
 
-            {{??it.user.advice == 'received'}}
+            {{?? it.user.advice == 'received'}}
                 USER_MESSAGE.type = 'received';
                 USER_MESSAGE.qty = 2;
             {{?? it.user.advice}}
                 USER_MESSAGE.type = 'advice';
                 USER_MESSAGE.text = "{{!it.user.advice}}";
-            {{??it.user && it.user.balance_satoshis < 100 }}
-                {{?it.user.eligible == true}}
+            {{?? it.user && it.user.balance_satoshis < 100}}
+                {{? it.user.eligible == true}}
                     USER_MESSAGE.type = 'collect';
                     USER_MESSAGE.qty = 2;
                 {{?}}
