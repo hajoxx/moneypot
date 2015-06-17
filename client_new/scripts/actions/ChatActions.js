@@ -15,12 +15,12 @@ define([
             });
         },
 
-        updateInputText: function(text) {
-            AppDispatcher.handleViewAction({
-                actionType: AppConstants.ActionTypes.SET_CHAT_INPUT_TEXT,
-                text: text
-            });
-        },
+        //updateInputText: function(text) {
+        //    AppDispatcher.handleViewAction({
+        //        actionType: AppConstants.ActionTypes.SET_CHAT_INPUT_TEXT,
+        //        text: text
+        //    });
+        //},
 
         setHeight: function(newHeight) {
             AppDispatcher.handleViewAction({

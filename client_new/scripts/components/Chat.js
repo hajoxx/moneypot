@@ -100,10 +100,10 @@ define([
 
         _sendMessage: function(e) {
             if(e.keyCode == 13) {
-                var msg = this.state.inputText;
-                if(msg.length >= 1 && msg.length < 500) {
-                    this._say(msg);
-                }
+                //var msg = this.state.inputText;
+                var msg = e.target.value;
+                this._say(msg);
+                e.target.value = '';
             }
         },
 
@@ -124,8 +124,9 @@ define([
                 chatInput = D.input(
                     { className: 'chat-input',
                         onKeyDown: this._sendMessage,
-                        onChange: this._updateInputText,
-                        value: this.state.inputText,
+                        //onChange: this._updateInputText,
+                        //value: this.state.inputText,
+                        maxLength: '500',
                         ref: 'input',
                         placeholder: 'Type here...'
                     }

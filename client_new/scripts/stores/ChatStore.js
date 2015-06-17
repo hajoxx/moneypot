@@ -9,11 +9,11 @@ define([
     AppConstants,
     AppDispatcher
 ) {
-    var MAX_MSG_LENGHT = 500;
+    //var MAX_MSG_LENGHT = 500;
 
     var CHANGE_EVENT = 'change';
 
-    var _inputText = '';
+    //var _inputText = '';
     var _height = 253;
 
     var ChatStore = _.extend({}, Events, {
@@ -30,14 +30,14 @@ define([
             this.off(CHANGE_EVENT, fn);
         },
 
-        _setInputText: function(message) {
-            if(message.length < MAX_MSG_LENGHT)
-                _inputText = message;
-        },
+        //_setInputText: function(message) {
+        //    if(message.length < MAX_MSG_LENGHT)
+        //        _inputText = message;
+        //},
 
-        _clearInputText: function() {
-            _inputText = '';
-        },
+        //_clearInputText: function() {
+        //    _inputText = '';
+        //},
 
         _setHeight: function(newHeight) {
             _height = newHeight;
@@ -45,7 +45,7 @@ define([
 
         getState: function() {
             return {
-                inputText: _inputText,
+                //inputText: _inputText,
                 height: _height
             }
         }
@@ -56,15 +56,15 @@ define([
         var action = payload.action;
 
         switch(action.actionType) {
-            case AppConstants.ActionTypes.SET_CHAT_INPUT_TEXT:
-                ChatStore._setInputText(action.text);
-                ChatStore.emitChange();
-                return;
+            //case AppConstants.ActionTypes.SET_CHAT_INPUT_TEXT:
+            //    ChatStore._setInputText(action.text);
+            //    ChatStore.emitChange();
+            //    return;
 
-            case AppConstants.ActionTypes.SAY_CHAT:
-                ChatStore._clearInputText();
-                ChatStore.emitChange();
-                return;
+            //case AppConstants.ActionTypes.SAY_CHAT:
+            //    ChatStore._clearInputText();
+            //    ChatStore.emitChange();
+            //    return;
 
             case AppConstants.ActionTypes.SET_CHAT_HEIGHT:
                 ChatStore._setHeight(action.newHeight);
