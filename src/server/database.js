@@ -458,7 +458,7 @@ exports.getUserNetProfit = function(userId, callback) {
     );
 };
 
-exports.getUserNetProfitSkip = function(userId, skip, callback) {
+exports.getUserNetProfitLast = function(userId, last, callback) {
     assert(userId);
     query('SELECT (' +
             'COALESCE(SUM(cash_out), 0) + ' +
@@ -468,8 +468,8 @@ exports.getUserNetProfitSkip = function(userId, skip, callback) {
                 'SELECT * FROM plays ' +
                 'WHERE user_id = $1 ' +
                 'ORDER BY id DESC ' +
-                'OFFSET $2 ' +
-            ') restricted ', [userId, skip], function(err, result) {
+                'LIMIT $2 ' +
+            ') restricted ', [userId, last], function(err, result) {
             if (err) return callback(err);
             assert(result.rows.length == 1);
             return callback(null, result.rows[0].profit);
@@ -479,7 +479,11 @@ exports.getUserNetProfitSkip = function(userId, skip, callback) {
 
 exports.getPublicStats = function(username, callback) {
 
-    query('SELECT * FROM leaderboard WHERE lower(username) = lower($1)',
+  var sql = 'SELECT id AS user_id, username, gross_profit, net_profit, games_played, ' +
+            'COALESCE((SELECT rank FROM leaderboard WHERE user_id = id), -1) rank ' +
+            'FROM users WHERE lower(username) = lower($1)';
+
+    query(sql,
         [username], function(err, result) {
             if (err) return callback(err);
 

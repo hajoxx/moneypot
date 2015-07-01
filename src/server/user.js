@@ -179,9 +179,13 @@ exports.profile = function(req, res, next) {
         var showing = page ? resultsPerPage : firstPageResultCount;
         var offset = page ? (firstPageResultCount + ((pages - page - 1) * resultsPerPage)) : 0 ;
 
+        if (offset > 100000) {
+          return next('Sorry we can\'t show games that far back :( ');
+        }
+
         var tasks = [
             function(callback) {
-                database.getUserNetProfitSkip(stats.user_id, showing + offset, callback);
+                database.getUserNetProfitLast(stats.user_id, showing + offset, callback);
             },
             function(callback) {
                 database.getUserPlays(stats.user_id, showing, offset, callback);
@@ -189,10 +193,12 @@ exports.profile = function(req, res, next) {
         ];
 
 
-        async.series(tasks, function(err, results) {
+        async.parallel(tasks, function(err, results) {
             if (err) return next(new Error('Error getting user profit: \n' + err));
 
-            var netProfitOffset = results[0];
+            var lastProfit = results[0];
+
+            var netProfitOffset = stats.net_profit - lastProfit;
             var plays = results[1];
 
 
