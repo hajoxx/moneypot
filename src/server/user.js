@@ -467,7 +467,7 @@ exports.security = function(req, res) {
 
     if (!user.mfa_secret) {
         user.mfa_potential_secret = speakeasy.generate_key({ length: 32 }).base32;
-        var qrUri = 'otpauth://totp/MoneyPot:' + user.username + '?secret=' + user.mfa_potential_secret + '&issuer=MoneyPot';
+        var qrUri = 'otpauth://totp/bustabit:' + user.username + '?secret=' + user.mfa_potential_secret + '&issuer=bustabit';
         user.qr_svg = qr.imageSync(qrUri, { type: 'svg' });
         user.sig = lib.sign(user.username + '|' + user.mfa_potential_secret);
     }
@@ -500,7 +500,7 @@ exports.enableMfa = function(req, res, next) {
 
     if (otp !== expected) {
         user.mfa_potential_secret = secret;
-        var qrUri = 'otpauth://totp/MoneyPot:' + user.username + '?secret=' + secret + '&issuer=MoneyPot';
+        var qrUri = 'otpauth://totp/bustabit:' + user.username + '?secret=' + secret + '&issuer=bustabit';
         user.qr_svg = qr.imageSync(qrUri, {type: 'svg'});
         user.sig = sig;
 
