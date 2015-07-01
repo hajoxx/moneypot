@@ -437,8 +437,9 @@ define([
      * Places a bet with a giving amount.
      * @param {number} amount - Bet amount in bits
      * @param {number} autoCashOut - Percentage of self cash out
+     * @param {function} callback(err, result)
      */
-    Engine.prototype._bet = function(amount, autoCashOut) {
+    Engine.prototype.bet = function(amount, autoCashOut, callback) {
         console.assert(typeof amount == 'number');
         console.assert(Clib.isInteger(amount));
         console.assert(!autoCashOut || (typeof autoCashOut === 'number' && autoCashOut >= 100));
@@ -451,14 +452,17 @@ define([
         this.placingBet = true;
 
         if (this.gameState === 'STARTING')
-            return this._doBet(amount, autoCashOut);
+            return this._doBet(amount, autoCashOut, callback);
 
-        //Otherwise the bet is queued
+        //otherwise, lets queue the bet
+        if (callback)
+            callback(null, 'WILL_JOIN_NEXT');
+
         this.trigger('bet_queued');
     };
 
     /** Throw the bet at the server **/
-    Engine.prototype._doBet =  function(amount, autoCashOut) {
+    Engine.prototype._doBet =  function(amount, autoCashOut, callback) {
         var self = this;
 
         this.ws.emit('place_bet', amount, autoCashOut, function(error) {
@@ -469,12 +473,15 @@ define([
                 if (error !== 'GAME_IN_PROGRESS' && error !== 'ALREADY_PLACED_BET') {
                     alert('There was an error, please reload the window: ' + error);
                 }
-
+                if (callback)
+                    callback(error);
                 return;
             }
 
             self.trigger('bet_placed');
 
+            if (callback)
+                callback(null);
         });
         self.trigger('placing_bet');
     };
@@ -637,7 +644,7 @@ define([
         switch(action.actionType) {
 
             case AppConstants.ActionTypes.PLACE_BET:
-                EngineSingleton._bet(action.bet, action.cashOut);
+                EngineSingleton.bet(action.bet, action.cashOut);
                 break;
 
             case AppConstants.ActionTypes.CANCEL_BET:
