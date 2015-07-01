@@ -1,4 +1,12 @@
-define(['react', 'game-logic/clib'], function(React, Clib) {
+define([
+    'react',
+    'game-logic/clib',
+    'game-logic/stateLib'
+], function(
+    React,
+    Clib,
+    StateLib
+) {
 
     var D = React.DOM;
 
@@ -26,7 +34,7 @@ define(['react', 'game-logic/clib'], function(React, Clib) {
             var po = Clib.calcGamePayout(Clib.getElapsedTimeWithLag(this.props.engine));
 
             if (po)
-                this.setState({ payout: po * this.props.engine.currentPlay().bet });
+                this.setState({ payout: po * StateLib.currentPlay(this.props.engine).bet });
             else
                 this.setState({ payout: null });
 
@@ -34,7 +42,7 @@ define(['react', 'game-logic/clib'], function(React, Clib) {
         },
 
         render: function() {
-            var decimals = this.props.engine.currentPlay().bet < 10000 ? 2 : 0;
+            var decimals = StateLib.currentPlay(this.props.engine).bet < 10000 ? 2 : 0;
 
             return D.span({ id: 'payout' }, Clib.formatSatoshis(this.state.payout, decimals));
         }

@@ -50,6 +50,7 @@
 }
 
 #players-container .users-playing thead, #players-container .users-summary thead {
+    z-index: 3000;
 }
 
 #players-container .users-playing thead tr, #players-container .users-summary thead tr {
@@ -71,9 +72,9 @@
     line-height: 1.2rem;
 }
 
-#players-container .bonus-projection {
-    opacity: 0.5;
-}
+/*#players-container .bonus-projection {*/
+    /*opacity: 0.5;*/
+/*}*/
 
 #players-container .users-summary tr:nth-of-type(even), #players-container .users-playing tr:nth-of-type(even) {
 }

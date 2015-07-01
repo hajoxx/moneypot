@@ -35,7 +35,22 @@ define(['lib/key-mirror'], function(KeyMirror){
             SET_CHAT_HEIGHT: null,
 
             //Game Settings
-            TOGGLE_THEME: null
+            TOGGLE_THEME: null,
+            SET_CONTROLS_SIZE: null,
+            SET_GRAPH_MODE: null,
+            SET_CONTROLS_POSITION: null,
+            SET_LEFT_WIDGET: null,
+            TOGGLE_HOYTKEYS_STATE: null,
+
+            //Hotkeys
+            DOUBLE_BET: null,
+            HALF_BET: null,
+            //PLACE_BET (GAME ACTIONS)
+
+            //Chart
+            SELECT_CHART: null
+
+
         }),
 
         PayloadSources: KeyMirror({

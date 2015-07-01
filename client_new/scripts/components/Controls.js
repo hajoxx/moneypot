@@ -1,8 +1,8 @@
 define([
     'react',
     'game-logic/clib',
+    'game-logic/stateLib',
     'lodash',
-    //'components/Countdown',
     'components/BetButton',
     'actions/ControlsActions',
     'stores/ControlsStore',
@@ -10,25 +10,23 @@ define([
 ], function(
     React,
     Clib,
+    StateLib,
     _,
-    //CountDownClass,
     BetButtonClass,
     ControlsActions,
     ControlsStore,
     Engine
 ){
-
-    //var Countdown = React.createFactory(CountDownClass);
     var BetButton = React.createFactory(BetButtonClass);
 
     var D = React.DOM;
 
     function getState(){
         return {
-            betSize: ControlsStore.getBetSize(),
-            betInvalid: ControlsStore.getBetInvalid(),
+            betSize: ControlsStore.getBetSize(), //Bet input string in bits
+            betInvalid: ControlsStore.getBetInvalid(), //false || string error message
             cashOut: ControlsStore.getCashOut(),
-            cashOutInvalid: ControlsStore.getCashOutInvalid(),
+            cashOutInvalid: ControlsStore.getCashOutInvalid(), //false || string error message
             engine: Engine
         }
     }
@@ -37,7 +35,8 @@ define([
         displayName: 'Controls',
 
         propTypes: {
-            isMobileOrSmall: React.PropTypes.bool.isRequired
+            isMobileOrSmall: React.PropTypes.bool.isRequired,
+            controlsSize: React.PropTypes.string.isRequired
         },
 
         getInitialState: function () {
@@ -82,14 +81,8 @@ define([
         },
 
         _placeBet: function () {
-            var bet = parseInt(this.state.betSize.replace(/k/g, '000')) * 100;
-            console.assert(_.isFinite(bet));
-
-            var cashOut = parseFloat(this.state.cashOut);
-            console.assert(_.isFinite(cashOut));
-            cashOut = Math.round(cashOut * 100);
-            console.assert(_.isFinite(cashOut));
-
+            var bet = StateLib.parseBet(this.state.betSize);
+            var cashOut = StateLib.parseCashOut(this.state.cashOut);
             ControlsActions.placeBet(bet, cashOut);
         },
 
@@ -109,45 +102,27 @@ define([
             ControlsActions.setAutoCashOut(autoCashOut);
         },
 
-        /** If the bet quantity is ok and the cash out quantity is ok returns null else returns true **/
-        _invalidBet: function () {
-            var self = this;
-
-            if (self.state.engine.balanceSatoshis < 100)
-                return 'Not enough bits to play';
-
-            var bet = Clib.parseBet(self.state.betSize);
-            if(bet instanceof Error)
-                return bet.message;
-
-            var co = Clib.parseAutoCash(self.state.cashOut);
-            if(co instanceof Error)
-                return co.message;
-
-            if (self.state.engine.balanceSatoshis < bet * 100)
-                return 'Not enough bits';
-
-            return null;
+        _redirectToRegister: function() {
+            window.location = '/register';
         },
 
         render: function () {
             var self = this;
 
             // If they're not logged in, let just show a login to play
-            if (!this.state.engine.username)
+            if (!Engine.username)
                 return D.div({ id: 'controls-inner-container' },
-                    D.div({ className: 'login-button-container'},
-                        D.a({ className: 'login-button bet-button', href: '/login' }, 'Login to play')
+                    D.div({ className: 'login-button-container' },
+                        D.button({ className: 'login-button bet-button', onClick: this._redirectToRegister }, 'Login to play')
                     ),
                     D.div({ className: 'register-container'},
                         D.a({ className: 'register', href: '/register' }, 'or register ')
                     )
                 );
 
-
             /** Control Inputs: Bet & AutoCash@  **/
-            var controlInputs = [];
-            controlInputs.push(D.div({ className: 'bet-container col-1-1' , key: 'ci-1' },
+            //var controlInputs = [], betContainer
+            var betContainer = D.div({ className: 'bet-container' , key: 'ci-1' },
 
                 D.div({ className: 'bet-input-group' + (this.state.betInvalid? ' error' : '') },
                     D.span({ className: '' }, 'Bet'),
@@ -161,8 +136,8 @@ define([
                     }),
                     D.span({ className: '' }, 'bits')
                 )
-            ));
-            controlInputs.push(D.div({ className: 'autocash-container col-1-1', key: 'ci-2' },
+            );
+            var autoCashContainer = D.div({ className: 'autocash-container', key: 'ci-2' },
 
                 D.div({ className: 'bet-input-group' + (this.state.cashOutInvalid? ' error' : '') },
                     D.span({ className: '' }, 'Auto Cash Out'),
@@ -179,28 +154,52 @@ define([
                     D.span({ className: '' }, 'x')
                 )
 
-            ));
+            );
+
+            var controlInputs;
+            if(this.props.isMobileOrSmall || this.props.controlsSize === 'small') {
+                controlInputs = D.div({ className: 'control-inputs-container' },
+                    D.div({ className: 'input-control' },
+                        betContainer
+                    ),
+
+                    D.div({ className: 'input-control' },
+                        autoCashContainer
+                    )
+                );
+            } else {
+                controlInputs = [];
+
+                controlInputs.push(D.div({ className: 'input-control controls-row', key: 'coi-1' },
+                    betContainer
+                ));
+
+                controlInputs.push(D.div({ className: 'input-control controls-row', key: 'coi-2' },
+                    autoCashContainer
+                ));
+            }
 
             //If the user is logged in render the controls
-            return D.div({ id: 'controls-inner-container' },
+            return D.div({ id: 'controls-inner-container', className: this.props.controlsSize },
 
-                D.div({ className: 'control-inputs-container grid' },
-                    controlInputs
-                ),
-                D.div({ className: 'button-container' },
+                controlInputs,
+
+                D.div({ className: 'button-container controls-row' },
                     BetButton({
                         engine: this.state.engine,
-                        invalidBet: this._invalidBet,
                         placeBet: this._placeBet,
                         cancelBet: this._cancelBet,
                         cashOut: this._cashOut,
-                        isMobileOrSmall: this.props.isMobileOrSmall
+                        isMobileOrSmall: this.props.isMobileOrSmall,
+                        betSize: this.state.betSize,
+                        betInvalid: this.state.betInvalid,
+                        cashOutInvalid: this.state.cashOutInvalid,
+                        controlsSize: this.props.controlsSize
                     })
                 )
+
             );
         }
-
-
 
         //_getStatusMessage: function () {
         //    var pi = this.state.engine.currentPlay();
@@ -272,7 +271,5 @@ define([
         //
         //    }
         //}
-
     });
-
 });

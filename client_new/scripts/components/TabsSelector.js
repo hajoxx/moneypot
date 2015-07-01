@@ -2,18 +2,27 @@ define([
     'react',
     'components/Chat',
     'components/GamesLog',
+    'components/Players',
+    'components/SettingsSelector',
+    'components/StrategyEditor',
     'stores/TabsSelectorStore',
     'actions/TabsSelectorActions'
 ], function(
     React,
     ChatClass,
     GamesLogClass,
+    PlayersClass,
+    SettingsSelectorClass,
+    StrategyEditorClass,
     TabsSelectorStore,
     TabsSelectorActions
 ) {
 
     var Chat = React.createFactory(ChatClass);
     var GamesLog = React.createFactory(GamesLogClass);
+    var Players = React.createFactory(PlayersClass);
+    var SettingsSelector = React.createFactory(SettingsSelectorClass);
+    var StrategyEditor = React.createFactory(StrategyEditorClass);
 
     var D = React.DOM;
 
@@ -22,7 +31,12 @@ define([
     }
 
     return React.createClass({
-        displayName: 'logChatSelector',
+        displayName: 'LogChatSelector',
+
+        propTypes: {
+            isMobileOrSmall: React.PropTypes.bool.isRequired,
+            controlsSize: React.PropTypes.string.isRequired
+        },
 
         getInitialState: function () {
             return getState();
@@ -37,8 +51,6 @@ define([
         },
 
         _onChange: function() {
-            //Check if its mounted because when Game view receives the disconnect event from EngineVirtualStore unmounts all views
-            //and the views unregister their events before the event dispatcher dispatch them with the disconnect event
             if(this.isMounted())
                 this.setState(getState());
         },
@@ -59,24 +71,60 @@ define([
                 case 'chat':
                     widget = Chat();
                     break;
+                case 'players':
+                    widget = Players();
+                    break;
+                case 'settings':
+                    widget = SettingsSelector();
+                    break;
+                case 'autobet':
+                    widget = StrategyEditor();
             }
+
+            var autoBetTab, tabCols;
+            if(this.props.controlsSize === 'small') {
+                autoBetTab = D.li({
+                        className: 'tab col-4 noselect' + ((this.state.selectedTab === 'autobet') ? ' tab-active' : ''),
+                        onClick: this._selectTab('autobet')
+                    },
+                    D.a(null, 'Auto')
+                );
+                tabCols = 'col-4';
+            } else {
+                autoBetTab = null;
+                tabCols = 'col-3';
+            }
+
 
             return D.div({ id: 'tabs-inner-container', className: 'log-chat-tabs-container' },
 
-                D.div({ className: 'tab-container unselect' },
+                D.div({ className: 'tab-container noselect' },
                         D.ul({ className: '' },
                             D.li({
-                                    className: 'chat-log-tab noselect ' + ((this.state.selectedTab === 'gamesLog') ? 'tab-active' : ''),
+                                    className: 'tab ' + tabCols + ' noselect' + ((this.state.selectedTab === 'gamesLog') ? ' tab-active' : ''),
                                     onClick: this._selectTab('gamesLog')
                                 },
                                 D.a(null, 'History')
                             ),
                             D.li({
-                                    className: 'chat-log-tab noselect ' + ((this.state.selectedTab === 'chat') ? 'tab-active' : ''),
+                                    className: 'tab ' + tabCols + ' noselect' + ((this.state.selectedTab === 'chat') ? ' tab-active' : ''),
                                     onClick: this._selectTab('chat')
                                 },
                                 D.a(null, 'Chat')
-                            )
+                            ),
+                            D.li({
+                                    className: 'tab ' + tabCols + ' noselect' + ((this.state.selectedTab === 'players') ? ' tab-active' : ''),
+                                    onClick: this._selectTab('players')
+                                },
+                                D.a(null, 'Players')
+                            ),
+                            autoBetTab
+                        ),
+                        D.div({
+                                className: 'tab-settings noselect' + ((this.state.selectedTab === 'settings') ? ' tab-active' : ''),
+                                onClick: this._selectTab('settings')
+                            },
+                            D.a(null, D.i({ className: 'fa fa-cog' }))
                         )
                 ),
 

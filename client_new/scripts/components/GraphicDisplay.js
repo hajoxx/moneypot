@@ -1,15 +1,17 @@
 /**
- * This is not a react component but we will try to make it work like one
+ * The code that renders the canvas, its life cycle is managed by Chart.js
  */
 
 define([
     'stores/GameSettingsStore',
     'game-logic/clib',
+    'game-logic/stateLib',
     'lodash',
     'game-logic/engine'
 ], function(
     GameSettingsStore,
     Clib,
+    StateLib,
     _,
     Engine
 ){
@@ -90,7 +92,7 @@ define([
         this.YAxisInitialPlotValue = "zero"; //"zero", "betSize" //TODO: ???
     };
 
-    Graph.prototype.calcGameData = function() {
+    Graph.prototype.calcGameData = function() { //TODO: Use getGamePayout from engine.
         this.currentTime = Clib.getElapsedTimeWithLag(Engine);
         this.currentGamePayout = Clib.calcGamePayout(this.currentTime);
     };
@@ -130,7 +132,7 @@ define([
         this.ctx.strokeStyle = (this.themeWhite? "Black" : "#b0b3c1");
 
         //Playing and not cashed out
-        if(Engine.currentlyPlaying()) {
+        if(StateLib.currentlyPlaying(Engine)) {
             this.ctx.lineWidth = 6;
             this.ctx.strokeStyle = '#7cba00';
 
@@ -245,12 +247,13 @@ define([
 
     Graph.prototype.drawGameData = function() {
 
-        //Percentage of canvas width
+        //One percent of canvas width
         var onePercent = this.canvasWidth/100;
+        //Multiply it x times
         function fontSizeNum(times) {
             return onePercent * times;
         }
-
+        //Return the font size in pixels of one percent of the width canvas by x times
         function fontSizePx(times) {
             var fontSize = fontSizeNum(times);
             return fontSize.toFixed(2) + 'px';
@@ -260,9 +263,8 @@ define([
         this.ctx.textBaseline = 'middle';
 
         if(Engine.gameState === 'IN_PROGRESS') {
-            var pi = (Engine.username)? Engine.playerInfo[Engine.username]: null; //TODO: Abstract this on engine virtual store?
 
-            if (pi && pi.bet && !pi.stopped_at)
+            if (StateLib.currentlyPlaying(Engine))
                 this.ctx.fillStyle = '#7cba00';
             else
                 this.ctx.fillStyle = (this.themeWhite? "black" : "#b0b3c1");

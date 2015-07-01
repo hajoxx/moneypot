@@ -1,32 +1,37 @@
 define([
     'react',
-    'components/Chart',
+    'components/GraphicsContainer',
     'components/ControlsSelector'
 ], function(
     React,
-    ChartClass,
+    GraphicsContainerClass,
     ControlsSelectorClass
 ) {
     var D = React.DOM;
 
-    var Chart =  React.createFactory(ChartClass);
+    var GraphicsContainer =  React.createFactory(GraphicsContainerClass);
     var ControlsSelector = React.createFactory(ControlsSelectorClass);
 
     return React.createClass({
         displayName: 'Chart-Controls',
 
         propTypes: {
-            isMobileOrSmall: React.PropTypes.bool.isRequired
+            isMobileOrSmall: React.PropTypes.bool.isRequired,
+            controlsSize: React.PropTypes.string.isRequired
         },
 
         render: function() {
-            return D.div({ id: 'chart-controls-inner-container' },
-                D.div({ id: 'chart-container' },
-                    Chart()
+            return D.div({ id: 'chart-controls-inner-container', className: this.props.controlsSize },
+                D.div({ id: 'chart-container', className: this.props.controlsSize },
+                    GraphicsContainer({
+                        isMobileOrSmall: this.props.isMobileOrSmall,
+                        controlsSize: this.props.controlsSize
+                    })
                 ),
-                D.div({ id: 'controls-container' },
+                D.div({ id: 'controls-container', className: this.props.controlsSize },
                     ControlsSelector({
-                        isMobileOrSmall: this.props.isMobileOrSmall
+                        isMobileOrSmall: this.props.isMobileOrSmall,
+                        controlsSize: this.props.controlsSize
                     })
                 )
             );

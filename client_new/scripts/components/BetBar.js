@@ -2,12 +2,14 @@ define([
     'react',
     'lodash',
     'game-logic/clib',
-    'game-logic/engine'
+    'game-logic/engine',
+    'game-logic/stateLib'
 ], function(
     React,
     _,
     Clib,
-    Engine
+    Engine,
+    StateLib
 ){
     var D = React.DOM;
 
@@ -62,11 +64,11 @@ define([
             if(this.state.engine.gameState === 'ENDED') {
                 playingLostClass = 'bet-bar-lost';
                 cashedWonClass = 'bet-bar-won';
-                mePlayingClass = this.state.engine.currentlyPlaying()?  'bet-bar-me-lost': 'bet-bar-me-won';
+                mePlayingClass = StateLib.currentlyPlaying(this.state.engine)?  'bet-bar-me-lost': 'bet-bar-me-won';
             } else {
                 playingLostClass = 'bet-bar-playing';
                 cashedWonClass = 'bet-bar-cashed';
-                mePlayingClass = this.state.engine.currentlyPlaying()?  'bet-bar-me-playing': 'bet-bar-me-cashed';
+                mePlayingClass = StateLib.currentlyPlaying(this.state.engine)?  'bet-bar-me-playing': 'bet-bar-me-cashed';
             }
 
             return D.div({ className: 'bet-bar-container' },
@@ -99,7 +101,7 @@ define([
 
         var bitsPlaying = 0, bitsCashedOut = 0, bitsCashedOutAfterMe = 0;
 
-        var currentPlay = engine.currentPlay();
+        var currentPlay = StateLib.currentPlay(engine);
 
         var myBet = currentPlay? currentPlay.bet: 0;
         var myStop = (currentPlay && currentPlay.stopped_at)? currentPlay.stopped_at: 0;

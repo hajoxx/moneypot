@@ -2,7 +2,7 @@
 @import url("general.css");
 @import url("topBar.css");
 @import url("chat.css");
-@import url("tabs.css");
+@import url("tabsSelector.css");
 @import url("gamesLog.css");
 @import url("controlsSelector.css");
 @import url("controls.css");
@@ -11,6 +11,10 @@
 @import url("chart.css");
 @import url("chartControls.css");
 @import url("players.css");
+@import url("settingsSelector.css");
+@import url("textDisplay.css");
+@import url("displaySettings.css");
+@import url("hotkeysSettings.css");
 
 /**
  * Header Background/ Widget Border Color: #292d35
@@ -167,6 +171,27 @@ html, body {
 
 #chart-controls-col, #tabs-controls-col {
     display: table-cell;
-    height: 50%;
     position: relative;
+}
+
+#chart-controls-col {
+    height: 45%;
+}
+
+#tabs-controls-col {
+    height: 55%;
+}
+
+/* Big Screens with small controls */
+@media handheld, only screen and (min-width: 767px) {
+    #chart-controls-col.small {
+        height: 10%;
+    
+}
+}
+/* Small Screens with small controls */
+@media handheld, only screen and (max-width: 767px) {
+    #chart-controls-col.small {
+        height: 20%;
+    }
 }

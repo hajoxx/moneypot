@@ -23,7 +23,8 @@ define([
         displayName: 'ControlsSelector',
 
         propTypes: {
-            isMobileOrSmall: React.PropTypes.bool.isRequired
+            isMobileOrSmall: React.PropTypes.bool.isRequired,
+            controlsSize: React.PropTypes.string.isRequired
         },
 
         getInitialState: function () {
@@ -51,8 +52,10 @@ define([
 
         render: function() {
 
+            var showManual = this.state.selectedControl === 'manual' || this.props.isMobileOrSmall;
+
             return D.div({ id: 'controls-selector-container' },
-                D.div({ className: 'buttons-container noselect' },
+                D.div({ className: 'buttons-container noselect ' + this.props.controlsSize },
                     D.div({ className: 'button-holder' + (this.state.selectedControl === 'manual'? ' tab-active' : ''), onClick: this._selectControl('manual') },
                         D.a(null,  'Manual' )
                     ),
@@ -61,10 +64,11 @@ define([
                     )
                 ),
 
-                D.div({ className: 'controls-widget-container' },
-                    this.state.selectedControl === 'manual'?
+                D.div({ className: 'controls-widget-container ' + this.props.controlsSize },
+                    showManual?
                         Controls({
-                            isMobileOrSmall: this.props.isMobileOrSmall
+                            isMobileOrSmall: this.props.isMobileOrSmall,
+                            controlsSize: this.props.controlsSize
                         }) :
                         StrategyEditor()
                 )

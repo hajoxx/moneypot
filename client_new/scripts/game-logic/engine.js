@@ -13,7 +13,6 @@ define([
     AppConstants,
     AppDispatcher
 ) {
-
     function Engine() {
         var self = this;
 
@@ -81,7 +80,7 @@ define([
         self.timeTillStart = null;
 
         /** If you are currently placing a bet
-         * True if the bet is queued
+         * True if the bet is queued (nextBetAmount)
          * True if the bet was sent to the server but the server has not responded yet
          *
          * Cleared in game_started, its possible to receive this event before receiving the response of
@@ -109,8 +108,6 @@ define([
         /** Animation Events triggers**/
         self.nyan = false;
 
-
-
         /**
          * Events triggered by the engine
          *
@@ -137,8 +134,6 @@ define([
          */
 
 
-
-
         /**
          * Event called at the moment when the game starts
          */
@@ -162,7 +157,7 @@ define([
                 self.playerInfo[username] = { bet: bets[username] };
             });
 
-            self.calcBonuses();
+            self._calcBonuses();
 
             self.trigger('game_started', self.playerInfo);
         });
@@ -182,7 +177,7 @@ define([
             if(self.tickTimer)
                 clearTimeout(self.tickTimer);
 
-            self.tickTimer = setTimeout(self.checkForLag.bind(self), AppConstants.Engine.STOP_PREDICTING_LAPSE);
+            self.tickTimer = setTimeout(self._checkForLag.bind(self), AppConstants.Engine.STOP_PREDICTING_LAPSE);
 
             //Check for animation triggers
             if(data > AppConstants.Animations.NYAN_CAT_TRIGGER_MS && !self.nyan) {
@@ -218,7 +213,7 @@ define([
 
             //If the game crashed at zero x remove bonuses projections by setting them to zero.
             if(data.game_crash == 0)
-                self.setBonusesToZero();
+                self._setBonusesToZero();
 
             //Update your balance if you won a bonus, use this one because its the bonus rounded by the server
             for (var user in data.bonuses) {
@@ -275,7 +270,7 @@ define([
 
             // Every time the game starts checks if there is a queue bet and send it
             if (self.nextBetAmount) {
-                self.doBet(self.nextBetAmount, self.nextAutoCashout, function(err) {
+                self._doBet(self.nextBetAmount, self.nextAutoCashout, function(err) {
                     if(err)
                         console.log('Response from placing a bet: ', err);
                 });
@@ -323,7 +318,7 @@ define([
                 self.balanceSatoshis += self.playerInfo[resp.username].bet * resp.stopped_at / 100;
             }
 
-            self.calcBonuses();
+            self._calcBonuses();
 
             self.trigger('cashed_out', resp);
         });
@@ -359,7 +354,7 @@ define([
 
         self.ws.on('connect', function() {
 
-            requestOtt(function(err, ott) {
+            _requestOtt(function(err, ott) {
                 if (err) {
                     /* If the error is 401 means the user is not logged in
                      * Todo: This will be fixed in the near future
@@ -404,7 +399,7 @@ define([
                             self.lastGameTick = Date.now();
 
                         if (self.gameState === 'IN_PROGRESS' || self.gameState === 'ENDED')
-                            self.calcBonuses();
+                            self._calcBonuses();
 
 
                         self.trigger('connected');
@@ -424,7 +419,7 @@ define([
     /**
      * STOP_PREDICTING_LAPSE milliseconds after game_tick we put the game in lag state
      */
-    Engine.prototype.checkForLag = function() {
+    Engine.prototype._checkForLag = function() {
         this.lag = true;
         this.trigger('lag_change');
     };
@@ -433,7 +428,7 @@ define([
      * Sends chat message
      * @param {string} msg - String containing the message, should be longer than 1 and shorter than 500.
      */
-    Engine.prototype.say = function(msg) {
+    Engine.prototype._say = function(msg) {
         console.assert(msg.length > 1 && msg.length < 500);
         this.ws.emit('say', msg);
     };
@@ -442,9 +437,8 @@ define([
      * Places a bet with a giving amount.
      * @param {number} amount - Bet amount in bits
      * @param {number} autoCashOut - Percentage of self cash out
-     * @param {function} callback(err, result)
      */
-    Engine.prototype.bet = function(amount, autoCashOut, callback) {
+    Engine.prototype._bet = function(amount, autoCashOut) {
         console.assert(typeof amount == 'number');
         console.assert(Clib.isInteger(amount));
         console.assert(!autoCashOut || (typeof autoCashOut === 'number' && autoCashOut >= 100));
@@ -457,17 +451,14 @@ define([
         this.placingBet = true;
 
         if (this.gameState === 'STARTING')
-            return this.doBet(amount, autoCashOut, callback);
+            return this._doBet(amount, autoCashOut);
 
-        //otherwise, lets queue the bet
-        if (callback)
-            callback(null, 'WILL_JOIN_NEXT');
-
+        //Otherwise the bet is queued
         this.trigger('bet_queued');
     };
 
-    // Actually bet. Throw the bet at the server.
-    Engine.prototype.doBet =  function(amount, autoCashOut, callback) {
+    /** Throw the bet at the server **/
+    Engine.prototype._doBet =  function(amount, autoCashOut) {
         var self = this;
 
         this.ws.emit('place_bet', amount, autoCashOut, function(error) {
@@ -478,23 +469,18 @@ define([
                 if (error !== 'GAME_IN_PROGRESS' && error !== 'ALREADY_PLACED_BET') {
                     alert('There was an error, please reload the window: ' + error);
                 }
-                if (callback)
-                    callback(error);
+
                 return;
             }
 
             self.trigger('bet_placed');
 
-            if (callback)
-                callback(null);
         });
         self.trigger('placing_bet');
     };
 
-    /**
-     * Cancels a bet, if the game state is able to do it so
-     */
-    Engine.prototype.cancelBet = function() {
+    /** Cancels a bet, if the game state is able to do it so */
+    Engine.prototype._cancelBet = function() {
         if (!this.nextBetAmount)
             return console.error('Can not cancel next bet, wasn\'t going to make it...');
 
@@ -507,7 +493,7 @@ define([
     /**
      * Request the server to cash out
      */
-    Engine.prototype.cashOut = function() {
+    Engine.prototype._cashOut = function() {
         var self = this;
         this.cashingOut = true;
         this.ws.emit('cash_out', function(error) {
@@ -521,45 +507,18 @@ define([
     };
 
     /**
-     * Returns the game payout as a percentage if game is in progress
-     * if the game is not in progress returns null.
-     *
-     * Used by the script-controller
-     *
-     * If the last was time exceed the STOP_PREDICTING_LAPSE constant
-     * It returns the last game tick elapsed time + the STOP_PREDICTING_LAPSE
-     * This will cause the graph or others to stops if there is lag.
-     * Only call this function if the game is 'IN_PROGRESS'.
-     * Use it for render, strategy, etc.
-     * @return {number}
-     */
-    Engine.prototype.getGamePayout = function() {
-        if(!(this.gameState === 'IN_PROGRESS'))
-            return null;
-
-        if((Date.now() - this.lastGameTick) < AppConstants.Engine.STOP_PREDICTING_LAPSE) {
-            var elapsed = Date.now() - this.startTime;
-        } else {
-            var elapsed = this.lastGameTick - this.startTime + AppConstants.Engine.STOP_PREDICTING_LAPSE; //+ STOP_PREDICTING_LAPSE because it looks better
-        }
-        var gamePayout = Clib.growthFunc(elapsed);
-        console.assert(isFinite(gamePayout));
-        return gamePayout;
-    };
-
-    /**
      * If the game crashed at zero x remove the bonus projections by setting bonuses to zero.
      */
-    Engine.prototype.setBonusesToZero = function() {
+    Engine.prototype._setBonusesToZero = function() {
         for(var user in this.playerInfo) {
             this.playerInfo[user].bonus = 0;
         }
     };
 
     /**
-     * Calculate the bonuses based on player info and append them to it
+     * Calculate the bonuses based on player info and append them to it on connect, cashed_out and game_started
      **/
-    Engine.prototype.calcBonuses = function() {
+    Engine.prototype._calcBonuses = function() {
         var self = this;
 
         //Slides across the array and apply the function to equally stopped_at parts of the array
@@ -630,35 +589,10 @@ define([
 
     };
 
-    /** If the user is currently playing return and object with the status else null **/
-    Engine.prototype.currentPlay = function() {
-        if (!this.username)
-            return null;
-        else
-            return this.playerInfo[this.username];
-    };
-
-    /** True if you are playing and haven't cashed out **/
-    Engine.prototype.currentlyPlaying = function() {
-        var currentPlay = this.currentPlay();
-        return currentPlay && currentPlay.bet && !currentPlay.stopped_at;
-    };
-
-    /** To Know if the user is betting **/
-    Engine.prototype.isBetting = function() {
-        if (!this.username) return false;
-        if (this.nextBetAmount) return true;
-        for (var i = 0 ; i < this.joined.length; ++i) {
-            if (this.joined[i] == this.username)
-                return true;
-        }
-        return false;
-    };
-
     /**
      * Function to request the one time token to the server
      */
-    function requestOtt(callback) {
+    function _requestOtt(callback) {
 
         try {
             var ajaxReq  = new XMLHttpRequest();
@@ -703,19 +637,19 @@ define([
         switch(action.actionType) {
 
             case AppConstants.ActionTypes.PLACE_BET:
-                EngineSingleton.bet(action.bet, action.cashOut);
+                EngineSingleton._bet(action.bet, action.cashOut);
                 break;
 
             case AppConstants.ActionTypes.CANCEL_BET:
-                EngineSingleton.cancelBet();
+                EngineSingleton._cancelBet();
                 break;
 
             case AppConstants.ActionTypes.CASH_OUT:
-                EngineSingleton.cashOut();
+                EngineSingleton._cashOut();
                 break;
 
             case AppConstants.ActionTypes.SAY_CHAT:
-                EngineSingleton.say(action.msg);
+                EngineSingleton._say(action.msg);
                 break;
 
         }

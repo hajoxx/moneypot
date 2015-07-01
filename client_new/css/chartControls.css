@@ -1,10 +1,17 @@
 #chart-controls-inner-container {
-    min-height: 20rem;
+    min-height: 15rem;
     height: 100%;
 }
 @media handheld, only screen and (max-width: 767px) {
     #chart-controls-inner-container {
-        min-height: 50%;
+        min-height: 7rem;
+
+    }
+}
+/* Big Screens with small controls */
+@media handheld, only screen and (min-width: 767px) {
+    #chart-controls-inner-container.small {
+        min-height: 4.7rem;
     }
 }
 
@@ -20,12 +27,28 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    left: 61%;
+    left: 60%;
     right: 0;
     border: 1px solid #ddd;
     margin: 5px;
 }
 
+/* Big Screens with small controls */
+@media handheld, only screen and (min-width: 767px) {
+
+    #chart-container.small {
+        top: 3px;
+        bottom: 3px;
+        left: 10px;
+        right: calc(50% + 3px);
+    }
+
+    #controls-container.small {
+        left: 50%;
+    }
+}
+
+/* Small Screens */
 @media handheld, only screen and (max-width: 767px) {
     
     #chart-container {
@@ -41,7 +64,6 @@
         bottom: 0;
         left: 0;
         right: 0;
-    
         border: none;
-}
+    }
 }

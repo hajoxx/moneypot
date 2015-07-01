@@ -5,10 +5,12 @@
 define([
     'lodash',
     'game-logic/engine',
+    'game-logic/stateLib',
     'lib/events'
 ], function(
     _,
     Engine,
+    StateLib,
     Events
 ){
 
@@ -182,7 +184,7 @@ define([
      * if the game is not in progress returns null
      */
     ScriptExecutor.prototype.getCurrentPayout = function() {
-        return Engine.getGamePayout();
+        return StateLib.getGamePayout(Engine);
     };
 
     /**

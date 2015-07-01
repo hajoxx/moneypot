@@ -13,7 +13,9 @@ define([
     'components/BetBar',
     'components/SpaceWrap',
     'game-logic/engine',
-    'game-logic/clib'
+    'game-logic/clib',
+    'game-logic/hotkeys',
+    'stores/GameSettingsStore'
 ], function(
     React,
     TopBarClass,
@@ -23,7 +25,9 @@ define([
     BetBarClass,
     SpaceWrapClass,
     Engine,
-    Clib
+    Clib,
+    Hotkeys,
+    GameSettingsStore
 ){
     var TopBar = React.createFactory(TopBarClass);
     var SpaceWrap = React.createFactory(SpaceWrapClass);
@@ -38,20 +42,23 @@ define([
         displayName: 'Game',
 
         getInitialState: function () {
-            return {
-                isConnected: Engine.isConnected,
-                showMessage: true,
-                isMobileOrSmall: Clib.isMobileOrSmall() //bool
-            }
+            var state = GameSettingsStore.getState();
+            state.isConnected = Engine.isConnected;
+            state.showMessage = true;
+            state.isMobileOrSmall = Clib.isMobileOrSmall(); //bool
+            return state;
         },
 
         componentDidMount: function() {
             Engine.on({
-                'connected': this._onChange,
-                'disconnected': this._onChange
+                'connected': this._onEngineChange,
+                'disconnected': this._onEngineChange
             });
+            GameSettingsStore.addChangeListener(this._onSettingsChange);
 
             window.addEventListener("resize", this._onWindowResize);
+
+            Hotkeys.mount();
         },
 
         componentWillUnmount: function() {
@@ -59,11 +66,20 @@ define([
                 'connected': this._onChange,
                 'disconnected': this._onChange
             });
+
+            window.removeEventListener("resize", this._onWindowResize);
+
+            Hotkeys.unmount();
         },
 
-        _onChange: function() {
-            if(this.state.isConnected != Engine.isConnected)
+        _onEngineChange: function() {
+            if((this.state.isConnected != Engine.isConnected) && this.isMounted())
                 this.setState({ isConnected: Engine.isConnected });
+        },
+
+        _onSettingsChange: function() {
+            if(this.isMounted())
+                this.setState(GameSettingsStore.getState());
         },
 
         _onWindowResize: function() {
@@ -149,16 +165,20 @@ define([
                 D.div({ id: 'game-playable-container', className: containerClass },
                     D.div({ id: 'game-left-container', className: this.state.isMobileOrSmall? ' small-window' : '' },
                         D.div({ id: 'chart-controls-row' },
-                            D.div({ id: 'chart-controls-col' },
+                            D.div({ id: 'chart-controls-col', className: this.state.controlsSize },
                                 ChartControls({
-                                    isMobileOrSmall: this.state.isMobileOrSmall
+                                    isMobileOrSmall: this.state.isMobileOrSmall,
+                                    controlsSize: this.state.controlsSize
                                 })
                             )
 
                         ),
                         D.div({ id: 'tabs-controls-row' },
                             D.div({ id: 'tabs-controls-col' },
-                                TabsSelector()
+                                TabsSelector({
+                                    isMobileOrSmall: this.state.isMobileOrSmall,
+                                    controlsSize: this.state.controlsSize
+                                })
                             )
                         )
 

@@ -1,20 +1,20 @@
 define([
-    'dispatcher/AppDispatcher',
-    'constants/AppConstants',
+    'lodash',
     'lib/events',
-    'lodash'
+    'dispatcher/AppDispatcher',
+    'constants/AppConstants'
 ], function(
-    AppDispatcher,
-    AppConstants,
+    _,
     Events,
-    _
-){
+    AppDispatcher,
+    AppConstants
+) {
     var CHANGE_EVENT = 'change';
 
-    var _selectedTab = 'chat'; //Tabs: chat, gamesLog, players
+    var _chartDisplayed = 'canvas'; //text || canvas
 
     //Singleton ControlsStore Object
-    var TabsSelectorStore = _.extend({}, Events, {
+    var ChartStore = _.extend({}, Events, {
 
         emitChange: function() {
             this.trigger(CHANGE_EVENT);
@@ -28,13 +28,13 @@ define([
             this.off(CHANGE_EVENT, callback);
         },
 
-        _selectTab: function(tab) {
-            _selectedTab = tab;
+        _selectChart: function(chartName) {
+            _chartDisplayed = chartName;
         },
 
         getState: function() {
             return {
-                selectedTab: _selectedTab
+                chartDisplayed: _chartDisplayed
             }
         }
 
@@ -45,15 +45,14 @@ define([
 
         switch(action.actionType) {
 
-            case AppConstants.ActionTypes.SELECT_TAB:
-                TabsSelectorStore._selectTab(action.tab);
-                TabsSelectorStore.emitChange();
+            case AppConstants.ActionTypes.SELECT_CHART:
+                ChartStore._selectChart(action.chartName);
+                ChartStore.emitChange();
                 break;
-
         }
 
         return true; // No errors. Needed by promise in Dispatcher.
     });
 
-    return TabsSelectorStore;
+    return ChartStore;
 });

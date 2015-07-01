@@ -42,6 +42,10 @@
     color: black;
 }
 
+#strategy-container .auto-bet-container>div:nth-of-type(even) {
+    background-color: whitesmoke;
+}
+
 #strategy-container .stra-base-bet {
     /* background-color: #ffffff; */
 }

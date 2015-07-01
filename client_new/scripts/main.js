@@ -6,7 +6,8 @@ requirejs.config({
         lodash: '../../node_modules/lodash/dist/lodash',
         react: '../../node_modules/react/dist/react-with-addons',
         seedrandom: '../../node_modules/seedrandom/seedrandom',
-        socketio: '../../node_modules/socket.io-client/socket.io'
+        socketio: '../../node_modules/socket.io-client/socket.io',
+        mousetrap: '../../node_modules/mousetrap/mousetrap'
     },
     shim: {
 
