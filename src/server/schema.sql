@@ -1,4 +1,4 @@
-
+CREATE EXTENSION plv8;
 
 CREATE TABLE blocks (
     height integer NOT NULL,
