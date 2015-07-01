@@ -132,7 +132,7 @@ CREATE TABLE plays (
     auto_cash_out bigint NOT NULL,
     game_id bigint NOT NULL,
     created timestamp with time zone DEFAULT now() NOT NULL,
-    bet bigint,
+    bet bigint NOT NULL,
     bonus bigint
 );
 
@@ -198,6 +198,9 @@ CREATE TABLE users (
     password text NOT NULL,
     mfa_secret text,
     balance_satoshis bigint DEFAULT 0 NOT NULL,
+    gross_profit bigint DEFAULT 0 NOT NULL,
+    net_profit bigint DEFAULT 0 NOT NULL,
+    games_played bigint DEFAULT 0 NOT NULL,
     userclass UserClassEnum DEFAULT 'user' NOT NULL,
     CONSTRAINT users_balance_satoshis_check CHECK ((balance_satoshis >= 0))
 );
@@ -476,21 +479,13 @@ ALTER TABLE ONLY plays
 
 
 CREATE MATERIALIZED VIEW leaderboard AS
- WITH t AS (
-         SELECT user_id,
-            (COALESCE(sum(cash_out - bet), 0::numeric) + COALESCE(sum(bonus), 0::numeric))::bigint AS gross_profit,
-            (COALESCE(sum(cash_out), 0::numeric) + COALESCE(sum(bonus), 0::numeric) - COALESCE(sum(bet), 0::numeric))::bigint AS net_profit,
-            count(*) AS games_played
-           FROM plays
-          GROUP BY user_id
-        )
- SELECT t.user_id,
-    (SELECT username FROM users WHERE users.id = user_id),
-    t.gross_profit,
-    t.net_profit,
-    t.games_played,
-    rank() OVER (ORDER BY t.gross_profit DESC) AS rank
-   FROM t;
+ SELECT id as user_id,
+        username,
+        gross_profit,
+        net_profit,
+        games_played,
+        rank() OVER (ORDER BY gross_profit DESC) AS rank
+   FROM users;
 
 CREATE UNIQUE INDEX leaderboard_user_id_idx
   ON leaderboard
@@ -502,3 +497,50 @@ CREATE INDEX leaderboard_username_idx ON leaderboard USING btree (lower(username
 CREATE INDEX leaderboard_gross_profit_idx ON leaderboard USING btree (gross_profit);
 
 CREATE INDEX leaderboard_net_profit_idx ON leaderboard USING btree (net_profit);
+
+CREATE OR REPLACE FUNCTION plays_users_stats_trigger()
+  RETURNS trigger AS $$
+
+    if (TG_OP === 'UPDATE' && OLD.user_id !== NEW.user_id)
+      throw new Error('Update of user_id not allowed');
+
+    var userId, gross = 0, net = 0, num = 0;
+    var bet, cashOut, bonus;
+
+    // Add new values.
+    if (NEW) {
+      userId  = NEW.user_id;
+      bet     = NEW.bet;
+      bonus   = NEW.bonus || 0;
+      cashOut = NEW.cash_out || 0;
+
+      gross  += Math.max(cashOut - bet, 0) + bonus;
+      net    += (cashOut - bet) + bonus;
+      num    += 1;
+    }
+
+    // Subtract old values
+    if (OLD) {
+      userId  = OLD.user_id;
+      bet     = OLD.bet;
+      bonus   = OLD.bonus || 0;
+      cashOut = OLD.cash_out || 0;
+
+      gross  -= Math.max(cashOut - bet, 0) + bonus;
+      net    -= (cashOut - bet) + bonus;
+      num    -= 1;
+    }
+
+    var sql =
+      'UPDATE users ' +
+      '  SET gross_profit = gross_profit + $1, ' +
+      '      net_profit   = net_profit   + $2, ' +
+      '      games_played = games_played + $3 ' +
+      '  WHERE id = $4';
+    var par = [gross,net,num,userId];
+    plv8.execute(sql,par);
+$$ LANGUAGE plv8;
+
+CREATE TRIGGER plays_users_stats_trigger
+AFTER INSERT OR UPDATE OR DELETE ON plays
+    FOR EACH ROW EXECUTE PROCEDURE plays_users_stats_trigger();
