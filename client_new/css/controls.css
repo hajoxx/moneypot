@@ -5,29 +5,19 @@
     position: relative;
     width: 100%;
     height: 100%;
-    display: table;
 }
 
 #controls-inner-container .control-inputs-container {
 }
 
-#controls-inner-container .controls-row {
-    display: table-row;
-    width: 100%;
-}
-
-#controls-inner-container .controls-col {
-    display: table-cell;
-    width: 100%;
-}
 
 #controls-inner-container .input-control {
-    height: 0;
     width: 100%;
 }
 
 #controls-inner-container .button-container {
-    height: 100%;
+    height: calc(100% - 7.5rem);
+    padding: 1rem 0.5rem 0 0.5rem;
 }
 
 #controls-inner-container .bet-container, #controls-inner-container  .autocash-container {
@@ -54,6 +44,7 @@
 
 #controls-inner-container .bet-input-group>input {
     line-height: 2em;
+    height: 2em;
     width: 100%;
     outline: none;
     padding-left: 0.5rem;
@@ -69,7 +60,7 @@
 #controls-inner-container .bet-input-group>span:first-child  {
     position: absolute;
     font-weight: bold;
-    top: -1.5rem;
+    top: -1rem;
     border: 0;
     background-color: transparent;
     border-color: transparent;
@@ -82,7 +73,7 @@
     background-color: #eee;
     border: 1px solid #ccc;
     border-radius: 2px;
-    font-size: 0.8em;
+    font-size: 0.8rem;
     padding: 0 0.5rem;
 
     border-left: 0;
@@ -129,8 +120,6 @@
 #controls-inner-container .bet-button-container {
     height: 100%;
     box-sizing: content-box;
-    padding-top: 0.8rem;
-    padding: 0.8rem 0.5rem 0.1rem 0.5rem;
 }
 
 #controls-inner-container .bet-button {
@@ -138,16 +127,14 @@
     padding: 0;
     margin: 0;
     width: 100%;
-    /* height: 6rem; */
     height: calc(100% - 10px);
-    /* top: calc(100% - 3em); */
     text-align: center;
     color: white;
     background-color: rgba(243,150,47,1);
     position: relative;
     text-decoration: none;
     font-weight: 300;
-    font-size: 2em;
+    font-size: 2rem;
     border-radius: 8px;
     -webkit-border-radius: 8px;
     -moz-border-radius: 8px;
@@ -247,7 +234,9 @@
         float: left;
         width: 30%;
         height: 100%;
-    }
+    
+        padding: 0 0.5rem 0 0;
+}
 
     #controls-inner-container .bet-container {
         padding-top: 0;
@@ -271,7 +260,7 @@
         background-color: #eee;
         border: 1px solid #ccc;
         border-radius: 2px;
-        font-size: 0.8em;
+        font-size: 0.8rem;
         padding: 0 0.2rem;
         border-right: 0;
         border-top-right-radius: 0;
@@ -300,7 +289,7 @@
     #controls-inner-container .bet-button {
         top: inherit;
         font-size: 1.2rem;
-        /* height: calc(100% - 10px); */
+        height: calc(100% - 10px - 0.3rem);
 }
 
     #controls-inner-container .btn-content .cashout-cont {
@@ -350,7 +339,9 @@
         float: left;
         width: 30%;
         height: 100%;
-    }
+    
+        padding: 0;
+}
 
     #controls-inner-container.small .bet-container {
         padding: 0.5rem 0.1rem 0 0.3rem;
@@ -364,7 +355,15 @@
 
     #controls-inner-container.small .bet-input-group>input, #controls-inner-container .bet-input-group>span {
         font-size: 0.8rem;
+    }
+
+    #controls-inner-container.small .bet-input-group>input {
         line-height: 2rem;
+        height: 2rem;
+    }
+
+    #controls-inner-container .bet-input-group>span {
+        height: 2rem;
     }
 
     #controls-inner-container.small .bet-input-group>span:first-child {
@@ -373,7 +372,7 @@
         background-color: #eee;
         border: 1px solid #ccc;
         border-radius: 2px;
-        font-size: 0.8em;
+        font-size: 0.8rem;
         padding: 0 0.3rem;
         border-right: 0;
         border-top-right-radius: 0;
@@ -401,7 +400,7 @@
     #controls-inner-container.small .bet-button {
         font-size: 1.2rem;
         margin: 0.5rem 0.5rem 0 0.5rem;
-        height: calc(100% - 10px - 0.6rem);
+        height: calc(100% - 10px - 0.9rem);
         width: calc(100% - 1rem);
     }
 

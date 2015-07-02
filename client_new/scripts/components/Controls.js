@@ -184,7 +184,7 @@ define([
 
                 controlInputs,
 
-                D.div({ className: 'button-container controls-row' },
+                D.div({ className: 'button-container' },
                     BetButton({
                         engine: this.state.engine,
                         placeBet: this._placeBet,

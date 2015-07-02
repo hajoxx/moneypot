@@ -157,6 +157,7 @@ define([
                 D.button({ className: btnClasses, onClick: onClickFun, onMouseDown: onMouseDownFun, onMouseUp: onMouseUpFun },
                     btnContent
                 )
+
             );
         }
     });
