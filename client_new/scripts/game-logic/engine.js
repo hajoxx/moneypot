@@ -270,7 +270,7 @@ define([
 
             // Every time the game starts checks if there is a queue bet and send it
             if (self.nextBetAmount) {
-                self._doBet(self.nextBetAmount, self.nextAutoCashout, function(err) {
+                self.doBet(self.nextBetAmount, self.nextAutoCashout, function(err) {
                     if(err)
                         console.log('Response from placing a bet: ', err);
                 });

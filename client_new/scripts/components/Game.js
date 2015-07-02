@@ -166,19 +166,22 @@ define([
                     D.div({ id: 'game-left-container', className: this.state.isMobileOrSmall? ' small-window' : '' },
                         D.div({ id: 'chart-controls-row' },
                             D.div({ id: 'chart-controls-col', className: this.state.controlsSize },
-                                ChartControls({
-                                    isMobileOrSmall: this.state.isMobileOrSmall,
-                                    controlsSize: this.state.controlsSize
-                                })
+                                D.div({ className: 'cell-wrapper' },
+                                    ChartControls({
+                                        isMobileOrSmall: this.state.isMobileOrSmall,
+                                        controlsSize: this.state.controlsSize
+                                    })
+                                )
                             )
-
                         ),
                         D.div({ id: 'tabs-controls-row' },
                             D.div({ id: 'tabs-controls-col' },
-                                TabsSelector({
-                                    isMobileOrSmall: this.state.isMobileOrSmall,
-                                    controlsSize: this.state.controlsSize
-                                })
+                                D.div({ className: 'cell-wrapper' },
+                                    TabsSelector({
+                                        isMobileOrSmall: this.state.isMobileOrSmall,
+                                        controlsSize: this.state.controlsSize
+                                    })
+                                )
                             )
                         )
 

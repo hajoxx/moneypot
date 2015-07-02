@@ -171,6 +171,11 @@ html, body {
 
 #chart-controls-col, #tabs-controls-col {
     display: table-cell;
+}
+
+#tabs-controls-col .cell-wrapper, #chart-controls-col .cell-wrapper {
+    height: 100%;
+    width: 100%;
     position: relative;
 }
 
