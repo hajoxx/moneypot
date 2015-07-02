@@ -157,7 +157,7 @@ define([
                 self.playerInfo[username] = { bet: bets[username] };
             });
 
-            self._calcBonuses();
+            self.calcBonuses();
 
             self.trigger('game_started', self.playerInfo);
         });
@@ -177,7 +177,7 @@ define([
             if(self.tickTimer)
                 clearTimeout(self.tickTimer);
 
-            self.tickTimer = setTimeout(self._checkForLag.bind(self), AppConstants.Engine.STOP_PREDICTING_LAPSE);
+            self.tickTimer = setTimeout(self.checkForLag.bind(self), AppConstants.Engine.STOP_PREDICTING_LAPSE);
 
             //Check for animation triggers
             if(data > AppConstants.Animations.NYAN_CAT_TRIGGER_MS && !self.nyan) {
@@ -213,7 +213,7 @@ define([
 
             //If the game crashed at zero x remove bonuses projections by setting them to zero.
             if(data.game_crash == 0)
-                self._setBonusesToZero();
+                self.setBonusesToZero();
 
             //Update your balance if you won a bonus, use this one because its the bonus rounded by the server
             for (var user in data.bonuses) {
@@ -318,7 +318,7 @@ define([
                 self.balanceSatoshis += self.playerInfo[resp.username].bet * resp.stopped_at / 100;
             }
 
-            self._calcBonuses();
+            self.calcBonuses();
 
             self.trigger('cashed_out', resp);
         });
@@ -354,17 +354,12 @@ define([
 
         self.ws.on('connect', function() {
 
-            _requestOtt(function(err, ott) {
-                if (err) {
-                    /* If the error is 401 means the user is not logged in
-                     * Todo: This will be fixed in the near future
-                     */
-                    if (err != 401) {
-                        console.error('request ott error:', err);
-                        if (confirm("An error, click to reload the page: " + err))
-                            location.reload();
-                        return;
-                    }
+            requestOtt(function(err, ott) {
+                if (err && err != 401) { // If the error is 401 means the user is not logged in
+                    console.error('request ott error:', err);
+                    if (confirm("An error, click to reload the page: " + err))
+                        location.reload();
+                    return;
                 }
 
                 //If there is a Dev ott use it
@@ -399,7 +394,7 @@ define([
                             self.lastGameTick = Date.now();
 
                         if (self.gameState === 'IN_PROGRESS' || self.gameState === 'ENDED')
-                            self._calcBonuses();
+                            self.calcBonuses();
 
 
                         self.trigger('connected');
@@ -419,7 +414,7 @@ define([
     /**
      * STOP_PREDICTING_LAPSE milliseconds after game_tick we put the game in lag state
      */
-    Engine.prototype._checkForLag = function() {
+    Engine.prototype.checkForLag = function() {
         this.lag = true;
         this.trigger('lag_change');
     };
@@ -428,7 +423,7 @@ define([
      * Sends chat message
      * @param {string} msg - String containing the message, should be longer than 1 and shorter than 500.
      */
-    Engine.prototype._say = function(msg) {
+    Engine.prototype.say = function(msg) {
         console.assert(msg.length > 1 && msg.length < 500);
         this.ws.emit('say', msg);
     };
@@ -452,7 +447,7 @@ define([
         this.placingBet = true;
 
         if (this.gameState === 'STARTING')
-            return this._doBet(amount, autoCashOut, callback);
+            return this.doBet(amount, autoCashOut, callback);
 
         //otherwise, lets queue the bet
         if (callback)
@@ -462,7 +457,7 @@ define([
     };
 
     /** Throw the bet at the server **/
-    Engine.prototype._doBet =  function(amount, autoCashOut, callback) {
+    Engine.prototype.doBet =  function(amount, autoCashOut, callback) {
         var self = this;
 
         this.ws.emit('place_bet', amount, autoCashOut, function(error) {
@@ -487,7 +482,7 @@ define([
     };
 
     /** Cancels a bet, if the game state is able to do it so */
-    Engine.prototype._cancelBet = function() {
+    Engine.prototype.cancelBet = function() {
         if (!this.nextBetAmount)
             return console.error('Can not cancel next bet, wasn\'t going to make it...');
 
@@ -500,7 +495,7 @@ define([
     /**
      * Request the server to cash out
      */
-    Engine.prototype._cashOut = function() {
+    Engine.prototype.cashOut = function() {
         var self = this;
         this.cashingOut = true;
         this.ws.emit('cash_out', function(error) {
@@ -516,7 +511,7 @@ define([
     /**
      * If the game crashed at zero x remove the bonus projections by setting bonuses to zero.
      */
-    Engine.prototype._setBonusesToZero = function() {
+    Engine.prototype.setBonusesToZero = function() {
         for(var user in this.playerInfo) {
             this.playerInfo[user].bonus = 0;
         }
@@ -525,7 +520,7 @@ define([
     /**
      * Calculate the bonuses based on player info and append them to it on connect, cashed_out and game_started
      **/
-    Engine.prototype._calcBonuses = function() {
+    Engine.prototype.calcBonuses = function() {
         var self = this;
 
         //Slides across the array and apply the function to equally stopped_at parts of the array
@@ -599,7 +594,7 @@ define([
     /**
      * Function to request the one time token to the server
      */
-    function _requestOtt(callback) {
+    function requestOtt(callback) {
 
         try {
             var ajaxReq  = new XMLHttpRequest();
@@ -648,15 +643,15 @@ define([
                 break;
 
             case AppConstants.ActionTypes.CANCEL_BET:
-                EngineSingleton._cancelBet();
+                EngineSingleton.cancelBet();
                 break;
 
             case AppConstants.ActionTypes.CASH_OUT:
-                EngineSingleton._cashOut();
+                EngineSingleton.cashOut();
                 break;
 
             case AppConstants.ActionTypes.SAY_CHAT:
-                EngineSingleton._say(action.msg);
+                EngineSingleton.say(action.msg);
                 break;
 
         }

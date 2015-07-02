@@ -248,6 +248,11 @@ body {
     background-color: #202328;
 }
 
+#strategy-container .strategy-input {
+    background-color: transparent;
+    color: white;
+}
+
 
 /* ==========================================================================
    players.css
