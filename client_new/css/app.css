@@ -45,6 +45,32 @@ body {
     margin-top: 1rem;
 }
 
+#top-bar .menu {
+    float: right;
+
+    margin-right: 3rem;
+}
+
+#top-bar .nav-list {
+    line-height: 40px;
+    
+    padding: 0;
+    margin: 0;
+}
+
+#top-bar .nav-item {
+    display: inline-block;
+
+    padding-right: 1rem;
+}
+
+#top-bar .nav-item a {
+    line-height: 40px;
+
+    color: black;
+    font-size: 20px;
+}
+
 
 /* Message wrappers
    ========================================================================== */

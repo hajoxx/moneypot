@@ -9,23 +9,31 @@
 
         <div class="user-login">
             {{?it.user}}
-                <div class="balance-bits">
-                    <span>Bits: </span>
-                    <span class="balance">{{#def.format:{n: it.user.balance_satoshis, decimals:2} }}</span>
-                </div>
-                <div class="username">
-                    <a href="/account">{{=it.user.username}}</a>
-                </div>
+            <div class="balance-bits">
+                <span>Bits: </span>
+                <span class="balance">{{#def.format:{n: it.user.balance_satoshis, decimals:2} }}</span>
+            </div>
+            <div class="username">
+                <a href="/account">{{=it.user.username}}</a>
+            </div>
             {{??}}
-                <div class="register">
-                    <a href="/register">Register</a>
-                </div>
-                <div class="login">
-                    <a href="/login">Log in</a>
-                </div>
+            <div class="register">
+                <a href="/register">Register</a>
+            </div>
+            <div class="login">
+                <a href="/login">Log in</a>
+            </div>
             {{?}}
         </div>
 
+        <div class="menu">
+            <ul class="nav-list">
+                <li class="nav-item"><a href="/request">Faucet</a></li>
+                <li class="nav-item"><a href="/leaderboard">Leaderboard</a></li>
+                <li class="nav-item"><a href="/stats">Stats</a></li>
+                <li class="nav-item"><a href="/faq">FAQ</a></li>
+            </ul>
+        </div>
 
         {{?it.table}}
         <div class="new-theme">

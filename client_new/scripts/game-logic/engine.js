@@ -105,6 +105,9 @@ define([
         /** Tell if the game is lagging but only  when the game is in progress **/
         self.lag = false;
 
+        /** The hash of the last game **/
+        self.lastHash = null;
+
         /** Animation Events triggers**/
         self.nyan = false;
 
