@@ -25,6 +25,15 @@ define([
 
         self.ws = io(AppConstants.Engine.HOST);
 
+        //Dev functions
+        //window.disconnect = function() {
+        //    self.ws.io.disconnect();
+        //};
+        //
+        //window.reconnect = function() {
+        //    self.ws.io.connect();
+        //};
+
         /** The engine is connected to the server, if not connected, all fields are unreadable */
         self.isConnected = false;
 
@@ -157,7 +166,8 @@ define([
                 if (self.username === username)
                     self.balanceSatoshis -= bets[username];
 
-                self.playerInfo[username] = { bet: bets[username] };
+                self.playerInfo[username] = { bet: bets[username], username: username };
+
             });
 
             self.calcBonuses();

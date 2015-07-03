@@ -83,7 +83,6 @@ define([
                 });
             } else {
                 _.forEach(game.playerInfo, function (player, username) {
-                    player.username = username;
 
                     if (player.stopped_at)
                         usersWonCashed.push(player);
