@@ -94,7 +94,13 @@ define([
 
         render: function() {
             if (!this.state.isConnected)
-                return D.p(null, 'Connecting to server..');
+                return D.div({ id: 'loading-container' },
+                    D.div({ className: 'loading-image' },
+                        D.span({ className: 'bubble-1' }),
+                        D.span({ className: 'bubble-2' }),
+                        D.span({ className: 'bubble-3' })
+                    )
+                );
 
             var messageContainer;
             if(USER_MESSAGE && this.state.showMessage) {
