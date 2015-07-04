@@ -9,7 +9,7 @@
     top: 0;
     right: 0;
     left: 0;
-    bottom: 2rem;
+    bottom: 1.2rem;
     overflow-y: scroll;
 }
 
@@ -38,7 +38,7 @@
    ========================================================================== */
 
 #strategy-container .auto-bet-container {
-    padding-top: 1rem;
+    padding-top: 0.2rem;
     color: black;
 }
 
@@ -55,7 +55,7 @@
 }
 
 #strategy-container .stra-base-bet, #strategy-container .stra-cash-out-at, #strategy-container .stra-max-bet-stop {
-    line-height: 2em;
+    line-height: 1.7rem;
     padding-left: 1em;
 }
 
