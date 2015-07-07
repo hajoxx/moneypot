@@ -1,7 +1,7 @@
 #!/bin/sh
-set -o verbose
-rm -rf node_modules
-npm install
+set -e -o verbose #-e: stop on first error
+#rm -rf node_modules
+#npm install
 gulp build
 git add build --force
 git add config/build-config.json --force
