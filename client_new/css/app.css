@@ -43,7 +43,6 @@ body {
 .page-content {
     position: relative;
     margin-top: 1rem;
-    pointer-events: none;
 }
 
 #top-bar .menu, #top-bar .menu-mobile {
