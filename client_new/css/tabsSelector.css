@@ -39,6 +39,39 @@
 }
 
 
+/** 2 columns **/
+
+#tabs-inner-container .tab-container li.tab.col-2 {
+    display: table-row;
+    height: 50%;
+    width: 1.5rem;
+    background: #ddd;
+    cursor: pointer;
+}
+
+#tabs-inner-container .tab-container li.tab.col-2:first-child {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 50%;
+}
+
+#tabs-inner-container .tab-container li.tab.col-2:nth-child(2) {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    left: 0;
+    bottom: 0;
+}
+
+/** tab adjustments **/
+
+#tabs-inner-container .tab-container li.tab.col-2:nth-child(2) a {
+    padding-left: 0.5rem;
+}
+
+
 /** 3 columns **/
 
 #tabs-inner-container .tab-container li.tab.col-3 {

@@ -81,20 +81,38 @@ define([
                     widget = StrategyEditor();
             }
 
-            var autoBetTab, tabCols;
+            var autoBetTab, playersTab, tabCols, tabCount = 2;
+
+            //Show the players tab when we are on mobile
+            if(this.props.isMobileOrSmall)
+        		tabCount++;
+        	//Show the auto widget when the controls are set to small
+        	if(this.props.controlsSize === 'small')
+        		tabCount++;
+
+        	tabCols = 'col-' + tabCount;
+
+            if(this.props.isMobileOrSmall) {
+            	playersTab = D.li({
+                        className: 'tab ' + tabCols + ' noselect' + ((this.state.selectedTab === 'players') ? ' tab-active' : ''),
+                        onClick: this._selectTab('players')
+                    },
+                    D.a(null, 'Players')
+                )
+            } else {
+            	playersTab = null;
+            }
+
             if(this.props.controlsSize === 'small') {
                 autoBetTab = D.li({
-                        className: 'tab col-4 noselect' + ((this.state.selectedTab === 'autobet') ? ' tab-active' : ''),
+                        className: 'tab ' + tabCols + ' noselect' + ((this.state.selectedTab === 'autobet') ? ' tab-active' : ''),
                         onClick: this._selectTab('autobet')
                     },
                     D.a(null, 'Auto')
                 );
-                tabCols = 'col-4';
             } else {
                 autoBetTab = null;
-                tabCols = 'col-3';
             }
-
 
             return D.div({ id: 'tabs-inner-container', className: 'log-chat-tabs-container' },
 
@@ -112,12 +130,7 @@ define([
                                 },
                                 D.a(null, 'Chat')
                             ),
-                            D.li({
-                                    className: 'tab ' + tabCols + ' noselect' + ((this.state.selectedTab === 'players') ? ' tab-active' : ''),
-                                    onClick: this._selectTab('players')
-                                },
-                                D.a(null, 'Players')
-                            ),
+							playersTab,
                             autoBetTab
                         ),
                         D.div({
