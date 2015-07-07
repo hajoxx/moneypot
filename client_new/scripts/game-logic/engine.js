@@ -162,12 +162,13 @@ define([
             self.nextBetAmount = null;
             self.nextAutoCashout = null;
 
+            //Create the player info object with bet and username
+            //If you are in the bets rest your bet from your balance
             Object.keys(bets).forEach(function(username) {
                 if (self.username === username)
                     self.balanceSatoshis -= bets[username];
 
                 self.playerInfo[username] = { bet: bets[username], username: username };
-
             });
 
             self.calcBonuses();
@@ -406,10 +407,16 @@ define([
                         if (self.gameState === 'IN_PROGRESS')
                             self.lastGameTick = Date.now();
 
-                        if (self.gameState === 'IN_PROGRESS' || self.gameState === 'ENDED')
-                            self.calcBonuses();
+                    	//Attach username to each user for sorting proposes 
+                    	for(var user in self.playerInfo) {
+                    		self.playerInfo[user].username = user;
+                    	}
 
-
+                    	//Calculate the bonuses of the current game if necessary
+                        if (self.gameState === 'IN_PROGRESS' || self.gameState === 'ENDED'){
+                        	self.calcBonuses();
+                        }
+                            
                         self.trigger('connected');
                     }
                 );
