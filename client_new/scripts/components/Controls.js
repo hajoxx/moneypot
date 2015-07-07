@@ -102,8 +102,8 @@ define([
             ControlsActions.setAutoCashOut(autoCashOut);
         },
 
-        _redirectToRegister: function() {
-            window.location = '/register';
+        _redirectToLogin: function() {
+            window.location = '/login';
         },
 
         render: function () {
@@ -113,7 +113,7 @@ define([
             if (!Engine.username)
                 return D.div({ id: 'controls-inner-container' },
                     D.div({ className: 'login-button-container' },
-                        D.button({ className: 'login-button bet-button', onClick: this._redirectToRegister }, 'Login to play')
+                        D.button({ className: 'login-button bet-button', onClick: this._redirectToLogin }, 'Login to play')
                     ),
                     D.div({ className: 'register-container'},
                         D.a({ className: 'register', href: '/register' }, 'or register ')

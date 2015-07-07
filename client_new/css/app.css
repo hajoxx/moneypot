@@ -43,11 +43,11 @@ body {
 .page-content {
     position: relative;
     margin-top: 1rem;
+    pointer-events: none;
 }
 
-#top-bar .menu {
+#top-bar .menu, #top-bar .menu-mobile {
     float: right;
-
     margin-right: 3rem;
 }
 
@@ -70,6 +70,33 @@ body {
     color: black;
     font-size: 20px;
 }
+
+@media screen and (max-width: 767px) {
+	#top-bar .menu {
+		position: absolute;
+		top: 40px;
+		right: 0;
+		margin-right: 0;
+	} 	
+
+	#top-bar .user-login .login {
+		padding-right: 0.5rem;
+	}	
+
+	#top-bar .user-login .register {
+		padding-right: 0.5rem;
+	}
+
+	#top-bar .title h1 {
+		padding-left: 0.5rem;
+	}
+
+	.page-content {
+		margin-top: 2rem;
+	}
+}
+
+
 
 
 /* Message wrappers
@@ -208,10 +235,6 @@ table {
 
 .data b, .data h5 {
     color: #FDFDFD;
-}
-
-.user-login a {
-    margin-right: 5px;
 }
 
 .panel {
