@@ -38,14 +38,17 @@
     padding: 0;
 }
 
+#tabs-inner-container .tab-container li.tab {
+    background: #ddd;
+}
+
 
 /** 2 columns **/
 
 #tabs-inner-container .tab-container li.tab.col-2 {
     display: table-row;
-    height: 50%;
+    /*height: 50%;*/
     width: 1.5rem;
-    background: #ddd;
     cursor: pointer;
 }
 
@@ -76,9 +79,8 @@
 
 #tabs-inner-container .tab-container li.tab.col-3 {
     display: table-row;
-    height: 33.33%;
+    /*height: 33.33%;*/
     width: 1.5rem;
-    background: #ddd;
     cursor: pointer;
 }
 
@@ -119,7 +121,6 @@
     display: table-row;
     /*height: 33.33%;*/
     width: 1.5rem;
-    background: #ddd;
     cursor: pointer;
     position: absolute;
     right: 0;

@@ -101,7 +101,10 @@ body {
 
 #controls-inner-container .bet-input-group>input, #controls-inner-container .bet-input-group>span {
     background-color: rgb(240, 238, 238);
-    /* color: #b0b3c1; */
+}
+
+#controls-inner-container .bet-input-group>input:disabled {
+	background-color: #BBBBBB;
 }
 
 
@@ -166,6 +169,10 @@ body {
 
 #tabs-inner-container .tab-container li.tab.tab-active {
     background-color: #181a1e;
+}
+
+#tabs-inner-container .tab-container li.tab {
+	background-color: #292d35;
 }
 
 #tabs-inner-container .tab-container li.tab a {

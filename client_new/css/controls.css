@@ -51,6 +51,10 @@
     margin: 0;
 }
 
+#controls-inner-container .bet-input-group>input:disabled {
+	background-color: #EBEBEB;
+}
+
 #controls-inner-container .bet-input-group>input, #controls-inner-container .bet-input-group>span {
     font-size: 1rem;
     border: 1px solid #ccc;

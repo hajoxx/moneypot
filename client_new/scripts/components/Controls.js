@@ -109,6 +109,8 @@ define([
         render: function () {
             var self = this;
 
+            var isPlayingOrBetting = StateLib.isBetting(Engine) || StateLib.currentlyPlaying(Engine);
+
             // If they're not logged in, let just show a login to play
             if (!Engine.username)
                 return D.div({ id: 'controls-inner-container' },
@@ -130,6 +132,7 @@ define([
                         type: 'text',
                         name: 'bet-size',
                         value: self.state.betSize,
+                        disabled: isPlayingOrBetting,
                         onChange: function (e) {
                             self._setBetSize(e.target.value);
                         }
@@ -147,6 +150,7 @@ define([
                         value: self.state.cashOut,
                         type: 'number',
                         name: 'cash-out',
+                        disabled: isPlayingOrBetting,
                         onChange: function (e) {
                             self._setAutoCashOut(e.target.value);
                         }
