@@ -79,7 +79,8 @@ define([
             // Able to bet, or is already betting
             var notPlayingOrBetting = notPlaying || isBetting;
 
-            var invalidBet = (StateLib.canUserBet(this.props.engine.balanceSatoshis, this.props.betSize, this.props.betInvalid, this.props.cashOutInvalid) instanceof Error);
+            var canUserBet = StateLib.canUserBet(this.props.engine.balanceSatoshis, this.props.betSize, this.props.betInvalid, this.props.cashOutInvalid);
+            var invalidBet = canUserBet instanceof Error; 
 
             var btnClasses, btnContent = [], onClickFun = null, onMouseDownFun = null, onMouseUpFun = null;
             btnClasses = 'bet-button';
@@ -100,16 +101,19 @@ define([
 
                     //Initial disable
                 } else if(this.state.initialDisable) {
-                    btnContent.push(D.span({ key: 'bc-2' }, smallButton? 'Bet' : 'Place bet'));
+                	var btnText =   (canUserBet.message === 'Not enough bits')? (smallButton? 'Bet' : 'Low balance') : (smallButton? 'Bet' : 'Place bet');
+                    btnContent.push(D.span({ key: 'bc-2' }, btnText));
                     btnClasses += ' disable unselect';
 
-                    //Able to bet
+                    //Able to betting
                 } else if(notPlaying) {
 
                     //Invalid bet
                     if(invalidBet) {
+
+                    	var btnText =   (canUserBet.message === 'Not enough bits')? (smallButton? 'Bet' : 'Low balance') : (smallButton? 'Bet' : 'Place bet');
                         //btnContent.push(D.span({ key: 'bc-3' }, invalidBet));
-                        btnContent.push(D.span({ key: 'bc-3' }, smallButton? 'Bet' : 'Place bet'));
+                        btnContent.push(D.span({ key: 'bc-3' }, btnText));
                         btnClasses += ' invalid-bet unselect';
 
                     //Placing bet
