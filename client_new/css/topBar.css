@@ -46,9 +46,11 @@
     padding: 2px;
 }
 @media handheld, only screen and (max-width: 767px) {
+    
     #top-bar .toggle-view a {
         display: none;
     }
+
     #top-bar .toggle-view:after {
         content: '\00a0';
         line-height: 2rem;
@@ -56,15 +58,31 @@
         padding: 0 0.5rem;
         height: 1rem;
         border: 2px solid grey;
-    
         cursor: pointer;
-}
+	}
+
     #top-bar .toggle-view.white:after {
         background-color: white;
     }
+    
     #top-bar .toggle-view.black:after {
         background-color: black;
     }
+}
+
+
+/** Full Screen **/
+
+#top-bar .full-screen {
+	float: right;
+    line-height: 2rem;
+    padding-right: 1rem;
+}
+
+#top-bar .full-screen i{
+	border: 2px solid grey;
+    padding: 4px;
+    cursor: pointer;
 }
 
 

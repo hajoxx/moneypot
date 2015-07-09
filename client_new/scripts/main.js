@@ -7,7 +7,8 @@ requirejs.config({
         react: '../../node_modules/react/dist/react-with-addons',
         seedrandom: '../../node_modules/seedrandom/seedrandom',
         socketio: '../../node_modules/socket.io-client/socket.io',
-        mousetrap: '../../node_modules/mousetrap/mousetrap'
+        mousetrap: '../../node_modules/mousetrap/mousetrap',
+        screenfull: '../../node_modules/screenfull/dist/screenfull' 
     },
     shim: {
 

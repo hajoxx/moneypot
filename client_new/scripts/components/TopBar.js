@@ -1,15 +1,17 @@
 define([
-   'react',
+    'react',
     'game-logic/engine',
     'stores/GameSettingsStore',
     'actions/GameSettingsActions',
-    'game-logic/clib'
+    'game-logic/clib',
+    'screenfull'
 ], function(
     React,
     Engine,
     GameSettingsStore,
     GameSettingsActions,
-    Clib
+    Clib,
+    Screenfull //Attached to window.screenfull
 ) {
     var D = React.DOM;
 
@@ -59,6 +61,10 @@ define([
             GameSettingsActions.toggleTheme();
         },
 
+        _toggleFullScreen: function() {
+        	window.screenfull.toggle();
+        },
+
         render: function() {
 
             var userLogin;
@@ -94,7 +100,10 @@ define([
                     D.a(null,
                         (this.state.theme === 'white')? 'Go black' : 'Go back'
                     )
-                )
+                ),
+                D.div({ className: 'full-screen noselect', onClick: this._toggleFullScreen },
+                	D.i({ className: 'fa fa-expand' })
+            	)
             )
         }
     });
