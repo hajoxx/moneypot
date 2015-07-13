@@ -283,7 +283,7 @@ exports.giveawayRequest = function(req, res, next) {
     //var challenge = req.body.recaptcha_challenge_field;
     //var recaptchaResponse = req.body.recaptcha_response_field;
 
-    if (!remoteip || !recaptchaResponse) return res.redirect('request', { user: user, warning: 'Unable to validate captcha. please try it later...' });
+    if (!remoteip || !recaptchaResponse) return res.render('request', { user: user, warning: 'Unable to validate captcha. please try it later...' });
 
     var uri =  'https://www.google.com/recaptcha/api/siteverify?secret=' + encodeURIComponent(privatekey) +
         '&remoteip=' + encodeURIComponent(remoteip) +
