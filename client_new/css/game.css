@@ -124,7 +124,7 @@ html, body {
 #game-left-container {
     display: table;
     height: 100%;
-    width: 70%;
+    width: 65%;
     position: relative;
 }
 
@@ -136,7 +136,7 @@ html, body {
     position: absolute;
     top: 0;
     bottom: 0;
-    left: 70%;
+    left: 65%;
     right: 0;
     border: 1px solid #ddd;
     margin: 5px;
