@@ -7,7 +7,7 @@ define([
     'game-logic/stateLib',
     'lodash'
 ], function(
-    MouseTrap,
+    Mousetrap,
     GameSettingsStore,
     ControlsStore,
     HotkeysActions,
@@ -39,19 +39,19 @@ define([
 
     Hotkeys.prototype.unmount = function() {
         GameSettingsStore.removeChangeListener(this._onChangeBinded);
-        MouseTrap.reset();
+        Mousetrap.reset();
     };
 
     Hotkeys.prototype._bindKeys = function() {
-        MouseTrap.bind('c', this._doubleBetBinded);
-        MouseTrap.bind('x', this._halfBetBinded);
-        MouseTrap.bind('space', this._betCashoutBinded);
+        Mousetrap.bind('c', this._doubleBetBinded);
+        Mousetrap.bind('x', this._halfBetBinded);
+        Mousetrap.bind('space', this._betCashoutBinded);
     };
 
     Hotkeys.prototype._unbindKeys = function() {
-        MouseTrap.unbind('c');
-        MouseTrap.unbind('x');
-        MouseTrap.unbind('space');
+        Mousetrap.unbind('c');
+        Mousetrap.unbind('x');
+        Mousetrap.unbind('space');
     };
 
     Hotkeys.prototype._onChange = function() {
