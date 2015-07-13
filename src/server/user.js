@@ -731,7 +731,7 @@ exports.handleWithdrawRequest = function(req, res, next) {
             if (err) {
                 if (err === 'NOT_ENOUGH_MONEY')
                     return res.render('withdraw_request', {user: user, id: uuid.v4(), warning: 'Not enough money to process withdraw.'});
-                else if (err === 'PENDING') //TODO: Whats with this error code?
+                else if (err === 'PENDING')
                     return res.render('withdraw_request', { user: user,  id: uuid.v4(), success: 'Withdrawal successful, however hot wallet was empty. Withdrawal will be reviewed and sent ASAP' });
                 else if(err === 'SAME_WITHDRAWAL_ID')
                     return res.render('withdraw_request', {user: user,  id: uuid.v4(), warning: 'Please reload your page, it looks like you tried to make the same transaction twice.'});
@@ -752,7 +752,8 @@ exports.handleWithdrawRequest = function(req, res, next) {
  **/
 exports.withdrawRequest = function(req, res) {
     assert(req.user);
-    res.render('withdraw_request', { user: req.user, id: uuid.v4() });
+    var miningFeeBits = config.MINING_FEE/100;
+    res.render('withdraw_request', { user: req.user, id: uuid.v4(), miningFee: miningFeeBits });
 };
 
 /**
