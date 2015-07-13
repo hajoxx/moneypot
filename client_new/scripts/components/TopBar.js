@@ -32,6 +32,7 @@ define([
         getInitialState: function() {
             var state = getState();
             state.username = Engine.username;
+            state.fullScreen = false;
             return state;
         },
 
@@ -63,6 +64,7 @@ define([
 
         _toggleFullScreen: function() {
         	window.screenfull.toggle();
+            this.setState({ fullScreen: !this.state.fullScreen });
         },
 
         render: function() {
@@ -102,7 +104,7 @@ define([
                     )
                 ),
                 D.div({ className: 'full-screen noselect', onClick: this._toggleFullScreen },
-                	D.i({ className: 'fa fa-expand' })
+                	 this.state.fullScreen? D.i({ className: 'fa fa-compress' }) : D.i({ className: 'fa fa-expand' })
             	)
             )
         }

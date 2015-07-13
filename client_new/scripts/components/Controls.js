@@ -109,7 +109,7 @@ define([
         render: function () {
             var self = this;
 
-            var isPlayingOrBetting = StateLib.isBetting(Engine) || StateLib.currentlyPlaying(Engine);
+            var isPlayingOrBetting =  StateLib.isBetting(Engine) || (Engine.gameState === 'IN_PROGRESS' && StateLib.currentlyPlaying(Engine));
 
             // If they're not logged in, let just show a login to play
             if (!Engine.username)

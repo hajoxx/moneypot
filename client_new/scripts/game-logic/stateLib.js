@@ -20,11 +20,13 @@ define([
                 return engine.playerInfo[engine.username];
         },
 
-        /** True if you are playing and haven't cashed out **/
+        /** True if you are playing and haven't cashed out, it returns true on game_crash also, it clears until game_starting **/
         currentlyPlaying: function(engine) {
             var currentPlay = this.currentPlay(engine);
             return currentPlay && currentPlay.bet && !currentPlay.stopped_at;
         },
+
+
 
         /**
          * Returns the game payout as a percentage if game is in progress
