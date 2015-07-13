@@ -101,7 +101,7 @@ define([
 
                     //Initial disable
                 } else if(this.state.initialDisable) {
-                	var btnText =   (canUserBet.message === 'Not enough bits')? (smallButton? 'Bet' : 'Low balance') : (smallButton? 'Bet' : 'Place bet');
+                	var btnText =   (canUserBet.message === 'Not enough bits')? (smallButton? 'Bet' : 'Bet too big') : (smallButton? 'Bet' : 'Place bet');
                     btnContent.push(D.span({ key: 'bc-2' }, btnText));
                     btnClasses += ' disable unselect';
 
@@ -111,7 +111,7 @@ define([
                     //Invalid bet
                     if(invalidBet) {
 
-                    	var btnText =   (canUserBet.message === 'Not enough bits')? (smallButton? 'Bet' : 'Low balance') : (smallButton? 'Bet' : 'Place bet');
+                    	var btnText =   (canUserBet.message === 'Not enough bits')? (smallButton? 'Bet' : 'Bet too big') : (smallButton? 'Bet' : 'Place bet');
                         //btnContent.push(D.span({ key: 'bc-3' }, invalidBet));
                         btnContent.push(D.span({ key: 'bc-3' }, btnText));
                         btnClasses += ' invalid-bet unselect';

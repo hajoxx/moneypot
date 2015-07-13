@@ -79,6 +79,7 @@ define([
         self.maxWin = null;
 
         /**
+         * Client side times:
          * if the game is pending, startTime is how long till it starts
          * if the game is running, startTime is how long its running for
          * if the game is ended, startTime is how long since the game started
@@ -180,7 +181,7 @@ define([
          * Event called each 150ms telling the client the game is still alive
          * @param {number} data - elapsed time
          */
-        self.ws.on('game_tick', function(data) {
+        self.ws.on('game_tick', function(elapsed) {
             /** Time of the last tick received */
             self.lastGameTick = Date.now();
             if(self.lag === true){
@@ -188,13 +189,18 @@ define([
                 self.trigger('lag_change');
             }
 
+            /** Correct the time of startTime every gameTick **/
+            var currentLatencyStartTime = self.lastGameTick - elapsed;
+            if(self.startTime>currentLatencyStartTime)
+                self.startTime = currentLatencyStartTime;
+
             if(self.tickTimer)
                 clearTimeout(self.tickTimer);
 
             self.tickTimer = setTimeout(self.checkForLag.bind(self), AppConstants.Engine.STOP_PREDICTING_LAPSE);
 
             //Check for animation triggers
-            if(data > AppConstants.Animations.NYAN_CAT_TRIGGER_MS && !self.nyan) {
+            if(elapsed > AppConstants.Animations.NYAN_CAT_TRIGGER_MS && !self.nyan) {
                 self.nyan = true;
                 self.trigger('nyan_cat_animation');
             }
