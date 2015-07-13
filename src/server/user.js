@@ -754,8 +754,7 @@ exports.handleWithdrawRequest = function(req, res, next) {
  **/
 exports.withdrawRequest = function(req, res) {
     assert(req.user);
-    var miningFeeBits = config.MINING_FEE/100;
-    res.render('withdraw_request', { user: req.user, id: uuid.v4(), miningFee: miningFeeBits });
+    res.render('withdraw_request', { user: req.user, id: uuid.v4() });
 };
 
 /**
