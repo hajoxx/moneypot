@@ -372,7 +372,7 @@ exports.resetPassword = function(req, res, next) {
     var otp = lib.removeNullsAndTrim(req.body.otp);
     var confirm = lib.removeNullsAndTrim(req.body.confirmation);
 
-    if (!password) return  res.redirect('/security?err=enter%20your%20password');
+    if (!password) return  res.redirect('/security?err=Enter%20your%20old%20password');
 
     var notValid = lib.isInvalidPassword(newPassword);
     if (notValid) return res.redirect('/security?err=new%20password%20not%20valid:' + notValid);
@@ -443,7 +443,7 @@ exports.addEmail = function(req, res, next) {
     if (notValid) return res.redirect('/security?err=email invalid because: ' + notValid);
 
     notValid = lib.isInvalidPassword(password);
-    if (notValid) return res.render('security?err=password not valid because: ' + notValid);
+    if (notValid) return res.render('/security?err=password not valid because: ' + notValid);
 
     database.validateUser(user.username, password, otp, function(err, userId) {
         if (err) {
@@ -732,13 +732,13 @@ exports.handleWithdrawRequest = function(req, res, next) {
         withdraw(req.user.id, amount, destination, withdrawalId, function(err) {
             if (err) {
                 if (err === 'NOT_ENOUGH_MONEY')
-                    return res.render('withdraw_request', {user: user, id: uuid.v4(), warning: 'Not enough money to process withdraw.'});
+                    return res.render('withdraw_request', { user: user, id: uuid.v4(), warning: 'Not enough money to process withdraw.' });
                 else if (err === 'PENDING')
                     return res.render('withdraw_request', { user: user,  id: uuid.v4(), success: 'Withdrawal successful, however hot wallet was empty. Withdrawal will be reviewed and sent ASAP' });
                 else if(err === 'SAME_WITHDRAWAL_ID')
-                    return res.render('withdraw_request', {user: user,  id: uuid.v4(), warning: 'Please reload your page, it looks like you tried to make the same transaction twice.'});
+                    return res.render('withdraw_request', { user: user,  id: uuid.v4(), warning: 'Please reload your page, it looks like you tried to make the same transaction twice.' });
                 else if(err === 'FUNDING_QUEUED')
-                    return res.render('withdraw_request', {user: user,  id: uuid.v4(), success: 'Your transaction is being processed come back later to see the status.'});
+                    return res.render('withdraw_request', { user: user,  id: uuid.v4(), success: 'Your transaction is being processed come back later to see the status.' });
                 else
                     return next(new Error('Unable to withdraw: \n' + err));
             }
