@@ -40,6 +40,10 @@
             <div class="small-10 columns setts-content">
                 <h5 class="">Deposit History</h5>
                 <hr>
+                <p class="account">
+                    <b>Deposit Address:</b>
+                    <a href="bitcoin:{{=it.user.deposit_address}}?message=deposit">{{=it.user.deposit_address}}</a>
+                </p>
                 {{?it.user.deposits.length > 0}}
                     <table>
                         <thead>

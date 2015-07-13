@@ -648,6 +648,7 @@ exports.deposit = function(req, res, next) {
             return next(new Error('Unable to get deposits: \n' + err));
         }
         user.deposits = deposits;
+        user.deposit_address = lib.deriveAddress(user.id);
         res.render('deposit', { user:  user });
     });
 };
