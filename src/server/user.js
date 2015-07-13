@@ -299,7 +299,7 @@ exports.giveawayRequest = function(req, res, next) {
                 database.addGiveaway(user.id, function(err) {
                     if (err) {
                         if (err.message === 'NOT_ELIGIBLE') {
-                            return res.render('request', { user: user, warning: 'You have to wait <b>' + err.time + '</b> minutes for your next give away.' });
+                            return res.render('request', { user: user, warning: 'You have to wait ' + err.time + ' minutes for your next give away.' });
                         } else if(err === 'USER_DOES_NOT_EXIST') {
                             return res.render('error', { error: 'User does not exist.' });
                         }
@@ -696,8 +696,10 @@ exports.handleWithdrawRequest = function(req, res, next) {
     amount = Math.round(parseFloat(amount) * 100);
     assert(Number.isFinite(amount));
 
-    if (amount < 20000)
-        return res.render('withdraw_request', { user: user,  id: uuid.v4(), warning: 'Must more 200 bits or more' });
+    var minWithdraw = config.MINING_FEE + 100;
+
+    if (amount < minWithdraw)
+        return res.render('withdraw_request', { user: user,  id: uuid.v4(), warning: 'You must withdraw ' + minWithdraw + ' or more'  });
 
     if (typeof destination !== 'string')
         return res.render('withdraw_request', { user: user,  id: uuid.v4(), warning: 'Destination address not provided' });

@@ -2,11 +2,13 @@ var assert = require('assert');
 var bc = require('./bitcoin_client');
 var db = require('./database');
 var request = require('request');
+var config = require('../../config/config');
 
 // Doesn't validate
 module.exports = function(userId, satoshis, withdrawalAddress, withdrawalId, callback) {
+    var minWithdraw = config.MINING_FEE + 100;
     assert(typeof userId === 'number');
-    assert(satoshis > 10000);
+    assert(satoshis >= minWithdraw);
     assert(typeof withdrawalAddress === 'string');
     assert(typeof callback === 'function');
 
@@ -23,7 +25,7 @@ module.exports = function(userId, satoshis, withdrawalAddress, withdrawalId, cal
 
         assert(fundingId);
 
-        var amountToSend = (satoshis - 10000) / 1e8;
+        var amountToSend = (satoshis - config.MINING_FEE) / 1e8;
         bc.sendToAddress(withdrawalAddress, amountToSend, function (err, hash) {
             if (err) {
                 if (err.message === 'Insufficient funds')
@@ -40,4 +42,3 @@ module.exports = function(userId, satoshis, withdrawalAddress, withdrawalId, cal
         });
     });
 };
-
