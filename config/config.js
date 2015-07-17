@@ -29,6 +29,6 @@ module.exports = {
   "BITCOIND_PASS": process.env.BITCOIND_PASS,
   "BITCOIND_CERT": process.env.BITCOIND_CERT  || '',
   "PORT":  process.env.PORT || 3841,
-  "MINING_FEE": process.env.MINING_FEE || 20000,
+  "MINING_FEE": process.env.MINING_FEE || 10000,
   "BUILD": prodConfig
 };

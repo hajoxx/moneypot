@@ -697,7 +697,7 @@ exports.handleWithdrawRequest = function(req, res, next) {
     amount = Math.round(parseFloat(amount) * 100);
     assert(Number.isFinite(amount));
 
-    var minWithdraw = config.MINING_FEE + 100;
+    var minWithdraw = config.MINING_FEE + 10000;
 
     if (amount < minWithdraw)
         return res.render('withdraw_request', { user: user,  id: uuid.v4(), warning: 'You must withdraw ' + minWithdraw + ' or more'  });
