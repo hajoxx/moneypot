@@ -741,7 +741,7 @@ exports.handleWithdrawRequest = function(req, res, next) {
                 else if(err === 'FUNDING_QUEUED')
                     return res.render('withdraw_request', { user: user,  id: uuid.v4(), success: 'Your transaction is being processed come back later to see the status.' });
                 else
-                    return next(new Error('Unable to withdraw: \n' + err));
+                    return next(new Error('Unable to withdraw: ' + err));
             }
             return res.render('withdraw_request', { user: user, id: uuid.v4(), success: 'OK' });
         });
