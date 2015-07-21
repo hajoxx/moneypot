@@ -11,7 +11,6 @@ define([
     'components/TabsSelector',
     'components/Players',
     'components/BetBar',
-    'components/SpaceWrap',
     'game-logic/engine',
     'game-logic/clib',
     'game-logic/hotkeys',
@@ -23,14 +22,13 @@ define([
     TabsSelectorClass,
     PlayersClass,
     BetBarClass,
-    SpaceWrapClass,
     Engine,
     Clib,
     Hotkeys,
     GameSettingsStore
 ){
     var TopBar = React.createFactory(TopBarClass);
-    var SpaceWrap = React.createFactory(SpaceWrapClass);
+    //var SpaceWrap = React.createFactory(SpaceWrapClass);
     var ChartControls = React.createFactory(ChartControlsClass);
     var TabsSelector = React.createFactory(TabsSelectorClass);
     var Players = React.createFactory(PlayersClass);
@@ -163,8 +161,6 @@ define([
                 TopBar({
                     isMobileOrSmall: this.state.isMobileOrSmall
                 }),
-
-                SpaceWrap(),
 
                 messageContainer,
 

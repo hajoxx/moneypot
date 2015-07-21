@@ -3,7 +3,7 @@ requirejs.config({
     paths: {
         autolinker: '../../node_modules/autolinker/dist/Autolinker',
         classnames: '../../node_modules/classnames/index',
-        lodash: '../../node_modules/lodash/dist/lodash',
+        lodash: '../../node_modules/lodash/index',
         react: '../../node_modules/react/dist/react-with-addons',
         seedrandom: '../../node_modules/seedrandom/seedrandom',
         socketio: '../../node_modules/socket.io-client/socket.io',

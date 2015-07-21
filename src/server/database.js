@@ -303,6 +303,18 @@ exports.getUserByRecoverId = function(recoverId, callback) {
     });
 };
 
+exports.getUserByName = function(username, callback) {
+    assert(username);
+    query('SELECT * FROM users WHERE lower(username) = lower($1)', [username], function(err, result) {
+        if (err) return callback(err);
+        if (result.rows.length === 0)
+            return callback('USER_DOES_NOT_EXIST');
+
+        assert(result.rows.length === 1);
+        callback(null, result.rows[0]);
+    });
+};
+
 exports.changePasswordFromRecoverId = function(recoverId, password, callback) {
     assert(recoverId && password && callback);
     var hashedPassword = passwordHash.generate(password);
@@ -601,6 +613,28 @@ exports.getLeaderBoard = function(byDb, order, callback) {
     query(sql, function(err, data) {
         if (err)
             return callback(err);
+        callback(null, data.rows);
+    });
+};
+
+exports.addChatMessage = function(userId, created, message, callback) {
+    var sql = 'INSERT INTO chat_messages (user_id, created, message) values($1, $2, $3)';
+    query(sql, [userId, created, message], function(err, res) {
+        if(err)
+            return callback(err);
+
+        assert(res.rowCount === 1);
+
+        callback(null);
+    });
+};
+
+exports.getChatTable = function(limit, callback) {
+    assert(typeof limit === 'number');
+    var sql = "SELECT chat_messages.created AS time, 'say' AS type, users.username, users.userclass AS role, chat_messages.message FROM chat_messages JOIN users ON users.id = chat_messages.user_id ORDER BY chat_messages.id DESC LIMIT " + limit;
+    query(sql, function(err, data) {
+        if(err)
+            callback(err);
         callback(null, data.rows);
     });
 };

@@ -4,16 +4,15 @@ define([
     'autolinker',
     'stores/ChatStore',
     'actions/ChatActions',
-    'game-logic/engine'
+    'game-logic/chat'
 ], function(
     React,
     Clib,
     Autolinker,
     ChatStore,
     ChatActions,
-    Engine
+    ChatEngine
 ){
-
     // Overrides Autolinker.js' @username handler to instead link to
     // user profile page.
     var replaceUsernameMentions = function(autolinker, match) {
@@ -45,34 +44,35 @@ define([
     /* Constants */
     var SCROLL_OFFSET = 120;
 
-    function getState(){
+    function getState(evName){
         var state = ChatStore.getState();
-        state.engine = Engine;
+        state.evName = evName;
         return state;
     }
 
     return React.createClass({
-        displayName: 'Chat',
+        displayName: 'Chet',
 
         getInitialState: function () {
             var state = getState();
 
             /* Avoid scrolls down if a render is not caused by length chat change */
-            this.listLength = state.engine.chat.length;
+            this.listLength = ChatEngine.history.length;
 
             return state;
         },
 
         componentDidMount: function() {
-            Engine.on({ msg: this._onChange });
+            ChatEngine.on('all', this._onChange);
             ChatStore.addChangeListener(this._onChange);
 
-            var msgs = this.refs.messages.getDOMNode();
-            msgs.scrollTop = msgs.scrollHeight;
+            //Scroll to the bottom
+            var msgsNode = this.refs.messages.getDOMNode();
+            msgsNode.scrollTop = msgsNode.scrollHeight;
         },
 
         componentWillUnmount: function() {
-            Engine.off({ msg: this._onChange });
+            ChatEngine.off('all', this._onChange);
             ChatStore.removeChangeListener(this._onChange);
 
             var height = this.refs.messages.getDOMNode().style.height;
@@ -82,8 +82,13 @@ define([
         /** If the length of the chat changed and the scroll position is near bottom scroll to the bottom **/
         componentDidUpdate: function(prevProps, prevState) {
 
-            if(prevState.engine.chat.length != this.listLength){
-                this.listLength = this.state.engine.chat.length;
+            if(this.state.evName === 'join') {//On join scroll to the bottom
+                var msgsNode = this.refs.messages.getDOMNode();
+                msgsNode.scrollTop = msgsNode.scrollHeight;
+
+            } else if(ChatEngine.history.length != this.listLength){ //If there is a new message scroll to the bottom if is near to it
+
+                this.listLength = ChatEngine.history.length;
 
                 var msgsBox = this.refs.messages.getDOMNode();
                 var scrollBottom = msgsBox.scrollHeight-msgsBox.offsetHeight-msgsBox.scrollTop;
@@ -93,17 +98,20 @@ define([
             }
         },
 
-        _onChange: function() {
+        _onChange: function(evName) {
             if(this.isMounted())
-                this.setState(getState());
+                this.setState(getState(evName));
         },
 
         _sendMessage: function(e) {
             if(e.keyCode == 13) {
                 //var msg = this.state.inputText;
                 var msg = e.target.value;
-                this._say(msg);
-                e.target.value = '';
+                msg = msg.trim();
+                if(msg.length >= 1 && msg.length < 500) {
+                    this._say(msg);
+                    e.target.value = '';
+                }
             }
         },
 
@@ -116,12 +124,20 @@ define([
         },
 
         render: function() {
-            var self = this;
-            var messages = this.state.engine.chat.map(renderMessage, self);
+            var messages = [];
+            for(var i = ChatEngine.history.length-1; i >= 0; i--)
+                messages.push(renderMessage(ChatEngine.history[i], i));
+
             var chatInput;
 
-            if (this.state.engine.username)
-                chatInput = D.input(
+            if(!ChatEngine.isConnected)
+                return D.div({ className: 'messages-container' },
+                    D.div({ className: 'loading-container' },
+                        ''//Loading spinner is added by css as background
+                ));
+
+            if (ChatEngine.username)
+                chatInput = D.input( //Input is not binded due to slowness on some browsers
                     { className: 'chat-input',
                         onKeyDown: this._sendMessage,
                         //onChange: this._updateInputText,
@@ -144,20 +160,20 @@ define([
                 D.ul({ className: 'messages', ref: 'messages' },
                     messages
                 ),
-                chatInput
+                chatInput,
+                D.div({ className: 'spinner-pre-loader' })
             );
         }
     });
 
     function renderMessage(message, index) {
-        var self = this;
 
         var pri = 'msg-chat-message';
         switch(message.type) {
             case 'say':
                 if (message.role === 'admin') pri += ' msg-admin-message';
 
-                var username = self.state.engine.username;
+                var username = ChatEngine.username;
 
                 var r = new RegExp('@' + username + '(?:$|[^a-z0-9_\-])', 'i');
                 if (username && message.username != username && r.test(message.message)) {
@@ -203,6 +219,19 @@ define([
                         },
                         '<'+message.username+'>'),
                     ' for ' + message.timespec);
+            case 'unmute':
+                pri = 'msg-mute-message';
+                return D.li({ className: pri , key: 'msg' + index },
+                            D.a({ href: '/user/' + message.moderator,
+                                    target: '_blank'
+                                },
+                                '*** <'+message.moderator+'>'),
+                            message.shadow ? ' shadow unmuted ' : ' unmuted ',
+                            D.a({ href: '/user/' + message.username,
+                                    target: '_blank'
+                                },
+                                '<'+message.username+'>')
+                        );
             case 'error':
             case 'info':
                 pri = 'msg-info-message';

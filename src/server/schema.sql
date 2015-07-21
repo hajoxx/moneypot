@@ -6,6 +6,24 @@ CREATE TABLE blocks (
 );
 
 
+CREATE TABLE chat_messages
+(
+  id bigint NOT NULL DEFAULT nextval('chat_id_seq'::regclass),
+  user_id bigint NOT NULL,
+  message text NOT NULL,
+  created timestamp with time zone,
+  CONSTRAINT chat_pkey PRIMARY KEY (id),
+  CONSTRAINT chat_user_id_fkey FOREIGN KEY (user_id)
+      REFERENCES users (id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE
+)
+
+CREATE INDEX chat_user_id_idx
+  ON chat_messages
+  USING btree
+  (user_id);
+
+
 --
 -- TOC entry 171 (class 1259 OID 87688)
 -- Name: fundings; Type: TABLE; Schema: public; Owner: -
@@ -203,6 +221,13 @@ CREATE TABLE users (
     games_played bigint DEFAULT 0 NOT NULL,
     userclass UserClassEnum DEFAULT 'user' NOT NULL,
     CONSTRAINT users_balance_satoshis_check CHECK ((balance_satoshis >= 0))
+);
+
+CREATE TABLE chat (
+    id bigserial NOT NULL,
+    user_id bigint NOT NULL,
+    message text NOT NULL,
+    created timestamp with time zone
 );
 
 

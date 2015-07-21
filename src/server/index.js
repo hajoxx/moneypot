@@ -7,12 +7,15 @@ var compression = require('compression');
 var path = require('path');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
+var socketIO = require('socket.io');
+var ioCookieParser = require('socket.io-cookie');
 var _ = require('lodash');
 var app = express();
 
 var config = require('../../config/config');
 var routes = require('./routes');
 var database = require('./database');
+var Chat = require('./chat');
 var lib = require('./lib');
 
 /** TimeAgo Settings:
@@ -103,16 +106,15 @@ app.use(function(req, res, next) {
     res.header("Content-Security-Policy", "frame-ancestors 'none'");
 
 
-  if (!lib.isUUIDv4(sessionId)) {
+    if (!lib.isUUIDv4(sessionId)) {
         res.clearCookie('id');
         return next();
     }
 
     database.getUserBySessionId(sessionId, function(err, user) {
-        //The error is handled manually to avoid sending it into routes
         if (err) {
+            res.clearCookie('id');
             if (err === 'NOT_VALID_SESSION') {
-                res.clearCookie('id');
                 return res.redirect('/');
             } else {
                 console.error('[INTERNAL_ERROR] Unable to get user by session id ' + sessionId + ':', err);
@@ -140,7 +142,6 @@ app.use(function(req, res, next) {
  * We do not use next() to avoid sending error logs to the client
  * so this should be the last middleware in express .
  */
-
 function errorHandler(err, req, res, next) {
 
     if (err) {
@@ -163,9 +164,47 @@ function errorHandler(err, req, res, next) {
 routes(app);
 app.use(errorHandler);
 
-
 /** Server **/
-var server = http.createServer(app).listen(config.PORT, function() {
+var server = http.createServer(app);
+var io = socketIO(server); //Socket io must be after the lat app.use
+io.use(ioCookieParser);
+
+/** Socket io login middleware **/
+io.use(function(socket, next) {
+    var sessionId = socket.request.headers.cookie.id;
+
+    //If no session id or wrong the user is a guest
+    if(!sessionId || !lib.isUUIDv4(sessionId)) {
+        socket.user = false;
+        return next();
+    }
+
+    database.getUserBySessionId(sessionId, function(err, user) {
+
+        //The error is handled manually to avoid sending it into routes
+        if (err) {
+            if (err === 'NOT_VALID_SESSION') {
+                socket.emit('err', 'NOT_VALID_SESSION');
+            } else {
+                console.error('[INTERNAL_ERROR] Unable to get user by session id ' + sessionId + ':', err);
+                return socket.emit('err', 'INTERNAL_ERROR');
+            }
+            socket.user = false;
+            return next();
+        }
+
+        //Save the user info in the socket connection object
+        socket.user = user;
+        socket.user.admin = user.userclass === 'admin';
+        socket.user.moderator = user.userclass === 'admin' || user.userclass === 'moderator';
+        next();
+    });
+});
+
+
+var chatServer = new Chat(io);
+
+server.listen(config.PORT, function() {
     console.log('Listening on port ', config.PORT);
 });
 

@@ -1,9 +1,23 @@
-
 .messages-container {
     height: 100%;
     position: relative;
     z-index: 1004;
     font-family: Verdana, Tahoma, "Courier New", Arial;
+}
+
+.messages-container .loading-container, .messages-container .spinner-pre-loader {
+    background-image: url('../img/loading-white.gif');
+    background-repeat: no-repeat;
+    background-attachment: local;
+    background-position: center;
+    height: 100%;
+    width: 100%;
+}
+
+.messages-container .spinner-pre-loader {
+    visibility: hidden;
+    height: 0;
+    width: 0;
 }
 
 .messages {
@@ -12,7 +26,7 @@
     font-size: 1rem;
     padding-left: 0.2rem;  /* Allow user to resize element */
     position: absolute;
-    top: 0rem;
+    top: 0;
     right: 0;
     left: 0;
     bottom: 1.8rem;
