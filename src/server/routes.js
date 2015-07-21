@@ -133,10 +133,6 @@ function requestDevOtt(id, callback) {
     });
 }
 
-function error(req, res, next) {
-    return res.render('error');
-}
-
 module.exports = function(app) {
 
     app.get('/', staticPageLogged('index'));
@@ -156,7 +152,7 @@ module.exports = function(app) {
     app.get('/forgot-password', staticPageLogged('forgot-password'));
     app.get('/calculator', staticPageLogged('calculator'));
     app.get('/guide', staticPageLogged('guide'));
-    app.get('/online-gambling-meets-bitcoin', staticPageLogged('online-gambling-meets-bitcoin'));
+
 
     app.get('/play-old', table());
     app.get('/play', tableNew());
@@ -166,7 +162,9 @@ module.exports = function(app) {
     app.get('/game/:id', games.show);
     app.get('/user/:name', user.profile);
 
-    app.get('/error', error);
+    app.get('/error', function(req, res, next) { // Sometimes we redirect people to /error
+      return res.render('error');
+    });
 
     app.post('/request', restrict, user.giveawayRequest);
     app.post('/sent-reset', user.handleReset);
