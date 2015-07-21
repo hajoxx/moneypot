@@ -33,6 +33,10 @@ define(['lib/key-mirror'], function(KeyMirror){
             //Chat
             SET_CHAT_INPUT_TEXT: null,
             SET_CHAT_HEIGHT: null,
+            IGNORE_USER: null,
+            CLIENT_MESSAGE: null,
+            APPROVE_USER: null,
+            LIST_MUTED_USERS: null,
 
             //Game Settings
             TOGGLE_THEME: null,
@@ -49,8 +53,6 @@ define(['lib/key-mirror'], function(KeyMirror){
 
             //Chart
             SELECT_CHART: null
-
-
         }),
 
         PayloadSources: KeyMirror({

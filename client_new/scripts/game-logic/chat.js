@@ -90,6 +90,40 @@ define([
         this.ws.emit('say', msg);
     };
 
+    /** Add a client message, used for showing errors or messages on the chat **/
+    Chat.prototype.addClientMessage = function(message) {
+        var msg = {
+            time: Date.now(),
+            type: 'client_message',
+            message: message
+        };
+
+        this.history.unshift(msg);
+
+        this.trigger('client_message');
+    };
+
+    /** Display a list of the users currently muted **/
+    Chat.prototype.listMutedUsers = function(ignoredClientList) {
+
+        var ignoredListMessage = '';
+        Object.keys(ignoredClientList).forEach(function(key, index) {
+            if(index !== 0)
+                ignoredListMessage+= ' ,' + ignoredClientList[key].username;
+            else
+                ignoredListMessage+= ignoredClientList[key].username;
+        });
+
+        var msg = {
+            time: Date.now(),
+            type: 'client_message',
+            message: ignoredListMessage
+        };
+
+        this.history.unshift(msg);
+
+        this.trigger('list_ignored');
+    };
 
     var ChatSingleton = new Chat();
 
@@ -106,6 +140,14 @@ define([
 
             case AppConstants.ActionTypes.SAY_CHAT:
                 ChatSingleton.say(action.msg);
+                break;
+
+            case AppConstants.ActionTypes.CLIENT_MESSAGE:
+                ChatSingleton.addClientMessage(action.message);
+                break;
+
+            case AppConstants.ActionTypes.LIST_MUTED_USERS:
+                ChatSingleton.listMutedUsers(action.ignoredClientList);
                 break;
         }
 

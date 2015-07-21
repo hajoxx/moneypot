@@ -213,6 +213,16 @@ define([
 
         localOrDef: function(name, defaultValue) {
             return localStorage[name]? localStorage[name] : defaultValue;
+        },
+
+        isInvalidUsername: function(username) {
+            if (typeof username !== 'string') return 'NOT_STRING';
+            if (username.length === 0) return 'NOT_PROVIDED';
+            if (username.length < 3) return 'TOO_SHORT';
+            if (username.length > 50) return 'TOO_LONG';
+            if (!/^[a-z0-9_\-]*$/i.test(username)) return 'INVALID_CHARS';
+            if (username === '__proto__') return 'INVALID_CHARS';
+            return false;
         }
 
     };

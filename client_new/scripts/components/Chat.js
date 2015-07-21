@@ -4,6 +4,7 @@ define([
     'autolinker',
     'stores/ChatStore',
     'actions/ChatActions',
+    'stores/GameSettingsStore',
     'game-logic/chat'
 ], function(
     React,
@@ -11,6 +12,7 @@ define([
     Autolinker,
     ChatStore,
     ChatActions,
+    GameSettingsStore,
     ChatEngine
 ){
     // Overrides Autolinker.js' @username handler to instead link to
@@ -46,12 +48,13 @@ define([
 
     function getState(evName){
         var state = ChatStore.getState();
+        state.ignoredClientList = GameSettingsStore.getIgnoredClientList();
         state.evName = evName;
         return state;
     }
 
     return React.createClass({
-        displayName: 'Chet',
+        displayName: 'Chat',
 
         getInitialState: function () {
             var state = getState();
@@ -63,8 +66,9 @@ define([
         },
 
         componentDidMount: function() {
-            ChatEngine.on('all', this._onChange);
-            ChatStore.addChangeListener(this._onChange);
+            ChatEngine.on('all', this._onChange); //Use all events
+            ChatStore.addChangeListener(this._onChange); //Use all events
+            GameSettingsStore.addChangeListener(this._onChange); //Not using all events but the store does not emits a lot
 
             //Scroll to the bottom
             var msgsNode = this.refs.messages.getDOMNode();
@@ -74,6 +78,7 @@ define([
         componentWillUnmount: function() {
             ChatEngine.off('all', this._onChange);
             ChatStore.removeChangeListener(this._onChange);
+            GameSettingsStore.removeChangeListener(this._onChange);
 
             var height = this.refs.messages.getDOMNode().style.height;
             ChatActions.setHeight(height);
@@ -108,10 +113,72 @@ define([
                 //var msg = this.state.inputText;
                 var msg = e.target.value;
                 msg = msg.trim();
-                if(msg.length >= 1 && msg.length < 500) {
-                    this._say(msg);
+
+                if(!this._doCommand(msg)){ //If not command was done is a message(or command) to the server
+                    if(msg.length >= 1 && msg.length < 500) {
+                        this._say(msg);
+                        e.target.value = '';
+                    }
+                } else { //If a command was done erase the command text
                     e.target.value = '';
                 }
+            }
+        },
+
+        //Returns true if a command was done, false if not
+        _doCommand: function(msg) {
+
+            //Check if is command
+            var cmdReg = /^\/([a-zA-z]*)\s*(.*)$/;
+            var cmdMatch = msg.match(cmdReg);
+
+            if(!cmdMatch)
+                return;
+
+            var cmd  = cmdMatch[1];
+            var rest = cmdMatch[2];
+
+            switch(cmd) {
+                case 'ignore':
+
+                    if(ChatEngine.username === rest) {
+                        ChatActions.showClientMessage('Cant ignore yourself');
+                        return true;
+                    }
+
+                    if(Clib.isInvalidUsername(rest)) {
+                        ChatActions.showClientMessage('Invalid Username');
+                        return true;
+                    }
+
+                    if(!this.state.ignoredClientList[rest]) {
+                        ChatActions.ignoreUser(rest);
+                        ChatActions.showClientMessage('User ' + rest + ' ignored');
+                    } else
+                        ChatActions.showClientMessage('User ' + rest + ' was already ignored');
+
+                    return true;
+
+                case 'unignore':
+
+                    if(Clib.isInvalidUsername(rest)) {
+                        ChatActions.showClientMessage('Invalid Username');
+                        return true;
+                    }
+
+                    if(this.state.ignoredClientList[rest]) {
+                        ChatActions.approveUser(rest);
+                        ChatActions.showClientMessage('User ' + rest + ' approved');
+                    } else
+                        ChatActions.showClientMessage('User ' + rest + ' was already approved');
+
+                    return true;
+
+                case 'ignored':
+                    ChatActions.listMutedUsers(this.state.ignoredClientList);
+                    return true;
+
+                return false;
             }
         },
 
@@ -126,7 +193,7 @@ define([
         render: function() {
             var messages = [];
             for(var i = ChatEngine.history.length-1; i >= 0; i--)
-                messages.push(renderMessage(ChatEngine.history[i], i));
+                messages.push(this._renderMessage(ChatEngine.history[i], i));
 
             var chatInput;
 
@@ -163,14 +230,18 @@ define([
                 chatInput,
                 D.div({ className: 'spinner-pre-loader' })
             );
-        }
-    });
+        },
 
-    function renderMessage(message, index) {
+        _renderMessage: function(message, index) {
 
         var pri = 'msg-chat-message';
         switch(message.type) {
             case 'say':
+
+                //If the user is in the ignored client list do not render the message
+                if(this.state.ignoredClientList.hasOwnProperty(message.username.toLowerCase()))
+                    return;
+
                 if (message.role === 'admin') pri += ' msg-admin-message';
 
                 var username = ChatEngine.username;
@@ -185,8 +256,8 @@ define([
 
                 return D.li({ className: pri , key: 'msg' + index },
                     D.span({
-                        className: 'time-stamp'
-                    },
+                            className: 'time-stamp'
+                        },
                         timeString
                     ),
                     D.a({
@@ -197,15 +268,15 @@ define([
                     ),
                     ' ',
                     D.span({
-                      className: 'msg-body',
-                      dangerouslySetInnerHTML: {
-                        __html: Autolinker.link(
-                                  escapeHTML(message.message),
-                                  { truncate: 50, replaceFn: replaceUsernameMentions }
-                                )
-                      }
+                        className: 'msg-body',
+                        dangerouslySetInnerHTML: {
+                            __html: Autolinker.link(
+                                escapeHTML(message.message),
+                                { truncate: 50, replaceFn: replaceUsernameMentions }
+                            )
+                        }
                     })
-                    );
+                );
             case 'mute':
                 pri = 'msg-mute-message';
                 return D.li({ className: pri , key: 'msg' + index },
@@ -222,18 +293,19 @@ define([
             case 'unmute':
                 pri = 'msg-mute-message';
                 return D.li({ className: pri , key: 'msg' + index },
-                            D.a({ href: '/user/' + message.moderator,
-                                    target: '_blank'
-                                },
-                                '*** <'+message.moderator+'>'),
-                            message.shadow ? ' shadow unmuted ' : ' unmuted ',
-                            D.a({ href: '/user/' + message.username,
-                                    target: '_blank'
-                                },
-                                '<'+message.username+'>')
-                        );
+                    D.a({ href: '/user/' + message.moderator,
+                            target: '_blank'
+                        },
+                        '*** <'+message.moderator+'>'),
+                    message.shadow ? ' shadow unmuted ' : ' unmuted ',
+                    D.a({ href: '/user/' + message.username,
+                            target: '_blank'
+                        },
+                        '<'+message.username+'>')
+                );
             case 'error':
             case 'info':
+            case 'client_message':
                 pri = 'msg-info-message';
                 return D.li({ className: pri, key: 'msg' + index },
                     D.span(null, ' *** ' + message.message));
@@ -242,5 +314,8 @@ define([
                 break;
         }
     }
+
+
+});
 
 });
