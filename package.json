@@ -27,6 +27,7 @@
     "password-hash": "^1.2.2",
     "pg": "~4.3.0",
     "qr-image": "2.0.x",
+    "recaptcha-validator": "^1.0.0",
     "request": "^2.36.0",
     "requirejs": "~2.1.15",
     "speakeasy": "1.0.x",

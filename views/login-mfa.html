@@ -3,13 +3,15 @@
 {{##def.content:
 <script src='https://www.google.com/recaptcha/api.js'></script>
 <script>
-  function enableSubmit() {
+	var submitEnabled = false;
+	function enableSubmit() {
+		submitEnabled = true;
     var s = document.getElementById('loginSubmit');
     s.style.display = 'block';
   }
 </script>
 <div class="login">
-    <form action="/login" method="post">
+    <form action="/login" method="post" onsubmit="return submitEnabled;">
 
             <input type="hidden" name="username" value="{{!it.username}}" />
             <input type="hidden" name="password" value="{{!it.password}}" />

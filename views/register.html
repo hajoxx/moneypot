@@ -3,7 +3,9 @@
 {{##def.content:
 <script src='https://www.google.com/recaptcha/api.js'></script>
 <script type="text/javascript">
-    function enableSubmit() {
+		var submitEnabled = false;
+		function enableSubmit() {
+			submitEnabled = true;
       var s = document.getElementById('registerSubmit');
       s.style.display = 'block';
     }
@@ -23,7 +25,7 @@
     }
 </script>
         <div class="register">
-            <form action="/register" method="post">
+            <form action="/register" method="post" onsubmit="return submitEnabled;">
                 <div class="row">
                     <div class="large-7 columns input">
                         <h5>Create a new account <small><a href="login">already have one?</a></small></h5>
