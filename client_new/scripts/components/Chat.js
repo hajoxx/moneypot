@@ -143,17 +143,14 @@ define([
 
                     if(ChatEngine.username === rest) {
                         ChatActions.showClientMessage('Cant ignore yourself');
-                        return true;
-                    }
 
-                    if(Clib.isInvalidUsername(rest)) {
+                    } else if(Clib.isInvalidUsername(rest)) {
                         ChatActions.showClientMessage('Invalid Username');
-                        return true;
-                    }
 
-                    if(!this.state.ignoredClientList[rest]) {
+                    } else if(!this.state.ignoredClientList.hasOwnProperty(rest.toLowerCase())) {
                         ChatActions.ignoreUser(rest);
                         ChatActions.showClientMessage('User ' + rest + ' ignored');
+
                     } else
                         ChatActions.showClientMessage('User ' + rest + ' was already ignored');
 
@@ -163,12 +160,12 @@ define([
 
                     if(Clib.isInvalidUsername(rest)) {
                         ChatActions.showClientMessage('Invalid Username');
-                        return true;
-                    }
 
-                    if(this.state.ignoredClientList[rest]) {
+                    } else if(this.state.ignoredClientList.hasOwnProperty(rest.toLowerCase())) {
+
                         ChatActions.approveUser(rest);
                         ChatActions.showClientMessage('User ' + rest + ' approved');
+
                     } else
                         ChatActions.showClientMessage('User ' + rest + ' was already approved');
 
@@ -178,7 +175,8 @@ define([
                     ChatActions.listMutedUsers(this.state.ignoredClientList);
                     return true;
 
-                return false;
+                default:
+                    return false;
             }
         },
 

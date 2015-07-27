@@ -79,6 +79,7 @@
         },
 
         _approveUser: function(username) {
+            username = username.toLowerCase();
             if(_ignoredClientList[username]) {
                 delete _ignoredClientList[username];
                 localStorage['ignoredList'] = JSON.stringify(_ignoredClientList);

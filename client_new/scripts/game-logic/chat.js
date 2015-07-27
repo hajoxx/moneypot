@@ -107,12 +107,17 @@ define([
     Chat.prototype.listMutedUsers = function(ignoredClientList) {
 
         var ignoredListMessage = '';
-        Object.keys(ignoredClientList).forEach(function(key, index) {
-            if(index !== 0)
-                ignoredListMessage+= ' ,' + ignoredClientList[key].username;
-            else
-                ignoredListMessage+= ignoredClientList[key].username;
-        });
+        var ignoredClientListArr = Object.keys(ignoredClientList);
+
+        if(ignoredClientListArr.length === 0)
+            ignoredListMessage = 'No users ignored';
+        else
+            ignoredClientListArr.forEach(function(key, index) {
+                if(index !== 0)
+                    ignoredListMessage+= ' ,' + ignoredClientList[key].username;
+                else
+                    ignoredListMessage+= ignoredClientList[key].username;
+            });
 
         var msg = {
             time: Date.now(),
