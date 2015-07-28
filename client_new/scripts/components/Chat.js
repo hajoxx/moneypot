@@ -240,7 +240,7 @@ define([
                 if (this.state.ignoredClientList.hasOwnProperty(message.username.toLowerCase()))
                     return;
 
-                if(message.bot) {
+                if(message.bot || /^!.*$/.test(message.message)) {
 
                     //If we are ignoring bots and the message is from a bot do not render the message
                     if (this.state.botsDisplayMode === 'none')
