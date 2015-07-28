@@ -237,10 +237,23 @@ define([
             case 'say':
 
                 //If the user is in the ignored client list do not render the message
-                if(this.state.ignoredClientList.hasOwnProperty(message.username.toLowerCase()))
+                if (this.state.ignoredClientList.hasOwnProperty(message.username.toLowerCase()))
                     return;
 
-                if (message.role === 'admin') pri += ' msg-admin-message';
+                if(message.bot) {
+
+                    //If we are ignoring bots and the message is from a bot do not render the message
+                    if (this.state.botsDisplayMode === 'none')
+                        return;
+
+                    pri += ' msg-bot';
+
+                    if(this.state.botsDisplayMode === 'greyed')
+                        pri += ' bot-greyed';
+                }
+
+                if (message.role === 'admin')
+                    pri += ' msg-admin-message';
 
                 var username = ChatEngine.username;
 

@@ -503,7 +503,8 @@ CREATE TABLE chat_messages
   id bigserial NOT NULL PRIMARY KEY,
   user_id bigint NOT NULL REFERENCES users(id),
   message text NOT NULL,
-  created timestamp with time zone
+  created timestamp with time zone,
+  is_bot boolean NOT NULL
 );
 
 CREATE INDEX chat_messages_user_id_idx

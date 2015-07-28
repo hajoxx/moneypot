@@ -33,6 +33,7 @@
     /** List of ignored users client side **/
     var _ignoredClientList = JSON.parse(Clib.localOrDef('ignoredList', '{}'));
 
+
     //Singleton ControlsStore Object
     var GameSettingsStore = _.extend({}, Events, {
 
@@ -138,8 +139,7 @@
             case AppConstants.ActionTypes.APPROVE_USER:
                 GameSettingsStore._approveUser(action.username);
                 GameSettingsStore.emitChange();
-
-
+                break;
 
             //case AppConstants.ActionTypes.SET_CONTROLS_POSITION:
             //    GameSettingsStore._setGraphMode(action.graphMode);
@@ -150,7 +150,6 @@
             //    GameSettingsStore._setGraphMode(action.graphMode);
             //    GameSettingsStore.emitChange();
             //    break;
-
 
         }
 

@@ -206,6 +206,20 @@ body {
     color: white;
 }
 
+/* ==========================================================================
+   chatSettings.css
+   ========================================================================== */
+
+#chat-settings-container .option-row:nth-of-type(even) {
+    background-color: #202328;
+}
+
+#chat-settings-container select {
+    background-color: #292d35;
+    border-color: #292d35;
+    color: white;
+}
+
 
 /* ==========================================================================
    strategy.css

@@ -617,9 +617,9 @@ exports.getLeaderBoard = function(byDb, order, callback) {
     });
 };
 
-exports.addChatMessage = function(userId, created, message, callback) {
-    var sql = 'INSERT INTO chat_messages (user_id, created, message) values($1, $2, $3)';
-    query(sql, [userId, created, message], function(err, res) {
+exports.addChatMessage = function(userId, created, message, isBot, callback) {
+    var sql = 'INSERT INTO chat_messages (user_id, created, message, is_bot) values($1, $2, $3, $4)';
+    query(sql, [userId, created, message, isBot], function(err, res) {
         if(err)
             return callback(err);
 
@@ -631,7 +631,7 @@ exports.addChatMessage = function(userId, created, message, callback) {
 
 exports.getChatTable = function(limit, callback) {
     assert(typeof limit === 'number');
-    var sql = "SELECT chat_messages.created AS time, 'say' AS type, users.username, users.userclass AS role, chat_messages.message FROM chat_messages JOIN users ON users.id = chat_messages.user_id ORDER BY chat_messages.id DESC LIMIT " + limit;
+    var sql = "SELECT chat_messages.created AS time, 'say' AS type, users.username, users.userclass AS role, chat_messages.message, is_bot AS bot FROM chat_messages JOIN users ON users.id = chat_messages.user_id ORDER BY chat_messages.id DESC LIMIT " + limit;
     query(sql, function(err, data) {
         if(err)
             callback(err);

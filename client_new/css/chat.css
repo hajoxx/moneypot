@@ -103,3 +103,8 @@
     font-size: 14px;
     font-weight: bold;
 }
+
+/* Bots messages */
+.msg-chat-message.bot-greyed, .msg-chat-message.bot-greyed a {
+    color: grey;
+}

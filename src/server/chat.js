@@ -66,7 +66,7 @@ function Chat(io) {
         });
 
         //Attach chat message handler
-        socket.on('say', function(message) {
+        socket.on('say', function(message, isBot) {
             var date = new Date();
 
             if (!socket.user)
@@ -85,7 +85,7 @@ function Chat(io) {
             if (cmdMatch) //If the message is a command try to execute it
                 self.doChatCommand(socket.user, cmdMatch, socket);
             else //If not broadcast the message
-                self.say(socket, socket.user, message, date);
+                self.say(socket, socket.user, message, isBot, date);
         });
     }
 
@@ -175,15 +175,18 @@ Chat.prototype.getHistory = function (userInfo, callback) {
     });
 };
 
-Chat.prototype.say = function(socket, userInfo, message, date) {
+Chat.prototype.say = function(socket, userInfo, message, isBot, date) {
     var self = this;
+
+    isBot = !!isBot;
 
     var msg = {
         time:      date,
         type:      'say',
         username:  userInfo.username,
         role:      userInfo.userclass,
-        message:   message
+        message:   message,
+        bot:       isBot
     };
 
     if (lib.hasOwnProperty(self.muted, userInfo.username)) {
@@ -212,11 +215,11 @@ Chat.prototype.say = function(socket, userInfo, message, date) {
 
     //self.chatTable.push(msg);
     self.io.to('joined').emit('msg', msg);
-    self.saveChatMessage(userInfo, message, date);
+    self.saveChatMessage(userInfo, message, isBot, date);
 };
 
-Chat.prototype.saveChatMessage = function(user, message, date) {
-    db.addChatMessage(user.id, date, message, function(err) {
+Chat.prototype.saveChatMessage = function(user, message, isBot, date) {
+    db.addChatMessage(user.id, date, message, isBot, function(err) {
        if(err)
         console.error('[INTERNAL_ERROR] got error ', err, ' saving chat message ', message, ' of user id ', user.id);
     });

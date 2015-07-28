@@ -84,10 +84,11 @@ define([
     /**
      * Sends chat message
      * @param {string} msg - String containing the message, should be longer than 1 and shorter than 500.
+     * @param {bool} isBot - Flag to tell the server than this message is from a bot
      */
-    Chat.prototype.say = function(msg) {
+    Chat.prototype.say = function(msg, isBot) {
         console.assert(msg.length >= 1 && msg.length < 500);
-        this.ws.emit('say', msg);
+        this.ws.emit('say', msg, isBot);
     };
 
     /** Add a client message, used for showing errors or messages on the chat **/
