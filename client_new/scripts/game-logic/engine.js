@@ -47,7 +47,7 @@ define([
         self.maxBet = AppConstants.Engine.MAX_BET;
 
         /** Array containing chat history */
-        self.chat = [];
+        //self.chat = [];
 
         /** Object containing the game history */
         self.tableHistory = [];
@@ -352,20 +352,20 @@ define([
          * @param {role} string - admin, moderator, user
          * @param {message} string - Da message
          */
-        self.ws.on('msg', function(data) {
-            //The chat only renders if the Arr length is diff, remove blocks of the array
-            if (self.chat.length > AppConstants.Chat.MAX_LENGTH)
-                self.chat.splice(0, 400);
-
-            // Match @username until end of string or invalid username char
-            var r = new RegExp('@' + self.username + '(?:$|[^a-z0-9_\-])', 'i');
-            if (data.type === 'say' && data.username !== self.username && r.test(data.message)) {
-                new Audio('/sounds/gong.mp3').play();
-            }
-            self.chat.push(data);
-
-            self.trigger('msg', data);
-        });
+        //self.ws.on('msg', function(data) {
+        //    //The chat only renders if the Arr length is diff, remove blocks of the array
+        //    if (self.chat.length > AppConstants.Chat.MAX_LENGTH)
+        //        self.chat.splice(0, 400);
+        //
+        //    // Match @username until end of string or invalid username char
+        //    var r = new RegExp('@' + self.username + '(?:$|[^a-z0-9_\-])', 'i');
+        //    if (data.type === 'say' && data.username !== self.username && r.test(data.message)) {
+        //        new Audio('/sounds/gong.mp3').play();
+        //    }
+        //    self.chat.push(data);
+        //
+        //    self.trigger('msg', data);
+        //});
 
         /** Triggered by the server to let users the have to reload the page */
         self.ws.on('update', function() {
@@ -391,7 +391,7 @@ define([
                         }
 
                         self.balanceSatoshis = resp.balance_satoshis;
-                        self.chat = resp.chat;
+                        //self.chat = resp.chat;
 
                         /** If username is a falsey value the user is not logged in */
                         self.username = resp.username;
@@ -449,10 +449,10 @@ define([
      * Sends chat message
      * @param {string} msg - String containing the message, should be longer than 1 and shorter than 500.
      */
-    Engine.prototype.say = function(msg) {
-        console.assert(msg.length > 1 && msg.length < 500);
-        this.ws.emit('say', msg);
-    };
+    //Engine.prototype.say = function(msg) {
+    //    console.assert(msg.length > 1 && msg.length < 500);
+    //    this.ws.emit('say', msg);
+    //};
 
     /**
      * Places a bet with a giving amount.
@@ -675,10 +675,10 @@ define([
             case AppConstants.ActionTypes.CASH_OUT:
                 EngineSingleton.cashOut();
                 break;
-
-            case AppConstants.ActionTypes.SAY_CHAT:
-                EngineSingleton.say(action.msg);
-                break;
+            //
+            //case AppConstants.ActionTypes.SAY_CHAT:
+            //    EngineSingleton.say(action.msg);
+            //    break;
 
         }
 

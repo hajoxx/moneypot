@@ -55,7 +55,7 @@ Create the database and setup the tables. The second command will prompt you
 for the password again.
 
     createdb -O bustabit bustabitdb
-    psql -W -U bustabit -d bustabitdb -h localhost -f server/schema.sql
+    psql -W -U bustabit -d bustabitdb -h localhost -f src/server/schema.sql
 
 
 Configuration

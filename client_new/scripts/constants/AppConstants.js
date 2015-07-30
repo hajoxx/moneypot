@@ -33,6 +33,12 @@ define(['lib/key-mirror'], function(KeyMirror){
             //Chat
             SET_CHAT_INPUT_TEXT: null,
             SET_CHAT_HEIGHT: null,
+            IGNORE_USER: null,
+            CLIENT_MESSAGE: null,
+            APPROVE_USER: null,
+            LIST_MUTED_USERS: null,
+            SET_BOTS_DISPLAY_MODE: null,
+            JOIN_CHANNEL: null,
 
             //Game Settings
             TOGGLE_THEME: null,
@@ -49,8 +55,6 @@ define(['lib/key-mirror'], function(KeyMirror){
 
             //Chart
             SELECT_CHART: null
-
-
         }),
 
         PayloadSources: KeyMirror({
@@ -60,6 +64,7 @@ define(['lib/key-mirror'], function(KeyMirror){
         Engine: {
             STOP_PREDICTING_LAPSE: 300,
             HOST: (window.document.location.host === 'www.bustabit.com' || window.DEV_OTT) ? 'https://g2.moneypot.com:443' : window.document.location.host.replace(/:3841$/, ':3842'),
+            CHAT_HOST: window.document.location.host,
             MAX_BET: 100000000 /** Max bet per game 1,000,000 Bits, this will be calculated dynamically in the future, based on the invested amount in the casino **/
         },
 

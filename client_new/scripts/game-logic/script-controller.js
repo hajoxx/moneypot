@@ -5,11 +5,13 @@
 define([
     'lodash',
     'game-logic/engine',
+    'game-logic/chat',
     'game-logic/stateLib',
     'lib/events'
 ], function(
     _,
     Engine,
+    Chat,
     StateLib,
     Events
 ){
@@ -269,7 +271,7 @@ define([
      * Say something in the chat, from 1 to 500 chars
      */
     ScriptExecutor.prototype.chat = function(msg) {
-        Engine.say(msg);
+        Chat.say(msg, true);
     };
 
 

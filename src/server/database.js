@@ -53,6 +53,10 @@ function query(query, params, callback) {
 
 exports.query = query;
 
+pg.on('error', function(err) {
+    console.error('POSTGRES EMITTED AN ERROR', err);
+});
+
 
 // runner takes (client, callback)
 
@@ -300,6 +304,18 @@ exports.getUserByRecoverId = function(recoverId, callback) {
 
         assert(data.length === 1);
         return callback(null, data[0]);
+    });
+};
+
+exports.getUserByName = function(username, callback) {
+    assert(username);
+    query('SELECT * FROM users WHERE lower(username) = lower($1)', [username], function(err, result) {
+        if (err) return callback(err);
+        if (result.rows.length === 0)
+            return callback('USER_DOES_NOT_EXIST');
+
+        assert(result.rows.length === 1);
+        callback(null, result.rows[0]);
     });
 };
 
@@ -596,10 +612,34 @@ exports.setFundingsWithdrawalTxid = function(fundingId, txid, callback) {
     );
 };
 
+
 exports.getLeaderBoard = function(byDb, order, callback) {
     var sql = 'SELECT * FROM leaderboard ORDER BY ' + byDb + ' ' + order + ' LIMIT 100';
     query(sql, function(err, data) {
         if (err)
+            return callback(err);
+        callback(null, data.rows);
+    });
+};
+
+exports.addChatMessage = function(userId, created, message, channelName, isBot, callback) {
+    var sql = 'INSERT INTO chat_messages (user_id, created, message, channel, is_bot) values($1, $2, $3, $4, $5)';
+    query(sql, [userId, created, message, channelName, isBot], function(err, res) {
+        if(err)
+            return callback(err);
+
+        assert(res.rowCount === 1);
+
+        callback(null);
+    });
+};
+
+exports.getChatTable = function(limit, channelName, callback) {
+    assert(typeof limit === 'number');
+    var sql = "SELECT chat_messages.created AS time, 'say' AS type, users.username, users.userclass AS role, chat_messages.message, is_bot AS bot " +
+        "FROM chat_messages JOIN users ON users.id = chat_messages.user_id WHERE channel = $1 ORDER BY chat_messages.id DESC LIMIT $2";
+    query(sql, [channelName, limit], function(err, data) {
+        if(err)
             return callback(err);
         callback(null, data.rows);
     });

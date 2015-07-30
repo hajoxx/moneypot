@@ -205,7 +205,6 @@ CREATE TABLE users (
     CONSTRAINT users_balance_satoshis_check CHECK ((balance_satoshis >= 0))
 );
 
-
 --
 -- TOC entry 181 (class 1259 OID 87733)
 -- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
@@ -497,6 +496,21 @@ CREATE INDEX leaderboard_username_idx ON leaderboard USING btree (lower(username
 CREATE INDEX leaderboard_gross_profit_idx ON leaderboard USING btree (gross_profit);
 
 CREATE INDEX leaderboard_net_profit_idx ON leaderboard USING btree (net_profit);
+
+
+CREATE TABLE chat_messages
+(
+  id bigserial NOT NULL PRIMARY KEY,
+  user_id bigint NOT NULL REFERENCES users(id),
+  message text NOT NULL,
+  created timestamp with time zone,
+  is_bot boolean NOT NULL,
+  channel text NOT NULL
+);
+
+CREATE INDEX chat_messages_user_id_idx ON chat_messages USING btree(user_id);
+CREATE INDEX chat_messages_channel_id_idx ON chat_messages USING btree(channel, id);
+
 
 CREATE OR REPLACE FUNCTION plays_users_stats_trigger()
   RETURNS trigger AS $$

@@ -1,4 +1,4 @@
-define([
+  define([
     'dispatcher/AppDispatcher',
     'constants/AppConstants',
     'lib/events',
@@ -29,6 +29,10 @@ define([
 
     if(localStorage['currentTheme'] === 'black')
         Clib.loadCss(_themeFileName, 'theme-black');
+
+    /** List of ignored users client side **/
+    var _ignoredClientList = JSON.parse(Clib.localOrDef('ignoredList', '{}'));
+
 
     //Singleton ControlsStore Object
     var GameSettingsStore = _.extend({}, Events, {
@@ -70,8 +74,17 @@ define([
             _hotkeysActive = !_hotkeysActive;
         },
 
-        getCurrentTheme: function() {
-            return _currentTheme;
+        _ignoreUser: function(username) {
+            _ignoredClientList[username.toLowerCase()] = { username: username };
+            localStorage['ignoredList'] = JSON.stringify(_ignoredClientList);
+        },
+
+        _approveUser: function(username) {
+            username = username.toLowerCase();
+            if(_ignoredClientList[username]) {
+                delete _ignoredClientList[username];
+                localStorage['ignoredList'] = JSON.stringify(_ignoredClientList);
+            }
         },
 
         getState: function() {
@@ -82,6 +95,14 @@ define([
                 leftWidget: _leftWidget,
                 hotkeysActive: _hotkeysActive
             }
+        },
+
+        getCurrentTheme: function() {
+            return _currentTheme;
+        },
+
+        getIgnoredClientList: function() {
+            return _ignoredClientList;
         }
 
     });
@@ -110,6 +131,15 @@ define([
                 GameSettingsStore.emitChange();
                 break;
 
+            case AppConstants.ActionTypes.IGNORE_USER:
+                GameSettingsStore._ignoreUser(action.username);
+                GameSettingsStore.emitChange();
+                break;
+
+            case AppConstants.ActionTypes.APPROVE_USER:
+                GameSettingsStore._approveUser(action.username);
+                GameSettingsStore.emitChange();
+                break;
 
             //case AppConstants.ActionTypes.SET_CONTROLS_POSITION:
             //    GameSettingsStore._setGraphMode(action.graphMode);
@@ -120,7 +150,6 @@ define([
             //    GameSettingsStore._setGraphMode(action.graphMode);
             //    GameSettingsStore.emitChange();
             //    break;
-
 
         }
 
