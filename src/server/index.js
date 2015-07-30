@@ -10,6 +10,7 @@ var cookieParser = require('cookie-parser');
 var socketIO = require('socket.io');
 var ioCookieParser = require('socket.io-cookie');
 var _ = require('lodash');
+var debug = require('debug')('app:index');
 var app = express();
 
 var config = require('../../config/config');
@@ -17,6 +18,8 @@ var routes = require('./routes');
 var database = require('./database');
 var Chat = require('./chat');
 var lib = require('./lib');
+
+debug('booting bustabit webserver');
 
 /** TimeAgo Settings:
  * Simplify and de-verbosify timeago output.
@@ -94,6 +97,8 @@ if(config.PRODUCTION) {
  * If the user is logged append the user object to the request
  */
 app.use(function(req, res, next) {
+    debug('incoming http request');
+
     var sessionId = req.cookies.id;
 
     if (!sessionId) {
@@ -164,13 +169,14 @@ function errorHandler(err, req, res, next) {
 routes(app);
 app.use(errorHandler);
 
-/** Server **/
+/**  Server **/
 var server = http.createServer(app);
 var io = socketIO(server); //Socket io must be after the lat app.use
 io.use(ioCookieParser);
 
 /** Socket io login middleware **/
 io.use(function(socket, next) {
+    debug('incoming socket connection');
     var sessionId = socket.request.headers.cookie.id;
 
     //If no session id or wrong the user is a guest
@@ -184,10 +190,12 @@ io.use(function(socket, next) {
         //The error is handled manually to avoid sending it into routes
         if (err) {
             if (err === 'NOT_VALID_SESSION') {
-                socket.emit('err', 'NOT_VALID_SESSION');
+                //socket.emit('err', 'NOT_VALID_SESSION');
+                next(new Error('NOT_VALID_SESSION'));
             } else {
-                console.error('[INTERNAL_ERROR] Unable to get user by session id ' + sessionId + ':', err);
-                return socket.emit('err', 'INTERNAL_ERROR');
+                console.error('[INTERNAL_ERROR] Unable to get user in socket by session ' + sessionId + ':', err);
+                next(new Error('Unable to get the session on the server, logged as a guest.'));
+                //return socket.emit('err', 'INTERNAL_ERROR');
             }
             socket.user = false;
             return next();

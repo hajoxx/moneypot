@@ -55,6 +55,13 @@ define([
                 actionType: AppConstants.ActionTypes.LIST_MUTED_USERS,
                 ignoredClientList: ignoredClientList
             });
+        },
+
+        selectChannel: function(channelName) {
+            AppDispatcher.handleViewAction({
+                actionType: AppConstants.ActionTypes.JOIN_CHANNEL,
+                channelName: channelName
+            });
         }
 
     };

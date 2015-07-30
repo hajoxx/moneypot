@@ -1,11 +1,13 @@
 define([
    'socketio',
     'lib/events',
+    'game-logic/clib',
     'constants/AppConstants',
     'dispatcher/AppDispatcher'
 ], function(
     io,
     Events,
+    Clib,
     AppConstants,
     AppDispatcher
 ) {
@@ -21,23 +23,22 @@ define([
 
         self.ws = io(AppConstants.Engine.CHAT_HOST);
 
-        /** The socket is connected and logged (as user || guest) **/
-        self.isConnected = false;
+        /** Chat channel currently in use **/
+        self.channelName = Clib.localOrDef('channelName', 'english');
+
+        /**
+         * States of the chat:
+         *  DISCONNECTED: Socket.io is trying to establish a connection
+         *  CONNECTED: The socket connection is established and we are connecting to a channel
+         *  JOINED: Currently connected to a channel
+         */
+        self.state = 'CONNECTING'; //DISCONNECTED || CONNECTED || JOINED
 
         /** Username, if it is false the user is a guest **/
         self.username = null;
 
         /** Array containing chat history */
         self.history = [];
-
-        self.ws.on('join', function(info) {
-            self.username = info.username;
-            self.history = info.history;
-
-            self.isConnected = true;
-
-            self.trigger('join');
-        });
 
         /**
          * Event called every time we receive a chat message
@@ -74,12 +75,36 @@ define([
             console.error('Server sent us the error: ', err);
         });
 
+        /** Socket io is connected to the server **/
+        self.ws.on('connect', function() {
+            self.state = 'CONNECTED';
+            self.ws.emit('join', self.channelName);
+            self.trigger('connected')
+        });
+
+        /** Chat is joined to a channel **/
+        self.ws.on('join', function(info) {
+            self.username = info.username;
+            self.history = info.history;
+
+            self.state = 'JOINED';
+
+            self.trigger('joined');
+        });
+
         self.ws.on('disconnect', function(data) {
-            self.isConnected = false;
-            console.log('Chat Client disconnected |', data, '|', typeof data);
+            self.state = 'DISCONNECTED';
             self.trigger('disconnected');
         });
     }
+
+    /** Join to a different channel **/
+    Chat.prototype.joinChannel = function(channelName) {
+        this.channelName = channelName;
+        localStorage['channelName'] = channelName;
+        this.ws.emit('join', channelName);
+        this.trigger('joining');
+    };
 
     /**
      * Sends chat message
@@ -154,6 +179,10 @@ define([
 
             case AppConstants.ActionTypes.LIST_MUTED_USERS:
                 ChatSingleton.listMutedUsers(action.ignoredClientList);
+                break;
+
+            case AppConstants.ActionTypes.JOIN_CHANNEL:
+                ChatSingleton.joinChannel(action.channelName);
                 break;
         }
 

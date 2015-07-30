@@ -504,13 +504,12 @@ CREATE TABLE chat_messages
   user_id bigint NOT NULL REFERENCES users(id),
   message text NOT NULL,
   created timestamp with time zone,
-  is_bot boolean NOT NULL
+  is_bot boolean NOT NULL,
+  channel text NOT NULL
 );
 
-CREATE INDEX chat_messages_user_id_idx
-  ON chat_messages
-  USING btree
-  (user_id);
+CREATE INDEX chat_messages_user_id_idx ON chat_messages USING btree(user_id);
+CREATE INDEX chat_messages_channel_id_idx ON chat_messages USING btree(channel, id);
 
 
 CREATE OR REPLACE FUNCTION plays_users_stats_trigger()

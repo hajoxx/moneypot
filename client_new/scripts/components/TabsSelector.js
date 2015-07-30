@@ -69,7 +69,7 @@ define([
                     contClass = 'gamesLog';
                     break;
                 case 'chat':
-                    widget = Chat();
+                    widget = Chat({ isMobileOrSmall: this.props.isMobileOrSmall });
                     break;
                 case 'players':
                     widget = Players();

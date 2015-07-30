@@ -53,6 +53,10 @@ function query(query, params, callback) {
 
 exports.query = query;
 
+pg.on('error', function(err) {
+    console.error('POSTGRES EMITTED AN ERROR', err);
+});
+
 
 // runner takes (client, callback)
 
@@ -608,6 +612,7 @@ exports.setFundingsWithdrawalTxid = function(fundingId, txid, callback) {
     );
 };
 
+
 exports.getLeaderBoard = function(byDb, order, callback) {
     var sql = 'SELECT * FROM leaderboard ORDER BY ' + byDb + ' ' + order + ' LIMIT 100';
     query(sql, function(err, data) {
@@ -617,9 +622,9 @@ exports.getLeaderBoard = function(byDb, order, callback) {
     });
 };
 
-exports.addChatMessage = function(userId, created, message, isBot, callback) {
-    var sql = 'INSERT INTO chat_messages (user_id, created, message, is_bot) values($1, $2, $3, $4)';
-    query(sql, [userId, created, message, isBot], function(err, res) {
+exports.addChatMessage = function(userId, created, message, channelName, isBot, callback) {
+    var sql = 'INSERT INTO chat_messages (user_id, created, message, channel, is_bot) values($1, $2, $3, $4, $5)';
+    query(sql, [userId, created, message, channelName, isBot], function(err, res) {
         if(err)
             return callback(err);
 
@@ -629,12 +634,13 @@ exports.addChatMessage = function(userId, created, message, isBot, callback) {
     });
 };
 
-exports.getChatTable = function(limit, callback) {
+exports.getChatTable = function(limit, channelName, callback) {
     assert(typeof limit === 'number');
-    var sql = "SELECT chat_messages.created AS time, 'say' AS type, users.username, users.userclass AS role, chat_messages.message, is_bot AS bot FROM chat_messages JOIN users ON users.id = chat_messages.user_id ORDER BY chat_messages.id DESC LIMIT " + limit;
-    query(sql, function(err, data) {
+    var sql = "SELECT chat_messages.created AS time, 'say' AS type, users.username, users.userclass AS role, chat_messages.message, is_bot AS bot " +
+        "FROM chat_messages JOIN users ON users.id = chat_messages.user_id WHERE channel = $1 ORDER BY chat_messages.id DESC LIMIT $2";
+    query(sql, [channelName, limit], function(err, data) {
         if(err)
-            callback(err);
+            return callback(err);
         callback(null, data.rows);
     });
 };

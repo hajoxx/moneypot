@@ -3,9 +3,14 @@ var CBuffer  =  require('CBuffer');
 var events   =  require('events');
 var util     =  require('util');
 var _        =  require('lodash');
+var debug    =  require('debug')('app:chat');
 
 var db       =  require('./database');
 var lib      =  require('./lib');
+
+//2nd step
+//Create a mod channel and save it to the database
+//Mute users by ip/username and store muted users in the database
 
 var CHAT_HISTORY_SIZE = 100;
 
@@ -14,8 +19,6 @@ function Chat(io) {
 
     self.io = io;
 
-    // History of chat messages.
-    //self.chatTable = new CBuffer(CHAT_HISTORY_SIZE); //Get directly from the database
     // History of mod only messages.
     self.modTable  = new CBuffer(CHAT_HISTORY_SIZE);
     // Number of connected clients
@@ -31,62 +34,38 @@ function Chat(io) {
      end:        Until when the user is muted
      shadow:     If the mute is a shadow mute
      */
-    self.muted = {}; //TODO: Store muted users in the database
+    self.muted = {};
 
     io.on('connection', onConnection);
 
     function onConnection(socket) {  //socket.user is attached on the login middleware
-
-        //Get user history and send it
-        self.getHistory(socket.user, function(history, err) {
-            if(err) { //If we couldn't reach the history send an empty array an error, and continue
-                sendError('Error getting chat history');
-                history = [];
-            }
-
-            var res = {};
-            res['history'] = history;
-            res['username'] = socket.user? socket.user.username : null;
-
-            //Return join info to the user
-            socket.emit('join', res);
-        });
-
-        ++self.clientCount;
-        console.log('Client joined: ', self.clientCount, ' - ', socket.user ? socket.user.username : '~guest~');
-
-        socket.join('joined');
-        if (socket.user && socket.user.moderator)
-            socket.join('moderators');
+        debug('socket connection event received');
 
         //Attach disconnect handler
         socket.on('disconnect', function() {
             --self.clientCount;
             console.log('Client disconnect, left: ', self.clientCount);
+            debug('client disconnect');
         });
 
-        //Attach chat message handler
+        //Join to a Room
+        socket.on('join', function(channelName) {
+            debug('join event received from user %s', socket.user ? socket.user.username : '~guest~');
+
+            //Check channelName variable and avoid users to join the mods channel
+            if(typeof channelName !== 'string' || channelName.length < 1 || channelName.length > 100 || channelName === 'moderators')
+                return sendError(socket, 'The channel name should be a string between 1 and 100');
+
+            self.join(socket, channelName);
+        });
+
+        //Register the message event
         socket.on('say', function(message, isBot) {
-            var date = new Date();
-
-            if (!socket.user)
-                return sendError(socket, '[say] not logged in');
-
-            if (typeof message !== 'string')
-                return sendError(socket, '[say] no message');
-
-            message = message.trim();
-            if (message.length == 0 || message.length > 500)
-                return sendError(socket, '[say] invalid message size');
-
-            var cmdReg = /^\/([a-zA-z]*)\s*(.*)$/;
-            var cmdMatch = message.match(cmdReg);
-
-            if (cmdMatch) //If the message is a command try to execute it
-                self.doChatCommand(socket.user, cmdMatch, socket);
-            else //If not broadcast the message
-                self.say(socket, socket.user, message, isBot, date);
+            self.onSay(socket, message, isBot);
         });
+
+        ++self.clientCount;
+        console.log('Client joined: ', self.clientCount, ' - ', socket.user ? socket.user.username : '~guest~'); //TODO: Add ip address
     }
 
     events.EventEmitter.call(self); //Call event emitter 'constructor' function
@@ -94,7 +73,75 @@ function Chat(io) {
 
 util.inherits(Chat, events.EventEmitter);
 
-Chat.prototype.doChatCommand = function(user, cmdMatch, socket) {
+Chat.prototype.join = function(socket, channelName) {
+    var self = this;
+
+    //Check if the user was joined to another room before, if it was leave that room
+    if(socket.currentChannel)
+        socket.leave(socket.currentChannel);
+
+    //Save the name of the current room in the socket, this can also be used to check if the user is joined into a channel
+    socket.currentChannel = channelName;
+
+    //Get user history of a room and send it to the user
+    self.getHistory(socket.user, channelName, function(err, history) {
+
+        //If we couldn't reach the history send an empty history to the user
+        if(err) {
+            history = [];
+        }
+
+        var res = {
+            history: history,
+            username: socket.user ? socket.user.username : null,
+            channel: channelName
+        };
+
+        //Actually join the socket.io room
+        socket.join(channelName);
+
+        //If the user is a mod join to the mods room
+        if (socket.user && socket.user.moderator)
+            socket.join('moderators');
+
+        //Return join info to the user
+        socket.emit('join', res);
+    });
+
+};
+
+Chat.prototype.onSay = function(socket, message, isBot) {
+    if (!socket.user)
+        return sendError(socket, '[say] you must be logged in to chat');
+
+    if (!socket.currentChannel)
+        return sendError(socket, '[say] you must be joined before you can chat');
+
+    var date = new Date();
+
+    message = message.trim();
+
+    isBot = isBot || /^!.*$/.test(message); //Messages starting with a bot prefix "!" are treated as a bot
+
+    if (typeof message !== 'string')
+        return sendError(socket, '[say] no message');
+
+    if (message.length == 0 || message.length > 500)
+        return sendError(socket, '[say] invalid message size');
+
+    var cmdReg = /^\/([a-zA-z]*)\s*(.*)$/;
+    var cmdMatch = message.match(cmdReg);
+
+    if (cmdMatch) //If the message is a command try to execute it
+        this.doChatCommand(socket.user, cmdMatch, socket.currentChannel, socket);
+    else //If not broadcast the message
+        this.say(socket, socket.user, message, socket.currentChannel, isBot, date);
+
+};
+
+
+
+Chat.prototype.doChatCommand = function(user, cmdMatch, channelName, socket) {
     var self = this;
 
     var cmd  = cmdMatch[1];
@@ -116,7 +163,7 @@ Chat.prototype.doChatCommand = function(user, cmdMatch, socket) {
                 var timespec = muteMatch[2] ? muteMatch[2] : "30m";
                 var shadow   = cmd === 'shadowmute';
 
-                self.mute(shadow, user, username, timespec,
+                self.mute(shadow, user, username, timespec, channelName,
                     function (err) {
                         if (err)
                             return sendErrorChat(socket, err);
@@ -135,7 +182,7 @@ Chat.prototype.doChatCommand = function(user, cmdMatch, socket) {
 
                 var username = unmuteMatch[1];
                 self.unmute(
-                    user, username,
+                    user, username, channelName,
                     function (err) {
                         if (err) return sendErrorChat(socket, err);
                     });
@@ -151,13 +198,13 @@ Chat.prototype.doChatCommand = function(user, cmdMatch, socket) {
     }
 };
 
-Chat.prototype.getHistory = function (userInfo, callback) {
+Chat.prototype.getHistory = function (userInfo, channelName, callback) {
     var self = this;
 
-    db.getChatTable(CHAT_HISTORY_SIZE, function(err, history) {
+    db.getChatTable(CHAT_HISTORY_SIZE, channelName, function(err, history) {
         if(err) {
             console.error('[INTERNAL_ERROR] got error ', err, ' loading chat table');
-            callback(err);
+            return callback(err);
         }
 
         //var history = self.chatTable.toArray();
@@ -171,11 +218,11 @@ Chat.prototype.getHistory = function (userInfo, callback) {
             history = history.splice(-CHAT_HISTORY_SIZE);
         }
 
-        callback(history);
+        callback(null, history);
     });
 };
 
-Chat.prototype.say = function(socket, userInfo, message, isBot, date) {
+Chat.prototype.say = function(socket, userInfo, message, channelName, isBot, date) {
     var self = this;
 
     isBot = !!isBot;
@@ -213,19 +260,21 @@ Chat.prototype.say = function(socket, userInfo, message, isBot, date) {
         }
     }
 
-    //self.chatTable.push(msg);
-    self.io.to('joined').emit('msg', msg);
-    self.saveChatMessage(userInfo, message, isBot, date);
+    if(isBot)
+        self.io.sockets.emit('msg', msg);
+    else
+        self.io.to(channelName).emit('msg', msg);
+    self.saveChatMessage(userInfo, message, channelName, isBot, date);
 };
 
-Chat.prototype.saveChatMessage = function(user, message, isBot, date) {
-    db.addChatMessage(user.id, date, message, isBot, function(err) {
+Chat.prototype.saveChatMessage = function(user, message, channelName, isBot, date) {
+    db.addChatMessage(user.id, date, message, channelName, isBot, function(err) {
        if(err)
-        console.error('[INTERNAL_ERROR] got error ', err, ' saving chat message ', message, ' of user id ', user.id);
+        console.error('[INTERNAL_ERROR] got error ', err, ' saving chat message of user id ', user.id);
     });
 };
 
-Chat.prototype.mute = function(shadow, moderatorInfo, username, time, callback) {
+Chat.prototype.mute = function(shadow, moderatorInfo, username, time, channelName, callback) {
     var self = this;
     var now = new Date();
     var ms  = lib.parseTimeString(time);
@@ -266,13 +315,13 @@ Chat.prototype.mute = function(shadow, moderatorInfo, username, time, callback) 
             self.io.to('moderators').emit('msg', msg);
         } else {
             //self.chatTable.push(msg);
-            self.io.to('joined').emit('msg', msg);
+            self.io.to(channelName).emit('msg', msg);
         }
         callback(null);
     });
 };
 
-Chat.prototype.unmute = function(moderatorInfo, username, callback) {
+Chat.prototype.unmute = function(moderatorInfo, username, channelName, callback) {
     var self = this;
     var now = new Date();
 
@@ -293,17 +342,13 @@ Chat.prototype.unmute = function(moderatorInfo, username, callback) {
     if (shadow) { //If the user was shadow mute just let the moderators now that it was unmuted
         self.modTable.push(msg);
         self.io.to('moderators').emit('msg', msg);
-    } else { //Broadcast to every one that the user was unmuted
-        //self.chatTable.push(msg);
-        self.io.to('joined').emit('msg', msg);
+    } else { //Broadcast to the user's room that an user was muted
+        self.io.to(channelName).emit('msg', msg);
     }
     callback(null);
 };
 
-//Chat.prototype.listmuted = function () {
-//    return self.muted;
-//};
-
+//Send an error to the chat to a socket
 function sendErrorChat(socket, message) {
     console.warn('Warning: sending client: ', message);
     socket.emit('msg', {
@@ -313,6 +358,7 @@ function sendErrorChat(socket, message) {
     });
 }
 
+//Send an error event to a socket
 function sendError(socket, description) {
     console.warn('Warning: sending client: ', description);
     socket.emit('err', description);
