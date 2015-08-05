@@ -367,7 +367,7 @@
     }
 
     #controls-inner-container .bet-input-group>span {
-        height: 2rem;
+        height: 1rem;
     }
 
     #controls-inner-container.small .bet-input-group>span:first-child {

@@ -41,7 +41,11 @@ define([
 
     ScriptExecutor.prototype.startEngine = function() {
 
-        var eventNames = [
+        var self = this;
+
+        /** Engine Events **/
+
+        var engineEventNames = [
 
             /* Game State Events */
             'game_starting', 'game_started', 'game_crash',
@@ -50,37 +54,66 @@ define([
             'player_bet', 'cashed_out',
 
             /* Chat Events */
-            'msg',
+            //'msg',
 
             /* Connection Events */
             'connected', 'disconnected'];
 
         //Array of pairs, where each pair is eventName and the function
-        var self = this;
-        var eventFunctions = eventNames.map(function(eventName) {
+        var engineEventFunctions = engineEventNames.map(function(eventName) {
             var fn = self.trigger.bind(self, eventName);
             return [eventName, fn];
         });
 
-        eventFunctions.forEach(function(pair) {
+        engineEventFunctions.forEach(function(pair) {
             var eventName = pair[0];
             var fn = pair[1];
 
             Engine.on(eventName, fn);
         });
 
-        this.events = eventFunctions;
+        this.engineEvents = engineEventFunctions;
+
+
+        /** Chat Events **/
+
+        var chatEventNames = [
+            /* Chat Events */
+            'msg'
+            ];
+
+        //Array of pairs, where each pair is eventName and the function
+        var chatEventFunctions = chatEventNames.map(function(eventName) {
+            var fn = self.trigger.bind(self, eventName);
+            return [eventName, fn];
+        });
+
+        chatEventFunctions.forEach(function(pair) {
+            var eventName = pair[0];
+            var fn = pair[1];
+
+            Chat.on(eventName, fn);
+        });
+
+        this.chatEvents = chatEventFunctions;
+
     };
 
 
     ScriptExecutor.prototype.stopScript = function() {
-        var self = this;
 
-        this.events.forEach(function(pair) {
+        this.engineEvents.forEach(function(pair) {
             var eventName = pair[0];
             var fn = pair[1];
 
             Engine.off(eventName, fn);
+        });
+
+        this.chatEvents.forEach(function(pair) {
+            var eventName = pair[0];
+            var fn = pair[1];
+
+            Chat.off(eventName, fn);
         });
     };
 
