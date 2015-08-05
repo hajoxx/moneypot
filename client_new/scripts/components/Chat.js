@@ -259,7 +259,8 @@ define([
                     ChatChannelSelector({
                         selectChannel: this._selectChannel,
                         selectedChannel: ChatEngine.channelName,
-                        isMobileOrSmall: this.props.isMobileOrSmall
+                        isMobileOrSmall: this.props.isMobileOrSmall,
+                        moderator: ChatEngine.moderator
                     })
                 ),
                 D.div({ className: 'spinner-pre-loader' })
@@ -276,7 +277,8 @@ define([
                 if (this.state.ignoredClientList.hasOwnProperty(message.username.toLowerCase()))
                     return;
 
-                if(message.bot) {
+                //Messages starting with '!' are considered as bot except those ones for me
+                if(message.bot || /^!/.test(message.message)) {
 
                     //If we are ignoring bots and the message is from a bot do not render the message
                     if (this.state.botsDisplayMode === 'none')
@@ -298,7 +300,7 @@ define([
                     pri += ' msg-highlight-message';
                 }
 
-                var msgDate = new Date(message.time);
+                var msgDate = new Date(message.date);
                 var timeString = msgDate.getHours() + ':' + ((msgDate.getMinutes() < 10 )? ('0' + msgDate.getMinutes()) : msgDate.getMinutes()) + ' ';
 
                 return D.li({ className: pri , key: 'msg' + index },

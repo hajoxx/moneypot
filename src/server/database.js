@@ -636,7 +636,7 @@ exports.addChatMessage = function(userId, created, message, channelName, isBot, 
 
 exports.getChatTable = function(limit, channelName, callback) {
     assert(typeof limit === 'number');
-    var sql = "SELECT chat_messages.created AS time, 'say' AS type, users.username, users.userclass AS role, chat_messages.message, is_bot AS bot " +
+    var sql = "SELECT chat_messages.created AS date, 'say' AS type, users.username, users.userclass AS role, chat_messages.message, is_bot AS bot " +
         "FROM chat_messages JOIN users ON users.id = chat_messages.user_id WHERE channel = $1 ORDER BY chat_messages.id DESC LIMIT $2";
     query(sql, [channelName, limit], function(err, data) {
         if(err)

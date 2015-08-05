@@ -37,6 +37,9 @@ define([
         /** Username, if it is false the user is a guest **/
         self.username = null;
 
+        /** Flag true if the user is a moderator or an admin **/
+        self.moderator = null;
+
         /** Array containing chat history */
         self.history = [];
 
@@ -86,6 +89,7 @@ define([
         self.ws.on('join', function(info) {
             self.username = info.username;
             self.history = info.history;
+            self.moderator = info.moderator;
 
             self.state = 'JOINED';
 

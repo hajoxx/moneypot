@@ -12,7 +12,8 @@ define([
         propTypes: {
             selectedChannel: React.PropTypes.string.isRequired,
             selectChannel: React.PropTypes.func.isRequired,
-            isMobileOrSmall: React.PropTypes.bool.isRequired
+            isMobileOrSmall: React.PropTypes.bool.isRequired,
+            moderator: React.PropTypes.any.isRequired
         },
 
         getInitialState: function() {
@@ -57,11 +58,14 @@ define([
 
             var rowLenght = this.props.isMobileOrSmall? 9 : 11;
 
-            var chans = ['arabic', 'armenian', 'basque', 'bengali', 'bosnian', 'portuguese', 'bulgarian', 'chinese',
+            var chans = ['arabic', 'armenian', 'basque', 'bengali', 'bosnian', 'bulgarian', 'chinese',
                 'croatian', 'czech', 'danish', 'dutch', 'english', 'estonian', 'farsi', 'finnish', 'french', 'german',
                 'greek', 'hebrew', 'hungarian', 'indonesian', 'italian', 'latvian', 'lithuanian', 'maltese', 'norwegian',
                 'polish', 'portuguese', 'romanian', 'russian', 'serbian', 'slovak', 'slovenian', 'spanish', 'swedish', 'thai',
                 'turkish', 'ukrainian', 'vietnamese'];
+
+            if(this.props.moderator)
+                chans.push('moderators', 'all');
 
             var chansRows = [];
             for(var i = 0, e = 0, length = chans.length; i < length; i += rowLenght, e++ )

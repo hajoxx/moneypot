@@ -503,7 +503,7 @@ CREATE TABLE chat_messages
   id bigserial NOT NULL PRIMARY KEY,
   user_id bigint NOT NULL REFERENCES users(id),
   message text NOT NULL,
-  created timestamp with time zone,
+  created timestamp with time zone DEFAULT now() NOT NULL,
   is_bot boolean NOT NULL,
   channel text NOT NULL
 );
