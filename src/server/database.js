@@ -7,6 +7,7 @@ var lib = require('./lib');
 var pg = require('pg');
 var passwordHash = require('password-hash');
 var speakeasy = require('speakeasy');
+var m = require('multiline');
 
 var databaseUrl = config.DATABASE_URL;
 
@@ -222,7 +223,7 @@ function createSession(client, userId, callback) {
 
         callback(null, session.id);
     });
-};
+}
 
 exports.createOneTimeToken = function(userId, callback) {
     assert(userId);
@@ -639,6 +640,20 @@ exports.getChatTable = function(limit, channelName, callback) {
     var sql = "SELECT chat_messages.created AS date, 'say' AS type, users.username, users.userclass AS role, chat_messages.message, is_bot AS bot " +
         "FROM chat_messages JOIN users ON users.id = chat_messages.user_id WHERE channel = $1 ORDER BY chat_messages.id DESC LIMIT $2";
     query(sql, [channelName, limit], function(err, data) {
+        if(err)
+            return callback(err);
+        callback(null, data.rows);
+    });
+};
+
+//Get the history of the chat of all channels except the mods channel
+exports.getAllChatTable = function(limit, callback) {
+    assert(typeof limit === 'number');
+    var sql = m(function(){/*
+     SELECT chat_messages.created AS date, 'say' AS type, users.username, users.userclass AS role, chat_messages.message, is_bot AS bot, chat_messages.channel AS "channelName"
+     FROM chat_messages JOIN users ON users.id = chat_messages.user_id WHERE channel <> 'moderators'  ORDER BY chat_messages.id DESC LIMIT $1
+    */});
+    query(sql, [limit], function(err, data) {
         if(err)
             return callback(err);
         callback(null, data.rows);

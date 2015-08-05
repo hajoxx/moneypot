@@ -255,14 +255,19 @@ Chat.prototype.doChatCommand = function(user, cmdMatch, channelName, socket) {
 };
 
 Chat.prototype.getHistory = function (channelName, callback) {
-    db.getChatTable(CHAT_HISTORY_SIZE, channelName, function(err, history) {
+    if(channelName === 'all')
+        db.getAllChatTable(CHAT_HISTORY_SIZE, fn);
+    else
+        db.getChatTable(CHAT_HISTORY_SIZE, channelName, fn);
+
+    function fn (err, history) {
         if(err) {
             console.error('[INTERNAL_ERROR] got error ', err, ' loading chat table');
             return callback(err);
         }
 
         callback(null, history);
-    });
+    }
 };
 
 Chat.prototype.say = function(socket, user, message, channelName, isBot) {
