@@ -162,7 +162,7 @@ module.exports = function(app) {
     app.get('/', staticPageLogged('index'));
     app.get('/register', staticPageLogged('register', '/play'));
     app.get('/login', staticPageLogged('login', '/play'));
-    app.get('/reset/:recoverId', user.resetForm);
+    app.get('/reset/:recoverId', user.validateResetPassword);
     app.get('/faq', staticPageLogged('faq'));
     app.get('/contact', staticPageLogged('contact'));
     app.get('/request', restrict, user.request);

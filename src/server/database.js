@@ -265,12 +265,26 @@ exports.getUserFromUsername = function(username, callback) {
     });
 };
 
-exports.addRecoverId = function(userId, callback) {
-    assert(userId && callback);
+exports.getUsersFromEmail = function(email, callback) {
+    assert(email, callback);
+
+    query('select * from users where email = lower($1)', [email], function(err, data) {
+       if (err) return callback(err);
+
+        if (data.rows.length === 0)
+            return callback('NO_USERS');
+
+        callback(null, data.rows);
+
+    });
+};
+
+exports.addRecoverId = function(userId, ipAddress, callback) {
+    assert(userId && ipAddress && callback);
 
     var recoveryId = uuid.v4();
 
-    query('INSERT INTO recovery (id, user_id)  values($1, $2)', [recoveryId, userId], function(err, res) {
+    query('INSERT INTO recovery (id, user_id, ip)  values($1, $2, $3)', [recoveryId, userId, ipAddress], function(err, res) {
         if (err) return callback(err);
         callback(null, recoveryId);
     });
@@ -294,9 +308,9 @@ exports.getUserBySessionId = function(sessionId, callback) {
     });
 };
 
-exports.getUserByRecoverId = function(recoverId, callback) {
+exports.getUserByValidRecoverId = function(recoverId, callback) {
     assert(recoverId && callback);
-    query('SELECT * FROM users_view WHERE id = (SELECT user_id FROM recovery WHERE id = $1)', [recoverId], function(err, res) {
+    query('SELECT * FROM users_view WHERE id = (SELECT user_id FROM recovery WHERE id = $1 AND used = false AND expired > NOW())', [recoverId], function(err, res) {
         if (err) return callback(err);
 
         var data = res.rows;
@@ -320,18 +334,24 @@ exports.getUserByName = function(username, callback) {
     });
 };
 
+/* Sets the recovery record to userd and update password */
 exports.changePasswordFromRecoverId = function(recoverId, password, callback) {
     assert(recoverId && password && callback);
     var hashedPassword = passwordHash.generate(password);
 
-    query("WITH t as (DELETE FROM recovery WHERE id = $2 AND created > NOW() - interval '24 hours' RETURNING *) UPDATE users SET password = $1 where id = (SELECT user_id FROM t) RETURNING *",
-        [hashedPassword, recoverId], function(err, res) {
+    var sql = m(function() {/*
+     WITH t as (UPDATE recovery SET used = true, expired = now()
+     WHERE id = $1 AND used = false AND expired > now()
+     RETURNING *) UPDATE users SET password = $2 where id = (SELECT user_id FROM t) RETURNING *
+     */});
+
+    query(sql, [recoverId, hashedPassword], function(err, res) {
             if (err)
                 return callback(err);
 
             var data = res.rows;
             if (data.length === 0)
-                return callback('USER_NOT_FOUND');
+                return callback('NOT_VALID_RECOVER_ID');
 
             assert(data.length === 1);
 

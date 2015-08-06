@@ -3,7 +3,7 @@ var nodemailer = require('nodemailer');
 var sesTransport = require('nodemailer-ses-transport');
 var config = require('../../config/config');
 
-var siteURL = config.SITE_URL;
+var SITE_URL = config.SITE_URL;
 
 
 function send(details, callback) {
@@ -41,19 +41,33 @@ exports.contact = function(from, content, user, callback) {
     send(details, callback);
 };
 
-exports.passwordReset = function(to, recoveryId, callback) {
+exports.passwordReset = function(to, recoveryList, callback) {
+
+    var htmlRecoveryLinks = '';
+    recoveryList.forEach(function(pair, index){
+        htmlRecoveryLinks += '<a href="' + SITE_URL + '/reset/' + pair[1] +'">Please click here to reset ' + pair[0] + "'s account</a><br>";
+    });
+
+    var html = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' +
+        '<html xmlns="http://www.w3.org/1999/xhtml">' +
+        '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />' +
+        '<title>MoneyPot</title>' +
+        '</head>' +
+        '<body>'+
+        '<h2>Bustabit Password recovery</h2>' +
+        '<br>' +
+         htmlRecoveryLinks +
+        '<br>' +
+        '<br>' +
+        "<span>We only send password resets to registered email accounts." +
+        '</body></html>';
+
     var details =  {
         to: to,
         from: 'noreply@moneypot.com',
-        subject: 'MoneyPot.com - Reset Password Request',
-        html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' +
-            '<html xmlns="http://www.w3.org/1999/xhtml">' +
-            '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />' +
-            '<title>MoneyPot</title>' +
-            '</head>' +
-            '<body>'+
-            '<a href="' + siteURL + '/reset/' + recoveryId +'">Please click here to reset your password</a>' +
-            '</body></html>'
+        subject: 'Bustabit.com - Reset Password Request',
+        html: html
+
     };
     send(details, callback);
 };

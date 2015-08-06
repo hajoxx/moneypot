@@ -514,48 +514,59 @@ exports.disableMfa = function(req, res, next) {
  * Send password recovery to an user if possible
  **/
 exports.sendPasswordRecover = function(req, res, next) {
-    var username = lib.removeNullsAndTrim(req.body.username);
-    if (!username) return res.redirect('forgot-password');
-    //We don't want to leak if the user has set his email so we send the same message for both
-    var messageSentAndNotEmail = { success: 'We\'ve sent an email to you if there is a recovery email.' };
-    var messageNotUser = { warning: 'That username does not exist :/' };
+    var email = lib.removeNullsAndTrim(req.body.email);
+    if (!email) return res.redirect('forgot-password');
+    var remoteIpAddress = req.ip;
 
-    database.getUserFromUsername (username, function(err, user) { 
-        if (err) {
-            if (err === 'NO_USER')
-                return res.render('forgot-password', messageNotUser);
-            else 
-                return next(new Error('Unable to get user ' + user +  'from username: \n' + err));
+    //We don't want to leak if the email has users, so we send this message even if there are no users from that email
+    var messageSent = { success: 'We\'ve sent an email to you if there is a recovery email.' };
+
+    database.getUsersFromEmail(email, function(err, users) {
+        if(err) {
+            if(err === 'NO_USERS')
+                return res.render('forgot-password', messageSent);
+            else
+                return next(new Error('Unable to get users by email ' + email +  ': \n' + err));
         }
-        if (!user.email)
-            return res.render('forgot-password',  messageSentAndNotEmail);
 
-        database.addRecoverId(user.id, function(err, recoveryId) { 
-            if (err)
-                return next(new Error('Unable to add recovery id ' + recoveryId + ' for user ' + user.id + ':\n' + err));
+        var recoveryList = []; //An array of pairs [username, recoveryId]
+        async.each(users, function(user, callback) {
 
-            assert(recoveryId);
+            database.addRecoverId(user.id, remoteIpAddress, function(err, recoveryId) {
+                if(err)
+                    callback(err);
 
-            sendEmail.passwordReset(user.email, recoveryId, function(err) {
-                if (err)
+                recoveryList.push([user.username, recoveryId]);
+                callback(); //async success
+            })
+
+        }, function(err) {
+            if(err)
+                return next(new Error('Unable to add recovery id :\n' + err));
+
+            sendEmail.passwordReset(email, recoveryList, function(err) {
+                if(err)
                     return next(new Error('Unable to send password email: \n' + err));
-                return res.render('forgot-password',  messageSentAndNotEmail);
+
+                return res.render('forgot-password',  messageSent);
             });
         });
+
     });
 };
 
 /**
  * GET
  * Public API
- * reset the password of the user from the recoverId sent to his email
+ * Validate if the reset id is valid or is has not being uses, does not alters the recovery state
+ * Renders the change password
  **/
-exports.resetForm = function(req, res, next) {
+exports.validateResetPassword = function(req, res, next) {
     var recoverId = req.params.recoverId;
     if (!recoverId || !lib.isUUIDv4(recoverId))
         return next('Invalid recovery id');
 
-    database.getUserByRecoverId(recoverId, function(err, user) {
+    database.getUserByValidRecoverId(recoverId, function(err, user) {
         if (err) {
             if (err === 'NOT_VALID_RECOVER_ID')
                 return next('Invalid recovery id');
@@ -581,7 +592,7 @@ exports.handleReset = function(req, res, next) {
 
     database.changePasswordFromRecoverId(recoverId, password, function(err, user) {
         if (err) {
-            if (err === 'USER_NOT_FOUND')
+            if (err === 'NOT_VALID_RECOVER_ID')
                 return next('Invalid recovery id');
             return next(new Error('Unable to change password for recoverId ' + recoverId + ', password: ' + password + '\n' + err));
         }
