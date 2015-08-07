@@ -6,7 +6,7 @@ var user = require('./user');
 var games = require('./games');
 var sendEmail = require('./sendEmail');
 var stats = require('./stats');
-var config = require('../../config/config');
+var config = require('../config/config');
 var recaptchaValidator = require('recaptcha-validator');
 
 
@@ -191,7 +191,7 @@ module.exports = function(app) {
     });
 
     app.post('/request', restrict, recaptchaRestrict, user.giveawayRequest);
-    app.post('/sent-reset', user.handleReset);
+    app.post('/sent-reset', user.resetPasswordRecovery);
     app.post('/sent-recover', recaptchaRestrict, user.sendPasswordRecover);
     app.post('/reset-password', restrict, user.resetPassword);
     app.post('/add-email', restrict, user.addEmail);
@@ -206,8 +206,10 @@ module.exports = function(app) {
 
     app.post('/ott', restrict, function(req, res, next) {
         var user = req.user;
+        var ipAddress = req.ip;
+        var userAgent = req.get('user-agent');
         assert(user);
-        database.createOneTimeToken(user.id, function(err, token) {
+        database.createOneTimeToken(user.id, ipAddress, userAgent, function(err, token) {
             if (err) {
                 console.error('[INTERNAL_ERROR] unable to get OTT got ' + err);
                 res.status(500);

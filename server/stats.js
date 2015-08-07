@@ -1,6 +1,6 @@
 var database = require('./database');
 var timeago = require('timeago');
-var config = require('../../config/config');
+var config = require('../config/config');
 
 var stats;
 var generated;

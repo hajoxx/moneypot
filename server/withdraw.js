@@ -2,7 +2,7 @@ var assert = require('assert');
 var bc = require('./bitcoin_client');
 var db = require('./database');
 var request = require('request');
-var config = require('../../config/config');
+var config = require('../config/config');
 
 // Doesn't validate
 module.exports = function(userId, satoshis, withdrawalAddress, withdrawalId, callback) {

@@ -1,7 +1,7 @@
 var assert = require('better-assert');
 var bitcoinjs = require('bitcoinjs-lib');
 var crypto = require('crypto');
-var config = require('../../config/config');
+var config = require('../config/config');
 
 var encKey = config.ENC_KEY;
 

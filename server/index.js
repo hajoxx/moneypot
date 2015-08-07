@@ -13,7 +13,7 @@ var _ = require('lodash');
 var debug = require('debug')('app:index');
 var app = express();
 
-var config = require('../../config/config');
+var config = require('../config/config');
 var routes = require('./routes');
 var database = require('./database');
 var Chat = require('./chat');
@@ -45,7 +45,7 @@ timeago.settings.strings = timeago_strings;
  *
  * Put here render engine global variable trough app.locals
  * **/
-app.set("views", path.join(__dirname, '/../../views'));
+app.set("views", path.join(__dirname, '../views'));
 
 app.locals.recaptchaKey = config.RECAPTCHA_SITE_KEY;
 app.locals.buildConfig = config.BUILD;
@@ -85,12 +85,13 @@ app.enable('trust proxy');
 /** Serve Static content **/
 var twoWeeksInSeconds = 1209600;
 if(config.PRODUCTION) {
-    app.use(express.static(path.join(__dirname, '/../../build'), { maxAge: twoWeeksInSeconds * 1000 }));
+    app.use(express.static(path.join(__dirname, '../build'), { maxAge: twoWeeksInSeconds * 1000 }));
 } else {
-    app.use(express.static(path.join(__dirname, '/../../client_new'), { maxAge: twoWeeksInSeconds * 1000 }));
-    app.use('/client_old', express.static(path.join(__dirname, '/../../client_old'), { maxAge: twoWeeksInSeconds * 1000 }));
-    app.use('/node_modules', express.static(path.join(__dirname, '../../node_modules')), { maxAge: twoWeeksInSeconds * 1000 });
+    app.use(express.static(path.join(__dirname, '../client_new'), { maxAge: twoWeeksInSeconds * 1000 }));
+    app.use('/client_old', express.static(path.join(__dirname, '../client_old'), { maxAge: twoWeeksInSeconds * 1000 }));
+    app.use('/node_modules', express.static(path.join(__dirname, '../node_modules')), { maxAge: twoWeeksInSeconds * 1000 });
 }
+
 
 /** Login middleware
  *

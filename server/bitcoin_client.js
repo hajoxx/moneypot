@@ -1,7 +1,7 @@
 var bitcoin = require('bitcoin');
 var fs = require('fs');
 var path = require('path');
-var config = require('../../config/config');
+var config = require('../config/config');
 
 var client = new bitcoin.Client({
     host: config.BITCOIND_HOST,

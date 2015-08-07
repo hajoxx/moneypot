@@ -1,7 +1,7 @@
 var assert = require('assert');
 var nodemailer = require('nodemailer');
 var sesTransport = require('nodemailer-ses-transport');
-var config = require('../../config/config');
+var config = require('../config/config');
 
 var SITE_URL = config.SITE_URL;
 

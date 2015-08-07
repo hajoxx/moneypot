@@ -1,11 +1,20 @@
 CREATE EXTENSION plv8;
 
 
+
+-- Blocks
+
 CREATE TABLE blocks (
     height integer NOT NULL,
     hash text NOT NULL
 );
 
+ALTER TABLE ONLY blocks
+    ADD CONSTRAINT bv_blocks_pkey PRIMARY KEY (height, hash);
+
+
+
+-- Fundings
 
 CREATE TABLE fundings (
     id bigint NOT NULL,
@@ -20,6 +29,18 @@ CREATE TABLE fundings (
     CONSTRAINT fundings_withdrawal_id_key UNIQUE (withdrawal_id)
 );
 
+ALTER TABLE ONLY fundings ALTER COLUMN id SET DEFAULT nextval('fundings_id_seq'::regclass);
+
+ALTER TABLE ONLY fundings
+    ADD CONSTRAINT fundings_user_id_bitcoin_deposit_txid_key UNIQUE (user_id, bitcoin_deposit_txid);
+
+ALTER TABLE ONLY fundings
+    ADD CONSTRAINT transactions_pkey PRIMARY KEY (id);
+
+CREATE INDEX fundings_user_id_idx ON fundings USING btree (user_id);
+
+ALTER TABLE ONLY fundings
+    ADD CONSTRAINT fundings_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 CREATE SEQUENCE fundings_id_seq
     START WITH 1
@@ -28,9 +49,11 @@ CREATE SEQUENCE fundings_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
 ALTER SEQUENCE fundings_id_seq OWNED BY fundings.id;
 
+
+
+-- Games
 
 CREATE TABLE games (
     id bigint NOT NULL,
@@ -39,6 +62,9 @@ CREATE TABLE games (
     ended boolean DEFAULT false NOT NULL
 );
 
+ALTER TABLE ONLY games ALTER COLUMN id SET DEFAULT nextval('games_id_seq'::regclass);
+
+ALTER TABLE ONLY games ADD CONSTRAINT games_pkey PRIMARY KEY (id);
 
 CREATE SEQUENCE games_id_seq
     START WITH 1
@@ -51,6 +77,8 @@ ALTER SEQUENCE games_id_seq OWNED BY games.id;
 
 
 
+-- Giveaways
+
 CREATE TABLE giveaways (
     amount bigint NOT NULL,
     created timestamp with time zone DEFAULT now() NOT NULL,
@@ -58,6 +86,9 @@ CREATE TABLE giveaways (
     id bigint NOT NULL
 );
 
+ALTER TABLE ONLY giveaways ALTER COLUMN id SET DEFAULT nextval('giveaways_id_seq'::regclass);
+
+CREATE INDEX giveaways_user_id_idx ON giveaways USING btree (user_id);
 
 CREATE SEQUENCE giveaways_id_seq
     START WITH 1
@@ -68,7 +99,11 @@ CREATE SEQUENCE giveaways_id_seq
 
 ALTER SEQUENCE giveaways_id_seq OWNED BY giveaways.id;
 
+ALTER TABLE ONLY giveaways ADD CONSTRAINT giveaways_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
+
+
+-- Plays
 
 CREATE TABLE plays (
     id bigint NOT NULL,
@@ -80,14 +115,31 @@ CREATE TABLE plays (
     bet bigint NOT NULL,
     bonus bigint
 );
+
+ALTER TABLE ONLY plays ALTER COLUMN id SET DEFAULT nextval('plays_id_seq'::regclass);
+
+ALTER TABLE ONLY plays ADD CONSTRAINT plays_pkey PRIMARY KEY (id);
+
+CREATE INDEX plays_game_id_idx ON plays USING btree (game_id);
+
+CREATE INDEX plays_user_id_idx ON plays USING btree (user_id, id DESC);
+
+ALTER TABLE ONLY plays ADD CONSTRAINT plays_game_id_fkey FOREIGN KEY (game_id) REFERENCES games(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE ONLY plays ADD CONSTRAINT plays_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
 CREATE SEQUENCE plays_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
+
 ALTER SEQUENCE plays_id_seq OWNED BY plays.id;
 
+
+
+-- Recovery
 
 CREATE TABLE recovery (
     id uuid NOT NULL PRIMARY KEY,
@@ -100,16 +152,31 @@ CREATE TABLE recovery (
 CREATE INDEX fki_foreing_user_id ON recovery USING btree (user_id);
 
 
+
+-- Sessions:
+    -- Regular sessions for users and one time tokens for the cross origin connection to the game server
+    -- Ott allows to let the session is http only
+
 CREATE TABLE sessions (
     id uuid NOT NULL,
     user_id bigint NOT NULL,
+    ip_address inet NOT NULL,
+    user_agent text,
+    ott boolean DEFAULT false,
     created timestamp with time zone DEFAULT now() NOT NULL,
-    ott boolean DEFAULT false
+    expired timestamp with time zone DEFAULT now() + interval '21 days'
 );
 
+ALTER TABLE ONLY sessions
+    ADD CONSTRAINT unique_id PRIMARY KEY (id);
+
+CREATE INDEX sessions_user_id_idx ON sessions USING btree (user_id);
+
+
+
+-- Users
+
 CREATE TYPE UserClassEnum AS ENUM ('user', 'moderator', 'admin');
-
-
 
 CREATE TABLE users (
     id bigint NOT NULL,
@@ -145,6 +212,8 @@ ALTER SEQUENCE users_id_seq OWNED BY users.id;
 
 
 
+-- Users View
+
 CREATE VIEW users_view AS
  SELECT u.id,
     u.created,
@@ -170,64 +239,7 @@ CREATE TABLE game_hashes
 
 
 
-ALTER TABLE ONLY fundings ALTER COLUMN id SET DEFAULT nextval('fundings_id_seq'::regclass);
-
-ALTER TABLE ONLY games ALTER COLUMN id SET DEFAULT nextval('games_id_seq'::regclass);
-
-ALTER TABLE ONLY giveaways ALTER COLUMN id SET DEFAULT nextval('giveaways_id_seq'::regclass);
-
-ALTER TABLE ONLY plays ALTER COLUMN id SET DEFAULT nextval('plays_id_seq'::regclass);
-
-
-
-
-ALTER TABLE ONLY blocks
-    ADD CONSTRAINT bv_blocks_pkey PRIMARY KEY (height, hash);
-
-ALTER TABLE ONLY fundings
-    ADD CONSTRAINT fundings_user_id_bitcoin_deposit_txid_key UNIQUE (user_id, bitcoin_deposit_txid);
-
-ALTER TABLE ONLY games
-    ADD CONSTRAINT games_pkey PRIMARY KEY (id);
-
-ALTER TABLE ONLY plays
-    ADD CONSTRAINT plays_pkey PRIMARY KEY (id);
-
-ALTER TABLE ONLY fundings
-    ADD CONSTRAINT transactions_pkey PRIMARY KEY (id);
-
-ALTER TABLE ONLY sessions
-    ADD CONSTRAINT unique_id PRIMARY KEY (id);
-
-
-
-CREATE INDEX fundings_user_id_idx ON fundings USING btree (user_id);
-
-CREATE INDEX giveaways_user_id_idx ON giveaways USING btree (user_id);
-
-CREATE INDEX plays_game_id_idx ON plays USING btree (game_id);
-
-CREATE INDEX plays_user_id_idx ON plays USING btree (user_id, id DESC);
-
-CREATE INDEX sessions_user_id_idx ON sessions USING btree (user_id);
-
-
-
-ALTER TABLE ONLY fundings
-    ADD CONSTRAINT fundings_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
-ALTER TABLE ONLY giveaways
-    ADD CONSTRAINT giveaways_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
-ALTER TABLE ONLY plays
-    ADD CONSTRAINT plays_game_id_fkey FOREIGN KEY (game_id) REFERENCES games(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
-ALTER TABLE ONLY plays
-    ADD CONSTRAINT plays_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
+-- Leaderboard View
 
 CREATE MATERIALIZED VIEW leaderboard AS
  SELECT id as user_id,
@@ -250,6 +262,9 @@ CREATE INDEX leaderboard_gross_profit_idx ON leaderboard USING btree (gross_prof
 CREATE INDEX leaderboard_net_profit_idx ON leaderboard USING btree (net_profit);
 
 
+
+-- Chat messages
+
 CREATE TABLE chat_messages
 (
   id bigserial NOT NULL PRIMARY KEY,
@@ -263,6 +278,9 @@ CREATE TABLE chat_messages
 CREATE INDEX chat_messages_user_id_idx ON chat_messages USING btree(user_id);
 CREATE INDEX chat_messages_channel_id_idx ON chat_messages USING btree(channel, id);
 
+
+
+-- User stats
 
 CREATE OR REPLACE FUNCTION plays_users_stats_trigger()
   RETURNS trigger AS $$

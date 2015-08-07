@@ -5,8 +5,8 @@
     "node": "~0.12.0"
   },
   "scripts": {
-    "start-dev": "env $(cat .env | xargs) nodemon src/server/index",
-    "start": "node src/server/index"
+    "start-dev": "env $(cat .env | xargs) nodemon server/index",
+    "start": "node server/index"
   },
   "dependencies": {
     "CBuffer": "^1.1.0",

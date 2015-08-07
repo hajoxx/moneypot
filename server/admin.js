@@ -1,7 +1,7 @@
 var assert = require('assert');
 var async = require('async');
 var database = require('./database');
-var config = require('../../config/config');
+var config = require('../config/config');
 
 /**
  * The req.user.admin is inserted in the user validation middleware

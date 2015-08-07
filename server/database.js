@@ -1,6 +1,6 @@
 var assert = require('assert');
 var uuid = require('uuid');
-var config = require('../../config/config');
+var config = require('../config/config');
 
 var async = require('async');
 var lib = require('./lib');
@@ -103,12 +103,10 @@ function getClient(runner, callback) {
             });
         });
     }
-
-
 }
 
 //Returns a sessionId
-exports.createUser = function(username, password, email, callback) {
+exports.createUser = function(username, password, email, ipAddress, userAgent, callback) {
     assert(username && password);
 
     getClient(
@@ -135,7 +133,7 @@ exports.createUser = function(username, password, email, callback) {
                                 assert(data.rows.length === 1);
                                 var user = data.rows[0];
 
-                                createSession(client, user.id, callback);
+                                createSession(client, user.id, ipAddress, userAgent, callback);
                             }
                         );
 
@@ -191,7 +189,7 @@ exports.validateUser = function(username, password, otp, callback) {
         if (user.mfa_secret) {
             if (!otp) return callback('INVALID_OTP'); // really, just needs one
 
-            var expected = speakeasy.totp({key: user.mfa_secret, encoding: 'base32'});
+            var expected = speakeasy.totp({ key: user.mfa_secret, encoding: 'base32' });
 
             if (otp !== expected)
                 return callback('INVALID_OTP');
@@ -201,20 +199,24 @@ exports.validateUser = function(username, password, otp, callback) {
     });
 };
 
-exports.deleteUserSessionsBySessionId = function(sessionId, callback) {
+exports.expireSessionsBySessionId = function(sessionId, callback) {
     assert(sessionId);
-    query('DELETE FROM sessions WHERE user_id = (SELECT user_id FROM sessions WHERE id = $1)', [sessionId], callback);
+    query('UPDATE sessions SET expired = now() WHERE id = $1', [sessionId], callback);
 };
 
-exports.deleteUserSessionsByUserId = function(userId, callback) {
+
+/** Expire all the sessions of an user by id **/
+exports.expireSessionsByUserId = function(userId, callback) {
     assert(userId);
-    query('DELETE FROM sessions WHERE user_id = $1', [userId], callback);
+
+    query('UPDATE sessions SET expired = now() WHERE user_id = $1', [userId], callback);
 };
 
-function createSession(client, userId, callback) {
+
+function createSession(client, userId, ipAddress, userAgent, callback) {
     var sessionId = uuid.v4();
 
-    client.query('INSERT INTO sessions(id, user_id) VALUES($1, $2) RETURNING id', [sessionId, userId], function(err, res) {
+    client.query('INSERT INTO sessions(id, user_id, ip_address, user_agent) VALUES($1, $2, $3, $4) RETURNING id', [sessionId, userId, ipAddress, userAgent], function(err, res) {
         if (err) return callback(err);
         assert(res.rows.length === 1);
 
@@ -225,11 +227,11 @@ function createSession(client, userId, callback) {
     });
 }
 
-exports.createOneTimeToken = function(userId, callback) {
+exports.createOneTimeToken = function(userId, ipAddress, userAgent, callback) {
     assert(userId);
     var id = uuid.v4();
 
-    query('INSERT INTO sessions(id, user_id, ott) VALUES($1, $2, true) RETURNING id', [id, userId], function(err, result) {
+    query('INSERT INTO sessions(id, user_id, ip_address, user_agent, ott) VALUES($1, $2, $3, $4, true) RETURNING id', [id, userId, ipAddress, userAgent], function(err, result) {
         if (err) return callback(err);
         assert(result.rows.length === 1);
 
@@ -239,11 +241,11 @@ exports.createOneTimeToken = function(userId, callback) {
     });
 };
 
-exports.createSession = function(userId, callback) {
+exports.createSession = function(userId, ipAddress, userAgent, callback) {
     assert(userId && callback);
 
     getClient(function(client, callback) {
-        createSession(client, userId, callback);
+        createSession(client, userId, ipAddress, userAgent, callback);
     }, callback);
 
 };
@@ -292,7 +294,7 @@ exports.addRecoverId = function(userId, ipAddress, callback) {
 
 exports.getUserBySessionId = function(sessionId, callback) {
     assert(sessionId && callback);
-    query('SELECT * FROM users_view WHERE id = (SELECT user_id FROM sessions WHERE id = $1 AND ott = FALSE)', [sessionId], function(err, response) {
+    query('SELECT * FROM users_view WHERE id = (SELECT user_id FROM sessions WHERE id = $1 AND ott = false AND expired > now())', [sessionId], function(err, response) {
         if (err) return callback(err);
 
         var data = response.rows;

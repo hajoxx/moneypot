@@ -11,7 +11,7 @@ var speakeasy = require('speakeasy');
 var qr = require('qr-image');
 var uuid = require('uuid');
 var _ = require('lodash');
-var config = require('../../config/config');
+var config = require('../config/config');
 
 var sessionOptions = {
     httpOnly: true,
@@ -30,6 +30,8 @@ exports.register  = function(req, res, next) {
     var password = lib.removeNullsAndTrim(values.user.password);
     var password2 = lib.removeNullsAndTrim(values.user.confirm);
     var email = lib.removeNullsAndTrim(values.user.email);
+    var ipAddress = req.ip;
+    var userAgent = req.get('user-agent');
 
     var notValid = lib.isInvalidUsername(username);
     if (notValid) return res.render('register', { warning: 'username not valid because: ' + notValid, values: values.user });
@@ -57,7 +59,7 @@ exports.register  = function(req, res, next) {
         });
     }
 
-    database.createUser(username, password, email, function(err, sessionId) {
+    database.createUser(username, password, email, ipAddress, userAgent, function(err, sessionId) {
         if (err) {
             if (err === 'USERNAME_TAKEN') {
                 values.user.name = null;
@@ -79,6 +81,8 @@ exports.login = function(req, res, next) {
     var username = lib.removeNullsAndTrim(req.body.username);
     var password = lib.removeNullsAndTrim(req.body.password);
     var otp = lib.removeNullsAndTrim(req.body.otp);
+    var ipAddress = req.ip;
+    var userAgent = req.get('user-agent');
 
     if (!username || !password)
         return res.render('login', { warning: 'no username or password' });
@@ -99,7 +103,7 @@ exports.login = function(req, res, next) {
         }
         assert(userId);
 
-        database.createSession(userId, function(err, sessionId) {
+        database.createSession(userId, ipAddress, userAgent, function(err, sessionId) {
             if (err)
                 return next(new Error('Unable to create session for userid ' + userId +  ':\n' + err));
 
@@ -118,7 +122,7 @@ exports.logout = function(req, res, next) {
     var sessionId = req.cookies.id;
     if (!sessionId) return res.redirect('/');
 
-    database.deleteUserSessionsBySessionId(sessionId, function(err) {
+    database.expireSessionsBySessionId(sessionId, function(err) {
         if (err)
             return next(new Error('Unable to logout got error: \n' + err));
         res.redirect('/');
@@ -323,7 +327,7 @@ exports.account = function(req, res, next) {
 /**
  * POST
  * Restricted API
- * Shows the account page, the default account page.
+ * Change the user's password
  **/
 exports.resetPassword = function(req, res, next) {
     var user = req.user;
@@ -332,6 +336,8 @@ exports.resetPassword = function(req, res, next) {
     var newPassword = lib.removeNullsAndTrim(req.body.password);
     var otp = lib.removeNullsAndTrim(req.body.otp);
     var confirm = lib.removeNullsAndTrim(req.body.confirmation);
+    var ipAddress = req.ip;
+    var userAgent = req.get('user-agent');
 
     if (!password) return  res.redirect('/security?err=Enter%20your%20old%20password');
 
@@ -352,11 +358,11 @@ exports.resetPassword = function(req, res, next) {
             if (err)
                 return next(new Error('Unable to change user password: \n' +  err));
 
-            database.deleteUserSessionsByUserId(user.id, function(err) {
+            database.expireSessionsByUserId(user.id, function(err) {
                 if (err)
                     return next(new Error('Unable to delete user sessions for userId: ' + user.id + ': \n' + err));
 
-                database.createSession(user.id, function(err, sessionId) {
+                database.createSession(user.id, ipAddress, userAgent, function(err, sessionId) {
                     if (err)
                         return next(new Error('Unable to create session for userid ' + userId +  ':\n' + err));
 
@@ -581,9 +587,11 @@ exports.validateResetPassword = function(req, res, next) {
  * Public API
  * Receives the new password for the recovery and change it
  **/
-exports.handleReset = function(req, res, next) {
+exports.resetPasswordRecovery = function(req, res, next) {
     var recoverId = req.body.recover_id;
     var password = lib.removeNullsAndTrim(req.body.password);
+    var ipAddress = req.ip;
+    var userAgent = req.get('user-agent');
 
     if (!recoverId || !lib.isUUIDv4(recoverId)) return next('Invalid recovery id');
 
@@ -596,7 +604,7 @@ exports.handleReset = function(req, res, next) {
                 return next('Invalid recovery id');
             return next(new Error('Unable to change password for recoverId ' + recoverId + ', password: ' + password + '\n' + err));
         }
-        database.createSession(user.id, function(err, sessionId) {
+        database.createSession(user.id, ipAddress, userAgent, function(err, sessionId) {
             if (err)
                 return next(new Error('Unable to create session for password from recover id: \n' + err));
 
