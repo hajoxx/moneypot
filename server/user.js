@@ -540,7 +540,7 @@ exports.sendPasswordRecover = function(req, res, next) {
 
             database.addRecoverId(user.id, remoteIpAddress, function(err, recoveryId) {
                 if(err)
-                    callback(err);
+                    return callback(err);
 
                 recoveryList.push([user.username, recoveryId]);
                 callback(); //async success

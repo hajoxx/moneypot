@@ -2,6 +2,44 @@ CREATE EXTENSION plv8;
 
 
 
+-- Users
+
+CREATE TYPE UserClassEnum AS ENUM ('user', 'moderator', 'admin');
+
+CREATE TABLE users (
+    id bigint NOT NULL,
+    created timestamp with time zone DEFAULT now() NOT NULL,
+    username text NOT NULL,
+    email text,
+    password text NOT NULL,
+    mfa_secret text,
+    balance_satoshis bigint DEFAULT 0 NOT NULL,
+    gross_profit bigint DEFAULT 0 NOT NULL,
+    net_profit bigint DEFAULT 0 NOT NULL,
+    games_played bigint DEFAULT 0 NOT NULL,
+    userclass UserClassEnum DEFAULT 'user' NOT NULL,
+    CONSTRAINT users_balance_satoshis_check CHECK ((balance_satoshis >= 0))
+);
+
+ALTER TABLE ONLY users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+CREATE UNIQUE INDEX unique_username ON users USING btree (lower(username));
+CREATE INDEX users_email_idx ON users USING btree (lower(email));
+CREATE INDEX user_id_idx ON users USING btree (id);
+
+CREATE SEQUENCE users_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+ALTER SEQUENCE users_id_seq OWNED BY users.id;
+
+ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
+
+
+
 -- Blocks
 
 CREATE TABLE blocks (
@@ -17,8 +55,8 @@ ALTER TABLE ONLY blocks
 -- Fundings
 
 CREATE TABLE fundings (
-    id bigint NOT NULL,
-    user_id bigint NOT NULL,
+    id bigserial NOT NULL PRIMARY KEY,
+    user_id bigint NOT NULL REFERENCES users(id),
     amount bigint NOT NULL,
     bitcoin_withdrawal_txid text,
     bitcoin_withdrawal_address text,
@@ -29,27 +67,10 @@ CREATE TABLE fundings (
     CONSTRAINT fundings_withdrawal_id_key UNIQUE (withdrawal_id)
 );
 
-ALTER TABLE ONLY fundings ALTER COLUMN id SET DEFAULT nextval('fundings_id_seq'::regclass);
-
 ALTER TABLE ONLY fundings
     ADD CONSTRAINT fundings_user_id_bitcoin_deposit_txid_key UNIQUE (user_id, bitcoin_deposit_txid);
 
-ALTER TABLE ONLY fundings
-    ADD CONSTRAINT transactions_pkey PRIMARY KEY (id);
-
 CREATE INDEX fundings_user_id_idx ON fundings USING btree (user_id);
-
-ALTER TABLE ONLY fundings
-    ADD CONSTRAINT fundings_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-CREATE SEQUENCE fundings_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE fundings_id_seq OWNED BY fundings.id;
 
 
 
@@ -62,8 +83,6 @@ CREATE TABLE games (
     ended boolean DEFAULT false NOT NULL
 );
 
-ALTER TABLE ONLY games ALTER COLUMN id SET DEFAULT nextval('games_id_seq'::regclass);
-
 ALTER TABLE ONLY games ADD CONSTRAINT games_pkey PRIMARY KEY (id);
 
 CREATE SEQUENCE games_id_seq
@@ -74,6 +93,8 @@ CREATE SEQUENCE games_id_seq
     CACHE 1;
 
 ALTER SEQUENCE games_id_seq OWNED BY games.id;
+
+ALTER TABLE ONLY games ALTER COLUMN id SET DEFAULT nextval('games_id_seq'::regclass);
 
 
 
@@ -86,8 +107,6 @@ CREATE TABLE giveaways (
     id bigint NOT NULL
 );
 
-ALTER TABLE ONLY giveaways ALTER COLUMN id SET DEFAULT nextval('giveaways_id_seq'::regclass);
-
 CREATE INDEX giveaways_user_id_idx ON giveaways USING btree (user_id);
 
 CREATE SEQUENCE giveaways_id_seq
@@ -98,6 +117,8 @@ CREATE SEQUENCE giveaways_id_seq
     CACHE 1;
 
 ALTER SEQUENCE giveaways_id_seq OWNED BY giveaways.id;
+
+ALTER TABLE ONLY giveaways ALTER COLUMN id SET DEFAULT nextval('giveaways_id_seq'::regclass);
 
 ALTER TABLE ONLY giveaways ADD CONSTRAINT giveaways_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
@@ -115,8 +136,6 @@ CREATE TABLE plays (
     bet bigint NOT NULL,
     bonus bigint
 );
-
-ALTER TABLE ONLY plays ALTER COLUMN id SET DEFAULT nextval('plays_id_seq'::regclass);
 
 ALTER TABLE ONLY plays ADD CONSTRAINT plays_pkey PRIMARY KEY (id);
 
@@ -136,6 +155,8 @@ CREATE SEQUENCE plays_id_seq
     CACHE 1;
 
 ALTER SEQUENCE plays_id_seq OWNED BY plays.id;
+
+ALTER TABLE ONLY plays ALTER COLUMN id SET DEFAULT nextval('plays_id_seq'::regclass);
 
 
 
@@ -171,44 +192,6 @@ ALTER TABLE ONLY sessions
     ADD CONSTRAINT unique_id PRIMARY KEY (id);
 
 CREATE INDEX sessions_user_id_idx ON sessions USING btree (user_id);
-
-
-
--- Users
-
-CREATE TYPE UserClassEnum AS ENUM ('user', 'moderator', 'admin');
-
-CREATE TABLE users (
-    id bigint NOT NULL,
-    created timestamp with time zone DEFAULT now() NOT NULL,
-    username text NOT NULL,
-    email text,
-    password text NOT NULL,
-    mfa_secret text,
-    balance_satoshis bigint DEFAULT 0 NOT NULL,
-    gross_profit bigint DEFAULT 0 NOT NULL,
-    net_profit bigint DEFAULT 0 NOT NULL,
-    games_played bigint DEFAULT 0 NOT NULL,
-    userclass UserClassEnum DEFAULT 'user' NOT NULL,
-    CONSTRAINT users_balance_satoshis_check CHECK ((balance_satoshis >= 0))
-);
-
-ALTER TABLE ONLY users
-    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
-
-CREATE UNIQUE INDEX unique_username ON users USING btree (lower(username));
-CREATE INDEX users_email_idx ON users USING btree (lower(email));
-CREATE INDEX user_id_idx ON users USING btree (id);
-
-ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
-
-CREATE SEQUENCE users_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE users_id_seq OWNED BY users.id;
 
 
 
