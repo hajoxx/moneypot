@@ -184,8 +184,8 @@ CREATE TABLE sessions (
     ip_address inet NOT NULL,
     user_agent text,
     ott boolean DEFAULT false,
-    created timestamp with time zone DEFAULT now() NOT NULL,
-    expired timestamp with time zone DEFAULT now() + interval '21 days'
+    created timestamp with time zone NOT NULL DEFAULT now(),
+    expired timestamp with time zone NOT NULL DEFAULT now() + interval '21 days'
 );
 
 ALTER TABLE ONLY sessions
