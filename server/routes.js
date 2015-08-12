@@ -172,7 +172,6 @@ module.exports = function(app) {
     app.get('/support', restrict, user.contact);
     app.get('/account', restrict, user.account);
     app.get('/security', restrict, user.security);
-    app.get('/delete-email', restrict, user.deleteEmail);
     app.get('/forgot-password', staticPageLogged('forgot-password'));
     app.get('/calculator', staticPageLogged('calculator'));
     app.get('/guide', staticPageLogged('guide'));
@@ -194,7 +193,7 @@ module.exports = function(app) {
     app.post('/sent-reset', user.resetPasswordRecovery);
     app.post('/sent-recover', recaptchaRestrict, user.sendPasswordRecover);
     app.post('/reset-password', restrict, user.resetPassword);
-    app.post('/add-email', restrict, user.addEmail);
+    app.post('/edit-email', restrict, user.editEmail);
     app.post('/enable-2fa', restrict, user.enableMfa);
     app.post('/disable-2fa', restrict, user.disableMfa);
     app.post('/withdraw-request', restrict, user.handleWithdrawRequest);

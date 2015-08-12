@@ -70,26 +70,28 @@
             <br>
             <br>
             <hr>
-            {{?it.user.email}}
-                <h5>Recovery Email</h5>
-                <span>{{=it.user.email}}<a class="small" href="/delete-email"> delete this email.</a></span>
-            {{??}}
-                <h5>Add an Email Address</h5>
-                <p class="small">In case you've forgotten your password we can send you a link to reset it, otherwise you don't have other way to recover your account.</p>
 
-                <form action="/add-email" method="post">
-                    <label for="email">Recovery Email</label>
-                    <input type="email" id="email" name="email" required="" />
-                    <label for="password">Confirmation Password</label>
-                    <input name="password" type="password" id="check_password" autocomplete="off" pattern=".{7,50}" required/>
-                    {{?it.user.mfa_secret}}
-                        <label>2FA Code
-                            <input name="otp" type="text" autocomplete="off" pattern="[0-9]{6}" required />
-                        </label>
-                    {{?}}
-                    <input class="border-button right blue" type="submit" value="save"/>
-                </form>
-            {{?}}
+            <h5>Edit Email Address</h5>
+            <p class="small">In case you've forgotten your password we can send you a link to reset it, otherwise you don't have other way to recover your account.</p>
+
+            <form action="/edit-email" method="post">
+                <label for="email">Recovery Email</label>
+
+                <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
+                <input style="display:none" type="text" name="fakeusernameremembered"/>
+                <input style="display:none" type="password" name="fakepasswordremembered"/>
+
+                <input type="email" id="email" name="email" value="{{?it.user.email}}{{=it.user.email}}{{??}}{{?}}" />
+                <label for="password">Confirmation Password</label>
+                <input name="password" type="password" id="check_password" autocomplete="off" pattern=".{7,50}" required/>
+                {{?it.user.mfa_secret}}
+                    <label>2FA Code
+                        <input name="otp" type="text" autocomplete="off" pattern="[0-9]{6}" required />
+                    </label>
+                {{?}}
+                <input class="border-button right blue" type="submit" value="save"/>
+            </form>
+
             <br>
             <br>
             <hr>

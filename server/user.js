@@ -375,39 +375,25 @@ exports.resetPassword = function(req, res, next) {
 };
 
 /**
- * GET
- * Restricted API
- * Deletes de email address without asking for confirmation
- **/
-exports.deleteEmail = function(req, res, next) {
-    var user = req.user;
-    assert(user);
-    if (user.email === null) return res.redirect('/security?m=No email');
-
-    database.updateEmail(user.id, null, function(err) {
-        if (err)
-            return next(new Error('Unable to delete email: \n' + err));
-
-        res.redirect('security?m=Email deleted');
-    });
-};
-
-/**
  * POST
  * Restricted API
  * Adds an email to the account
  **/
-exports.addEmail = function(req, res, next) {
+exports.editEmail = function(req, res, next) {
     var user  = req.user;
     assert(user);
-    user.deposit_address = lib.deriveAddress(user.id);
 
     var email = lib.removeNullsAndTrim(req.body.email);
     var password = lib.removeNullsAndTrim(req.body.password);
     var otp = lib.removeNullsAndTrim(req.body.otp);
 
-    var notValid = lib.isInvalidEmail(email);
-    if (notValid) return res.redirect('/security?err=email invalid because: ' + notValid);
+    //If no email set to null
+    if(email.length === 0) {
+        email = null;
+    } else {
+        var notValid = lib.isInvalidEmail(email);
+        if (notValid) return res.redirect('/security?err=email invalid because: ' + notValid);
+    }
 
     notValid = lib.isInvalidPassword(password);
     if (notValid) return res.render('/security?err=password not valid because: ' + notValid);
