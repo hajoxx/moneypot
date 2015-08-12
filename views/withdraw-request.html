@@ -52,6 +52,10 @@
                 that uses the sending address, or returns to sender, because any returns will probably be credited to a different player.
             </p>
             <form action="/withdraw-request" method="post">
+                <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
+                <input style="display:none" type="text" name="fakeusernameremembered"/>
+                <input style="display:none" type="password" name="fakepasswordremembered"/>
+
                 <label for="amount">Bits amount</label>
                 <input type="number" id="amount" name="amount" placeholder="{{= it.miningFeeBits + 100 }}" min="{{= it.miningFeeBits + 100 }}" step=".01" required/>
                 <label for="destination">Destination Address</label>

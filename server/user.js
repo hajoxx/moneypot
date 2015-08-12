@@ -658,7 +658,7 @@ exports.handleWithdrawRequest = function(req, res, next) {
 
     var r =  /^[1-9]\d*(\.\d{0,2})?$/;
     if (!r.test(amount))
-        return res.render('withdraw_request', { user: user, id: uuid.v4(),  warning: 'Not a valid amount' });
+        return res.render('withdraw-request', { user: user, id: uuid.v4(),  warning: 'Not a valid amount' });
 
     amount = Math.round(parseFloat(amount) * 100);
     assert(Number.isFinite(amount));
@@ -666,32 +666,32 @@ exports.handleWithdrawRequest = function(req, res, next) {
     var minWithdraw = config.MINING_FEE + 10000;
 
     if (amount < minWithdraw)
-        return res.render('withdraw_request', { user: user,  id: uuid.v4(), warning: 'You must withdraw ' + minWithdraw + ' or more'  });
+        return res.render('withdraw-request', { user: user,  id: uuid.v4(), warning: 'You must withdraw ' + minWithdraw + ' or more'  });
 
     if (typeof destination !== 'string')
-        return res.render('withdraw_request', { user: user,  id: uuid.v4(), warning: 'Destination address not provided' });
+        return res.render('withdraw-request', { user: user,  id: uuid.v4(), warning: 'Destination address not provided' });
 
     try {
         var version = bitcoinjs.Address.fromBase58Check(destination).version;
         if (version !== bitcoinjs.networks.bitcoin.pubKeyHash && version !== bitcoinjs.networks.bitcoin.scriptHash)
-            return res.render('withdraw_request', { user: user,  id: uuid.v4(), warning: 'Destination address is not a bitcoin one' });
+            return res.render('withdraw-request', { user: user,  id: uuid.v4(), warning: 'Destination address is not a bitcoin one' });
     } catch(ex) {
-        return res.render('withdraw_request', { user: user,  id: uuid.v4(), warning: 'Not a valid destination address' });
+        return res.render('withdraw-request', { user: user,  id: uuid.v4(), warning: 'Not a valid destination address' });
     }
 
     if (!password)
-        return res.render('withdraw_request', { user: user,  id: uuid.v4(), warning: 'Must enter a password' });
+        return res.render('withdraw-request', { user: user,  id: uuid.v4(), warning: 'Must enter a password' });
 
     if(!lib.isUUIDv4(withdrawalId))
-      return res.render('withdraw_request', { user: user,  id: uuid.v4(), warning: 'Could not find a one-time token' });
+      return res.render('withdraw-request', { user: user,  id: uuid.v4(), warning: 'Could not find a one-time token' });
 
     database.validateUser(user.username, password, otp, function(err) {
 
         if (err) {
             if (err === 'WRONG_PASSWORD')
-                return res.render('withdraw_request', { user: user, id: uuid.v4(), warning: 'wrong password, try it again...' });
+                return res.render('withdraw-request', { user: user, id: uuid.v4(), warning: 'wrong password, try it again...' });
             if (err === 'INVALID_OTP')
-                return res.render('withdraw_request', { user: user, id: uuid.v4(), warning: 'invalid one-time token' });
+                return res.render('withdraw-request', { user: user, id: uuid.v4(), warning: 'invalid one-time token' });
             //Should be an user
             return next(new Error('Unable to validate user handling withdrawal: \n' + err));
         }
@@ -699,17 +699,17 @@ exports.handleWithdrawRequest = function(req, res, next) {
         withdraw(req.user.id, amount, destination, withdrawalId, function(err) {
             if (err) {
                 if (err === 'NOT_ENOUGH_MONEY')
-                    return res.render('withdraw_request', { user: user, id: uuid.v4(), warning: 'Not enough money to process withdraw.' });
+                    return res.render('withdraw-request', { user: user, id: uuid.v4(), warning: 'Not enough money to process withdraw.' });
                 else if (err === 'PENDING')
-                    return res.render('withdraw_request', { user: user,  id: uuid.v4(), success: 'Withdrawal successful, however hot wallet was empty. Withdrawal will be reviewed and sent ASAP' });
+                    return res.render('withdraw-request', { user: user,  id: uuid.v4(), success: 'Withdrawal successful, however hot wallet was empty. Withdrawal will be reviewed and sent ASAP' });
                 else if(err === 'SAME_WITHDRAWAL_ID')
-                    return res.render('withdraw_request', { user: user,  id: uuid.v4(), warning: 'Please reload your page, it looks like you tried to make the same transaction twice.' });
+                    return res.render('withdraw-request', { user: user,  id: uuid.v4(), warning: 'Please reload your page, it looks like you tried to make the same transaction twice.' });
                 else if(err === 'FUNDING_QUEUED')
-                    return res.render('withdraw_request', { user: user,  id: uuid.v4(), success: 'Your transaction is being processed come back later to see the status.' });
+                    return res.render('withdraw-request', { user: user,  id: uuid.v4(), success: 'Your transaction is being processed come back later to see the status.' });
                 else
                     return next(new Error('Unable to withdraw: ' + err));
             }
-            return res.render('withdraw_request', { user: user, id: uuid.v4(), success: 'OK' });
+            return res.render('withdraw-request', { user: user, id: uuid.v4(), success: 'OK' });
         });
     });
 };
@@ -721,7 +721,7 @@ exports.handleWithdrawRequest = function(req, res, next) {
  **/
 exports.withdrawRequest = function(req, res) {
     assert(req.user);
-    res.render('withdraw_request', { user: req.user, id: uuid.v4() });
+    res.render('withdraw-request', { user: req.user, id: uuid.v4() });
 };
 
 /**
