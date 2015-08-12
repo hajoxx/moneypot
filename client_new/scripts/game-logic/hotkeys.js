@@ -32,6 +32,7 @@ define([
 
     Hotkeys.prototype.mount = function() {
         GameSettingsStore.addChangeListener(this._onChangeBinded);
+        ControlsStore.addChangeListener(this._onChangeBinded);
         _.extend(this.state, getState());
         if(this.state.hotkeysActive)
             this._bindKeys();
@@ -39,6 +40,7 @@ define([
 
     Hotkeys.prototype.unmount = function() {
         GameSettingsStore.removeChangeListener(this._onChangeBinded);
+        ControlsStore.removeChangeListener(this._onChangeBinded);
         Mousetrap.reset();
     };
 
