@@ -133,7 +133,7 @@ exports.createUser = function(username, password, email, ipAddress, userAgent, c
                                 assert(data.rows.length === 1);
                                 var user = data.rows[0];
 
-                                createSession(client, user.id, ipAddress, userAgent, callback);
+                                createSession(client, user.id, ipAddress, userAgent, false, callback);
                             }
                         );
 
@@ -199,31 +199,32 @@ exports.validateUser = function(username, password, otp, callback) {
     });
 };
 
-exports.expireSessionsBySessionId = function(sessionId, callback) {
-    assert(sessionId);
-    query('UPDATE sessions SET expired = now() WHERE id = $1', [sessionId], callback);
-};
-
-
-/** Expire all the sessions of an user by id **/
+/** Expire all the not expired sessions of an user by id **/
 exports.expireSessionsByUserId = function(userId, callback) {
     assert(userId);
 
-    query('UPDATE sessions SET expired = now() WHERE user_id = $1', [userId], callback);
+    query('UPDATE sessions SET expired = now() WHERE user_id = $1 AND expired > now()', [userId], callback);
 };
 
 
-function createSession(client, userId, ipAddress, userAgent, callback) {
+function createSession(client, userId, ipAddress, userAgent, remember, callback) {
     var sessionId = uuid.v4();
 
-    client.query('INSERT INTO sessions(id, user_id, ip_address, user_agent) VALUES($1, $2, $3, $4) RETURNING id', [sessionId, userId, ipAddress, userAgent], function(err, res) {
+    var expired = new Date();
+    if (remember)
+        expired.setFullYear(expired.getFullYear() + 10);
+    else
+        expired.setDate(expired.getDate() + 21);
+
+    client.query('INSERT INTO sessions(id, user_id, ip_address, user_agent, expired) VALUES($1, $2, $3, $4, $5) RETURNING id',
+        [sessionId, userId, ipAddress, userAgent, expired], function(err, res) {
         if (err) return callback(err);
         assert(res.rows.length === 1);
 
         var session = res.rows[0];
         assert(session.id);
 
-        callback(null, session.id);
+        callback(null, session.id, expired);
     });
 }
 
@@ -241,11 +242,11 @@ exports.createOneTimeToken = function(userId, ipAddress, userAgent, callback) {
     });
 };
 
-exports.createSession = function(userId, ipAddress, userAgent, callback) {
+exports.createSession = function(userId, ipAddress, userAgent, remember, callback) {
     assert(userId && callback);
 
     getClient(function(client, callback) {
-        createSession(client, userId, ipAddress, userAgent, callback);
+        createSession(client, userId, ipAddress, userAgent, remember, callback);
     }, callback);
 
 };

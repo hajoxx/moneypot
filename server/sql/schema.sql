@@ -191,7 +191,7 @@ CREATE TABLE sessions (
 ALTER TABLE ONLY sessions
     ADD CONSTRAINT unique_id PRIMARY KEY (id);
 
-CREATE INDEX sessions_user_id_idx ON sessions USING btree (user_id);
+CREATE INDEX sessions_user_id_idx ON sessions USING btree (user_id, expired);
 
 
 

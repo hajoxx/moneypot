@@ -81,16 +81,17 @@ exports.login = function(req, res, next) {
     var username = lib.removeNullsAndTrim(req.body.username);
     var password = lib.removeNullsAndTrim(req.body.password);
     var otp = lib.removeNullsAndTrim(req.body.otp);
+    var remember = !!req.body.remember;
     var ipAddress = req.ip;
     var userAgent = req.get('user-agent');
 
     if (!username || !password)
         return res.render('login', { warning: 'no username or password' });
 
-
     database.validateUser(username, password, otp, function(err, userId) {
-        console.log('Attempted login for user: ', username, ' err: ', err);
         if (err) {
+            console.log('[Login] Error for ', username, ' err: ', err);
+
             if (err === 'NO_USER')
                 return res.render('login',{ warning: 'Username does not exist' });
             if (err === 'WRONG_PASSWORD')
@@ -103,9 +104,12 @@ exports.login = function(req, res, next) {
         }
         assert(userId);
 
-        database.createSession(userId, ipAddress, userAgent, function(err, sessionId) {
+        database.createSession(userId, ipAddress, userAgent, remember, function(err, sessionId, expires) {
             if (err)
                 return next(new Error('Unable to create session for userid ' + userId +  ':\n' + err));
+
+            if(remember)
+                sessionOptions.expires = expires;
 
             res.cookie('id', sessionId, sessionOptions);
             res.redirect('/');
@@ -120,9 +124,11 @@ exports.login = function(req, res, next) {
  */
 exports.logout = function(req, res, next) {
     var sessionId = req.cookies.id;
-    if (!sessionId) return res.redirect('/');
+    var userId = req.user.id;
 
-    database.expireSessionsBySessionId(sessionId, function(err) {
+    assert(sessionId && userId);
+
+    database.expireSessionsByUserId(userId, function(err) {
         if (err)
             return next(new Error('Unable to logout got error: \n' + err));
         res.redirect('/');
@@ -362,7 +368,7 @@ exports.resetPassword = function(req, res, next) {
                 if (err)
                     return next(new Error('Unable to delete user sessions for userId: ' + user.id + ': \n' + err));
 
-                database.createSession(user.id, ipAddress, userAgent, function(err, sessionId) {
+                database.createSession(user.id, ipAddress, userAgent, false, function(err, sessionId) {
                     if (err)
                         return next(new Error('Unable to create session for userid ' + userId +  ':\n' + err));
 
@@ -590,7 +596,7 @@ exports.resetPasswordRecovery = function(req, res, next) {
                 return next('Invalid recovery id');
             return next(new Error('Unable to change password for recoverId ' + recoverId + ', password: ' + password + '\n' + err));
         }
-        database.createSession(user.id, ipAddress, userAgent, function(err, sessionId) {
+        database.createSession(user.id, ipAddress, userAgent, false, function(err, sessionId) {
             if (err)
                 return next(new Error('Unable to create session for password from recover id: \n' + err));
 
