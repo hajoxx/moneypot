@@ -68,7 +68,8 @@ html, body {
 
 #game-message-container>span {
     overflow-y: hidden;
-
+    padding-right: 20px;
+    display: block;
 }
 
 #game-message-container span>span, #game-message-container span>a {
@@ -104,16 +105,21 @@ html, body {
     cursor: pointer;
 }
 
-#game-message-container .close-message i{
+#game-message-container .close-message i {
     color: white;
     font-size: 0.8rem;
     line-height: 1.2rem;
     padding-right: 0.2rem;
 }
+@media handheld, only screen and (max-width: 767px) {
+    #game-message-container .close-message i {
+        font-size: 1rem;
+    }
+}
 
 #game-message-container {
     text-align: center;
-
+    z-index: 999;
 }
 
 #game-inner-container {
