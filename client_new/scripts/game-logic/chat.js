@@ -55,7 +55,7 @@ define([
         self.ws.on('msg', function(data) {
             //The chat only renders if the Arr length is diff, remove blocks of the array
             if (self.history.length > AppConstants.Chat.MAX_LENGTH)
-                self.history.splice(0, 400);
+                self.history.splice(-100, 100);
 
             // Match @username until end of string or invalid username char
             var r = new RegExp('@' + self.username + '(?:$|[^a-z0-9_\-])', 'i');
@@ -82,7 +82,7 @@ define([
         self.ws.on('connect', function() {
             self.state = 'CONNECTED';
             self.ws.emit('join', self.channelName);
-            self.trigger('connected')
+            self.trigger('connected');
         });
 
         /** Chat is joined to a channel **/
