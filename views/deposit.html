@@ -42,7 +42,8 @@
                 <hr>
                 <p class="account">
                     <b>Deposit Address:</b>
-                    <a href="bitcoin:{{=it.user.deposit_address}}?message=deposit">{{=it.user.deposit_address}}</a>
+                    <input type="text" value="{{=it.user.deposit_address}}" readonly>
+                    <a href="bitcoin:{{=it.user.deposit_address}}?message=deposit">Bitcoin link</a>
                 </p>
                 {{?it.user.deposits.length > 0}}
                     <table>
