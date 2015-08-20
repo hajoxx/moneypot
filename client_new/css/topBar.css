@@ -34,6 +34,7 @@
     line-height: 2rem;
     float: right;
     margin-right: 2rem;
+    cursor: pointer;
 }
 @media handheld, only screen and (max-width: 767px) {
     #top-bar .toggle-view {
