@@ -60,7 +60,7 @@ define([
 
             var chans = ['arabic', 'armenian', 'basque', 'bengali', 'bosnian', 'bulgarian', 'chinese',
                 'croatian', 'czech', 'danish', 'dutch', 'english', 'estonian', 'farsi', 'finnish', 'french', 'german',
-                'greek', 'hebrew', 'hungarian', 'indonesian', 'italian', 'latvian', 'lithuanian', 'maltese', 'norwegian',
+                'greek', 'hebrew', 'hindi', 'hungarian', 'indonesian', 'italian', 'latvian', 'lithuanian', 'maltese', 'norwegian',
                 'polish', 'portuguese', 'romanian', 'russian', 'serbian', 'slovak', 'slovenian', 'spanish', 'swedish', 'thai',
                 'turkish', 'ukrainian', 'vietnamese'];
 
