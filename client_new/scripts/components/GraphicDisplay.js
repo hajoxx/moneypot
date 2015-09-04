@@ -7,7 +7,7 @@ define([
     'game-logic/clib',
     'game-logic/stateLib',
     'lodash',
-    'game-logic/engine'
+    'game-logic/GameEngineStore'
 ], function(
     GameSettingsStore,
     Clib,

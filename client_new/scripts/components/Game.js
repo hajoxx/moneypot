@@ -11,7 +11,7 @@ define([
     'components/TabsSelector',
     'components/Players',
     'components/BetBar',
-    'game-logic/engine',
+    'game-logic/GameEngineStore',
     'game-logic/clib',
     'game-logic/hotkeys',
     'stores/GameSettingsStore'
@@ -28,7 +28,6 @@ define([
     GameSettingsStore
 ){
     var TopBar = React.createFactory(TopBarClass);
-    //var SpaceWrap = React.createFactory(SpaceWrapClass);
     var ChartControls = React.createFactory(ChartControlsClass);
     var TabsSelector = React.createFactory(TabsSelectorClass);
     var Players = React.createFactory(PlayersClass);

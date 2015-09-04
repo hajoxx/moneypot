@@ -39,6 +39,7 @@ define(['lib/key-mirror'], function(KeyMirror){
             LIST_MUTED_USERS: null,
             SET_BOTS_DISPLAY_MODE: null,
             JOIN_CHANNEL: null,
+            CLOSE_CURRENT_CHANNEL: null,
 
             //Game Settings
             TOGGLE_THEME: null,

@@ -13,7 +13,7 @@ define([
             selectedChannel: React.PropTypes.string.isRequired,
             selectChannel: React.PropTypes.func.isRequired,
             isMobileOrSmall: React.PropTypes.bool.isRequired,
-            moderator: React.PropTypes.any.isRequired
+            moderator: React.PropTypes.any //Not required because react takes null as not sent
         },
 
         getInitialState: function() {
@@ -21,13 +21,6 @@ define([
                 showingChans: false,
                 showFlagHoverName: false,
                 popoverPosition: { x: 0, y: 0 }
-            }
-        },
-
-        _selectChannel: function(chanName) {
-            var self = this;
-            return function() {
-                self.props.selectChannel(chanName);
             }
         },
 
@@ -79,7 +72,7 @@ define([
                         return D.img({
                                 src: 'img/flags/' + channel + '.png',
                                 className: 'flags-flag',
-                                onClick: self._selectChannel(channel),
+                                onClick: self.props.selectChannel(channel),
                                 key: 'flag-' + index,
                                 onMouseOver: self._onFlagOver(channel),
                                 onMouseOut: self._onFlagOut

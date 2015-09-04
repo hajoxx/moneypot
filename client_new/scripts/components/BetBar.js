@@ -2,7 +2,7 @@ define([
     'react',
     'lodash',
     'game-logic/clib',
-    'game-logic/engine',
+    'game-logic/GameEngineStore',
     'game-logic/stateLib'
 ], function(
     React,

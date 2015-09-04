@@ -1,7 +1,7 @@
 define([
     'react',
     'game-logic/clib',
-    'game-logic/engine'
+    'game-logic/GameEngineStore'
 ], function(
     React,
     Clib,

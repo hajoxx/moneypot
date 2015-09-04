@@ -3,7 +3,7 @@ define([
     'stores/GameSettingsStore',
     'stores/ControlsStore',
     'actions/HotkeysActions',
-    'game-logic/engine',
+    'game-logic/GameEngineStore',
     'game-logic/stateLib',
     'lodash'
 ], function(

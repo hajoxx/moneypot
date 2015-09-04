@@ -6,7 +6,7 @@ define([
     'components/BetButton',
     'actions/ControlsActions',
     'stores/ControlsStore',
-    'game-logic/engine'
+    'game-logic/GameEngineStore'
 ], function(
     React,
     Clib,

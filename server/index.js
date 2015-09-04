@@ -205,8 +205,8 @@ io.use(function(socket, next) {
 
         //Save the user info in the socket connection object
         socket.user = user;
-        socket.user.admin = user.userclass === 'admin';
-        socket.user.moderator = user.userclass === 'admin' || user.userclass === 'moderator';
+        socket.admin = user.userclass === 'admin';
+        socket.moderator = user.userclass === 'admin' || user.userclass === 'moderator';
         next();
     });
 });

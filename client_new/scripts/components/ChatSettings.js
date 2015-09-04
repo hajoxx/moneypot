@@ -1,19 +1,15 @@
 define([
     'react',
     'stores/GameSettingsStore',
-    'stores/ChatStore',
+    'game-logic/ChatEngineStore',
     'actions/ChatSettingsActions'
 ], function(
     React,
     GameSettingsStore,
-    ChatStore,
+    Chat,
     ChatSettingsActions
 ) {
     var D = React.DOM;
-
-    function getState() {
-        return ChatStore.getState();
-    }
 
     return React.createClass({
         displayName: 'ChatSettings',
@@ -23,16 +19,16 @@ define([
         },
 
         componentDidMount: function() {
-            ChatStore.addChangeListener(this._onChange);
+            Chat.on('all', this._onChange);
         },
 
         componentWillUnmount: function() {
-            ChatStore.removeChangeListener(this._onChange);
+            Chat.off('all', this._onChange);
         },
 
         _onChange: function() {
             if(this.isMounted())
-                this.setState(getState());
+                this.setState({ chat: Chat });
         },
 
         _setBotsDisplayMode: function(e) {
@@ -44,7 +40,7 @@ define([
 
                 D.div({ className: 'option-row' },
                     D.span({ className: 'option-text' }, 'Bots Display Mode'),
-                    D.select({ value: this.state.botsDisplayMode, onChange: this._setBotsDisplayMode },
+                    D.select({ value: Chat.botsDisplayMode, onChange: this._setBotsDisplayMode },
                         D.option({ value: 'normal' }, 'Normal'),
                         D.option({ value: 'greyed' }, 'Greyed Out'),
                         D.option({ value: 'none' }, "Don't display"))

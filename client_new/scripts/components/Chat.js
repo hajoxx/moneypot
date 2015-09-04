@@ -2,16 +2,14 @@ define([
     'react',
     'game-logic/clib',
     'autolinker',
-    'stores/ChatStore',
     'actions/ChatActions',
     'stores/GameSettingsStore',
-    'game-logic/chat',
+    'game-logic/ChatEngineStore',
     'components/ChatChannelSelector'
 ], function(
     React,
     Clib,
     Autolinker,
-    ChatStore,
     ChatActions,
     GameSettingsStore,
     ChatEngine,
@@ -51,7 +49,7 @@ define([
     var SCROLL_OFFSET = 120;
 
     function getState(evName){
-        var state = ChatStore.getState();
+        var state = {};
         state.ignoredClientList = GameSettingsStore.getIgnoredClientList();
         state.evName = evName;
         return state;
@@ -65,17 +63,12 @@ define([
         },
 
         getInitialState: function () {
-
-
-            /* Avoid scrolls down if a render is not caused by length chat change */
-            this.listLength = ChatEngine.history.length;
-
+            this.listLength = 0; // Avoid scrolls down if a render is not caused by length chat change
             return getState();
         },
 
         componentDidMount: function() {
             ChatEngine.on('all', this._onChange); //Use all events
-            ChatStore.addChangeListener(this._onChange); //Use all events
             GameSettingsStore.addChangeListener(this._onChange); //Not using all events but the store does not emits a lot
 
             //If messages are rendered scroll down to the bottom
@@ -87,7 +80,6 @@ define([
 
         componentWillUnmount: function() {
             ChatEngine.off('all', this._onChange);
-            ChatStore.removeChangeListener(this._onChange);
             GameSettingsStore.removeChangeListener(this._onChange);
 
             var height = this.refs.messages.getDOMNode().style.height;
@@ -97,7 +89,7 @@ define([
         /** If the length of the chat changed and the scroll position is near bottom scroll to the bottom **/
         componentDidUpdate: function(prevProps, prevState) {
 
-            if(this.state.evName === 'joined') {//On join scroll to the bottom
+            if(this.state.evName === 'joined' || this.state.evName === 'channel-changed') {//On join scroll to the bottom
                 var msgsNode = this.refs.messages.getDOMNode();
                 msgsNode.scrollTop = msgsNode.scrollHeight;
 
@@ -202,10 +194,17 @@ define([
         },
 
         _selectChannel: function(channelName) {
-            ChatActions.selectChannel(channelName);
+            return function() {
+                ChatActions.selectChannel(channelName);
+            };
+        },
+
+        _closeChannel: function() {
+            ChatActions.closeCurrentChannel();
         },
 
         render: function() {
+            var self = this;
 
             /** If the chat is disconnected render a spinner **/
             if(ChatEngine.state === 'DISCONNECTED')
@@ -250,7 +249,25 @@ define([
                     }
                 );
 
-            return D.div({ className: 'messages-container' },
+            //Tabs for the opened channels
+            var channelTabs = ChatEngine.mapChannels(function(channelObject, index, keys) {
+                return D.div({ className: 'tab', key: index, onClick: channelObject.currentChannel? (channelObject.closable? self._closeChannel : null) : self._selectChannel(channelObject.name) },
+                    channelObject.closable? D.i({ className: 'fa fa-times close-channel' }) : null,
+                    channelObject.currentChannel? D.div({ className: 'selected-border' }) : null,
+                    channelObject.unreadCount? D.span({ className: 'unread-counter' }, channelObject.unreadCount) : null,
+                    D.img({
+                        src: 'img/flags/' + channelObject.name + '.png'
+                    })
+                );
+            });
+
+            return D.div({ id: 'chat' },
+
+                D.div({ className: 'tabs-container' },
+                    D.div({ className: 'tabs-scroller' },
+                        channelTabs
+                    )
+                ),
 
                 chatMessagesContainer,
 
@@ -258,7 +275,7 @@ define([
                     chatInput,
                     ChatChannelSelector({
                         selectChannel: this._selectChannel,
-                        selectedChannel: ChatEngine.channelName,
+                        selectedChannel: ChatEngine.currentChannel,
                         isMobileOrSmall: this.props.isMobileOrSmall,
                         moderator: ChatEngine.moderator
                     })

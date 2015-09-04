@@ -1,6 +1,6 @@
 define([
     'react',
-    'game-logic/engine',
+    'game-logic/GameEngineStore',
     'stores/GameSettingsStore',
     'actions/GameSettingsActions',
     'game-logic/clib',

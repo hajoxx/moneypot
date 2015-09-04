@@ -4,8 +4,8 @@
  **/
 define([
     'lodash',
-    'game-logic/engine',
-    'game-logic/chat',
+    'game-logic/GameEngineStore',
+    'game-logic/ChatEngineStore',
     'game-logic/stateLib',
     'lib/events'
 ], function(

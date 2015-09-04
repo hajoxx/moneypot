@@ -62,6 +62,12 @@ define([
                 actionType: AppConstants.ActionTypes.JOIN_CHANNEL,
                 channelName: channelName
             });
+        },
+
+        closeCurrentChannel: function() {
+            AppDispatcher.handleViewAction({
+                actionType: AppConstants.ActionTypes.CLOSE_CURRENT_CHANNEL
+            });
         }
 
     };

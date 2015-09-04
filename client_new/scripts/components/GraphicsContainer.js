@@ -4,7 +4,7 @@ define([
     'game-logic/clib',
     'components/GraphicDisplay',
     'components/TextDisplay',
-    'game-logic/engine',
+    'game-logic/GameEngineStore',
     'stores/ChartStore',
     'stores/GameSettingsStore'
 ], function(

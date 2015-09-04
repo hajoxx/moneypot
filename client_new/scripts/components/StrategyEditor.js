@@ -3,7 +3,7 @@ define([
     'strategies/strategies',
     'lodash',
     'game-logic/clib',
-    'game-logic/engine',
+    'game-logic/GameEngineStore',
     'stores/StrategyEditorStore',
     'actions/StrategyEditorActions'
 ],function(

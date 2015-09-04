@@ -5,7 +5,7 @@
     "node": "~0.12.0"
   },
   "scripts": {
-    "start-dev": "env $(cat .env | xargs) nodemon server/index",
+    "start-dev": "env $(cat .env | xargs) DEBUG=app* nodemon server/index",
     "start": "node server/index"
   },
   "dependencies": {

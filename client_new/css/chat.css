@@ -1,11 +1,73 @@
-.messages-container {
+#chat {
     height: 100%;
     position: relative;
     z-index: 1004;
     font-family: Verdana, Tahoma, "Courier New", Arial;
 }
 
-.messages-container .loading-container, .messages-container .spinner-pre-loader {
+#chat .tabs-container {
+    z-index: 9999;
+    position: absolute;
+    right: 0.5rem;
+    top: 0.3rem;
+    bottom: 2rem;
+    overflow: hidden;
+}
+
+#chat .tabs-scroller {
+    width: 100%;
+    height: 99%;
+    overflow: auto;
+    padding-right: 15px;
+    box-sizing: content-box;
+    padding-top: 4px;
+}
+
+#chat .tab {
+    position: relative;
+    padding-left: 3px;
+    width: 38px;
+}
+
+#chat .tab img {
+    width: 30px;
+    cursor: pointer;
+}
+
+#chat .tab .unread-counter {
+    position: absolute;
+    top: -1px;
+    right: 0px;
+    background-color: #FFD52D;
+    border-radius: 2px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .7);
+    padding: 2px 2px;
+    font-size: 0.5rem;
+    line-height: 0.5rem;
+    color: black;
+}
+
+#chat .tab .selected-border {
+    position: absolute;
+    top: 5px;
+    left: 0px;
+    height: 20px;
+    
+    width: 2px;
+    background-color: orange;
+    pointer-events: none;
+}
+
+#chat .tab .close-channel {
+    position: absolute;
+    right: -2px;
+    top: -4px;
+    color: rgb(234, 0, 0);
+    cursor: pointer
+;pointer-events: none;
+}
+
+#chat .loading-container, #chat .spinner-pre-loader {
     background-image: url('../img/loading-white.gif');
     background-repeat: no-repeat;
     background-attachment: local;
@@ -14,7 +76,7 @@
     width: 100%;
 }
 
-.messages-container .spinner-pre-loader {
+#chat .spinner-pre-loader {
     visibility: hidden;
     height: 0;
     width: 0;
@@ -93,7 +155,10 @@
      position: absolute;
      bottom: 2rem;
      right: 1rem;
- }
+ 
+     z-index: 9999999999;
+     background-color: white;
+}
 
 /* Animations for the flags container */
 
@@ -132,6 +197,7 @@
     line-height: 1rem;
     font-size: 0.8rem;
     padding: 0 0.2rem;
+    z-index: 999999999999;
 }
 
 /* Links within the message */
