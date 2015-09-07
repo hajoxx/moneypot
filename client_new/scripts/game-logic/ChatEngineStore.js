@@ -64,7 +64,7 @@ define([
             self.channelManager.insertMessage(data.channelName, data, function(err) {
                 if(err) {
                     if(err === 'CHANNEL_DOES_NOT_EXIST')
-                        return console.error('[Chat] Received a message from a chanel we are not listening');
+                        return console.error('[Chat] Received a message from a chanel we are not listening: ', data.channelName);
                     return console.error('[Chat] ', err);
                 }
 

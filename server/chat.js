@@ -311,6 +311,7 @@ Chat.prototype.doChatCommand = function(user, cmdMatch, channelName, socket, cal
             return callback('DEPRECATED_FEATURE');
         case 'mute':
         case 'shadowmute':
+
             if (socket.moderator) {
                 var muteReg = /^\s*([a-zA-Z0-9_\-]+)\s*([1-9]\d*[dhms])?\s*$/;
                 var muteMatch = rest.match(muteReg);
@@ -489,12 +490,22 @@ Chat.prototype.mute = function(shadow, moderatorUser, username, time, channelNam
 
         //If mute shadow inform only mods about it
         if (shadow) {
+            msg.channelName = 'moderators';
             self.io.to('moderators').emit('msg', msg);
-            self.io.to('mod:'+channelName).emit('msg', msg);
+            //self.io.to('mod:'+channelName).emit('msg', msg); //TODO: Send it also to the mods on the current channel
         //If regular mute send mute message to the channel
         } else {
+
+            //Send to current channel
+            msg.channelName = channelName;
             self.io.to(channelName).emit('msg', msg);
-            self.io.to('moderators').emit('msg', msg);
+
+            //Sends to mods channel if we are not currently on it
+            if(channelName !== 'moderators') {
+
+                msg.channelName = 'moderators';
+                self.io.to('moderators').emit('msg', msg);
+            }
         }
 
         callback(null);
@@ -523,12 +534,22 @@ Chat.prototype.unmute = function(moderatorUser, username, channelName, callback)
 
     //If mute shadow inform only mods about it
     if (shadow) {
+        msg.channelName = 'moderators';
         self.io.to('moderators').emit('msg', msg);
-        self.io.to('mod:'+channelName).emit('msg', msg);
+        //self.io.to('mod:'+channelName).emit('msg', msg); //TODO: Send it also to the mods on the current channel
         //If regular mute send mute message to the channel
     } else {
+
+        //Send to current channel
+        msg.channelName = channelName;
         self.io.to(channelName).emit('msg', msg);
-        self.io.to('moderators').emit('msg', msg);
+
+        //Sends to mods channel if we are not currently on it
+        if(channelName !== 'moderators') {
+
+            msg.channelName = 'moderators';
+            self.io.to('moderators').emit('msg', msg);
+        }
     }
 
     callback(null);
