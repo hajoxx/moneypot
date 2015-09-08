@@ -12,7 +12,7 @@ define([
     Autolinker,
     ChatActions,
     GameSettingsStore,
-    ChatEngine,
+    ChatEngineStore,
     ChatChannelSelectorClass
 ){
     // Overrides Autolinker.js' @username handler to instead link to
@@ -68,7 +68,7 @@ define([
         },
 
         componentDidMount: function() {
-            ChatEngine.on('all', this._onChange); //Use all events
+            ChatEngineStore.on('all', this._onChange); //Use all events
             GameSettingsStore.addChangeListener(this._onChange); //Not using all events but the store does not emits a lot
 
             //If messages are rendered scroll down to the bottom
@@ -79,23 +79,26 @@ define([
         },
 
         componentWillUnmount: function() {
-            ChatEngine.off('all', this._onChange);
+            ChatEngineStore.off('all', this._onChange);
             GameSettingsStore.removeChangeListener(this._onChange);
-
-            var height = this.refs.messages.getDOMNode().style.height;
-            ChatActions.setHeight(height);
         },
 
         /** If the length of the chat changed and the scroll position is near bottom scroll to the bottom **/
         componentDidUpdate: function(prevProps, prevState) {
 
-            if(this.state.evName === 'joined' || this.state.evName === 'channel-changed') {//On join scroll to the bottom
+            //If the chat is not connected do nothing
+            if(ChatEngineStore.connectionState !== 'JOINED')
+                return;
+
+            //On join or channel change scroll to the bottom
+            if(this.state.evName === 'joined' || this.state.evName === 'channel-changed') {
                 var msgsNode = this.refs.messages.getDOMNode();
                 msgsNode.scrollTop = msgsNode.scrollHeight;
 
-            } else if(ChatEngine.history.length != this.listLength){ //If there is a new message scroll to the bottom if is near to it
+            //If there is a new message scroll to the bottom if is near to it
+            } else if(ChatEngineStore.history.length != this.listLength){
 
-                this.listLength = ChatEngine.history.length;
+                this.listLength = ChatEngineStore.history.length;
 
                 //If messages are rendered scroll down
                 if(this.refs.messages) {
@@ -115,16 +118,18 @@ define([
 
         _sendMessage: function(e) {
             if(e.keyCode == 13) {
-                //var msg = this.state.inputText;
                 var msg = e.target.value;
                 msg = msg.trim();
 
-                if(!this._doCommand(msg)){ //If not command was done is a message(or command) to the server
+                //If not command was done is a message(or command) to the server
+                if(!this._doCommand(msg)){
                     if(msg.length >= 1 && msg.length < 500) {
                         this._say(msg);
                         e.target.value = '';
                     }
-                } else { //If a command was done erase the command text
+
+                //If a command was done erase the command text
+                } else {
                     e.target.value = '';
                 }
             }
@@ -146,7 +151,7 @@ define([
             switch(cmd) {
                 case 'ignore':
 
-                    if(ChatEngine.username === rest) {
+                    if(ChatEngineStore.username === rest) {
                         ChatActions.showClientMessage('Cant ignore yourself');
 
                     } else if(Clib.isInvalidUsername(rest)) {
@@ -189,10 +194,6 @@ define([
             ChatActions.say(msg);
         },
 
-        _updateInputText: function(ev) {
-            ChatActions.updateInputText(ev.target.value);
-        },
-
         _selectChannel: function(channelName) {
             return function() {
                 ChatActions.selectChannel(channelName);
@@ -206,51 +207,101 @@ define([
         render: function() {
             var self = this;
 
-            /** If the chat is disconnected render a spinner **/
-            if(ChatEngine.state === 'DISCONNECTED')
-                return D.div({ className: 'messages-container' },
-                    D.div({ className: 'loading-container' },
-                        ''//Loading spinner is added by css as background
-                ));
-
-            /** If is joining a channel render a spinner inside the chat list **/
+            //Messages div
             var chatMessagesContainer;
-            if(ChatEngine.state == 'JOINED') {
-                var messages = [];
-                for(var i = ChatEngine.history.length-1; i >= 0; i--)
-                    messages.push(this._renderMessage(ChatEngine.history[i], i));
 
-                chatMessagesContainer = D.ul({ className: 'messages', ref: 'messages' },
-                    messages
-                );
-            } else {
-                chatMessagesContainer = 'Joinning';
+            /** Chat input **/
+            var chatInput;
+            var chatInputPlaceholder;
+            var chatInputOnKeyDown = null;
+            var chatInputDisabled = false;
+            var chatInputClass = 'chat-input';
+
+            switch(ChatEngineStore.connectionState) {
+
+                //Render loading spinner on chat container and render 'connecting' on the chat input
+                case 'CONNECTING':
+
+                    //Spinner
+                    chatMessagesContainer = D.div({ className: 'loading-container' });//Loading spinner is added by css as background
+
+                    //Input
+                    chatInputPlaceholder = 'Connecting...';
+                    chatInputDisabled = true;
+
+                    break;
+
+                //Render loading spinner on chat container and render 'joining channel' on the chat input
+                case 'JOINING':
+
+                    //Spinner
+                    chatMessagesContainer = D.div({ className: 'loading-container' });//Loading spinner is added by css as background
+
+                    //Input
+                    chatInputPlaceholder = 'Joining...';
+                    chatInputDisabled = true;
+
+                    break;
+
+                //Render everything
+                case 'JOINED':
+
+                    chatMessagesContainer = renderCurrentChannelMessages();
+
+                    //If user is logged
+                    if(ChatEngineStore.username) {
+                        chatInputPlaceholder = 'Type here...';
+                        chatInputOnKeyDown = this._sendMessage;
+
+                    //If user is not logged is just an expectator
+                    } else {
+                        chatInputPlaceholder = 'Log in to chat...';
+                    }
+
+                    break;
+
+                //Render connection lost on the message container and render 'connection lost' on the chat input
+                case 'DISCONNECTED':
+
+                    chatMessagesContainer = renderCurrentChannelMessages();
+
+                    //Input
+                    chatInputPlaceholder = 'Not connected...';
+                    chatInputDisabled = true;
+                    chatInputClass += ' disconnected';
+
+                    break;
             }
 
-            /** Chat input is enabled when logged and joined **/
-            var chatInput;
-            if (ChatEngine.username && ChatEngine.state == 'JOINED')
-                chatInput = D.input( //Input is not binded due to slowness on some browsers
-                    { className: 'chat-input',
-                        onKeyDown: this._sendMessage,
-                        //onChange: this._updateInputText,
-                        //value: this.state.inputText,
-                        maxLength: '500',
-                        ref: 'input',
-                        placeholder: 'Type here...'
-                    }
-                );
-            else
-                chatInput = D.input(
-                    { className: 'chat-input',
-                        ref: 'input',
-                        placeholder: 'Log in to chat...',
-                        disabled: true
-                    }
-                );
+            //Render current channel messages
+            function renderCurrentChannelMessages() {
+                //Render the messages of the current channel
+                var messages = [];
+                for(var i = ChatEngineStore.history.length-1; i >= 0; i--)
+                    messages.push(self._renderMessage(ChatEngineStore.history[i], i));
 
-            //Tabs for the opened channels
-            var channelTabs = ChatEngine.mapChannels(function(channelObject, index, keys) {
+                 return D.ul({ className: 'messages', ref: 'messages' },
+                    messages
+                );
+            }
+
+            //Text input
+            chatInput = D.input( //Input is not binded due to slowness on some browsers
+                { className: chatInputClass,
+                    onKeyDown: chatInputOnKeyDown,
+                    maxLength: '500',
+                    ref: 'input',
+                    placeholder: chatInputPlaceholder,
+                    disabled: chatInputDisabled
+                }
+            );
+
+            /**
+             * Tabs panel
+             *
+             * Show them always except when the engine is connecting because it does not have history in that moment
+             */
+            var channelTabs = (ChatEngineStore.connectionState !== 'CONNECTING')? ChatEngineStore.mapChannels(function(channelObject, index, keys) {
                 return D.div({ className: 'tab', key: index, onClick: channelObject.currentChannel? (channelObject.closable? self._closeChannel : null) : self._selectChannel(channelObject.name) },
                     channelObject.closable? D.i({ className: 'fa fa-times close-channel' }) : null,
                     channelObject.currentChannel? D.div({ className: 'selected-border' }) : null,
@@ -259,7 +310,7 @@ define([
                         src: 'img/flags/' + channelObject.name + '.png'
                     })
                 );
-            });
+            }) : null;
 
             return D.div({ id: 'chat' },
 
@@ -275,9 +326,9 @@ define([
                     chatInput,
                     ChatChannelSelector({
                         selectChannel: this._selectChannel,
-                        selectedChannel: ChatEngine.currentChannel,
+                        selectedChannel: ChatEngineStore.currentChannel,
                         isMobileOrSmall: this.props.isMobileOrSmall,
-                        moderator: ChatEngine.moderator
+                        moderator: ChatEngineStore.moderator
                     })
                 ),
                 D.div({ className: 'spinner-pre-loader' })
@@ -298,19 +349,19 @@ define([
                 if(message.bot || /^!/.test(message.message)) {
 
                     //If we are ignoring bots and the message is from a bot do not render the message
-                    if (this.state.botsDisplayMode === 'none')
+                    if (ChatEngineStore.botsDisplayMode === 'none')
                         return;
 
                     pri += ' msg-bot';
 
-                    if(this.state.botsDisplayMode === 'greyed')
+                    if(ChatEngineStore.botsDisplayMode === 'greyed')
                         pri += ' bot-greyed';
                 }
 
                 if (message.role === 'admin')
                     pri += ' msg-admin-message';
 
-                var username = ChatEngine.username;
+                var username = ChatEngineStore.username;
 
                 var r = new RegExp('@' + username + '(?:$|[^a-z0-9_\-])', 'i');
                 if (username && message.username != username && r.test(message.message)) {

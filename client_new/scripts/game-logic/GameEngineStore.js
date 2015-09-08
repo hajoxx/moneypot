@@ -34,8 +34,8 @@ define([
         //    self.ws.io.connect();
         //};
 
-        /** The engine is connected to the server, if not connected, all fields are unreadable */
-        self.isConnected = false;
+        /** The status of the connection: LOADING: When the game is created, CONNECTED, DISCONNECTED **/
+        self.connectionState = 'CONNECTING';//CONNECTING || CONNECTED || JOINED || DISCONNECTED
 
         /** The username or null if is not logged in */
         self.username = null;
@@ -343,36 +343,14 @@ define([
             self.trigger('cashed_out', resp);
         });
 
-        /**
-         * Event called every time we receive a chat message
-         * @param {object} resp - JSON payload
-         * @param {string} time - Time when the message was sent
-         * @param {string} type - The 'command': say, mute, error, info
-         * @param {username} string - The username of who sent it
-         * @param {role} string - admin, moderator, user
-         * @param {message} string - Da message
-         */
-        //self.ws.on('msg', function(data) {
-        //    //The chat only renders if the Arr length is diff, remove blocks of the array
-        //    if (self.chat.length > AppConstants.Chat.MAX_LENGTH)
-        //        self.chat.splice(0, 400);
-        //
-        //    // Match @username until end of string or invalid username char
-        //    var r = new RegExp('@' + self.username + '(?:$|[^a-z0-9_\-])', 'i');
-        //    if (data.type === 'say' && data.username !== self.username && r.test(data.message)) {
-        //        new Audio('/sounds/gong.mp3').play();
-        //    }
-        //    self.chat.push(data);
-        //
-        //    self.trigger('msg', data);
-        //});
-
         /** Triggered by the server to let users the have to reload the page */
         self.ws.on('update', function() {
             alert('Please refresh your browser! We just pushed a new update to the server!');
         });
 
         self.ws.on('connect', function() {
+
+            self.connectionState ='CONNECTED';
 
             requestOtt(function(err, ott) {
                 if (err && err != 401) { // If the error is 401 means the user is not logged in
@@ -391,13 +369,12 @@ define([
                         }
 
                         self.balanceSatoshis = resp.balance_satoshis;
-                        //self.chat = resp.chat;
 
                         /** If username is a falsey value the user is not logged in */
                         self.username = resp.username;
 
                         /** Variable to check if we are connected to the server */
-                        self.isConnected = true;
+                        self.connectionState = 'JOINED';
                         self.gameState = resp.state;
                         self.playerInfo = resp.player_info;
 
@@ -423,18 +400,19 @@ define([
                         	self.calcBonuses();
                         }
                             
-                        self.trigger('connected');
+                        self.trigger('joined');
                     }
                 );
             });
         });
 
         self.ws.on('disconnect', function(data) {
-            self.isConnected = false;
+            self.connectionState = 'DISCONNECTED';
 
             console.log('Client disconnected |', data, '|', typeof data);
             self.trigger('disconnected');
         });
+
     }
 
     /**
@@ -444,15 +422,6 @@ define([
         this.lag = true;
         this.trigger('lag_change');
     };
-
-    /**
-     * Sends chat message
-     * @param {string} msg - String containing the message, should be longer than 1 and shorter than 500.
-     */
-    //Engine.prototype.say = function(msg) {
-    //    console.assert(msg.length > 1 && msg.length < 500);
-    //    this.ws.emit('say', msg);
-    //};
 
     /**
      * Places a bet with a giving amount.

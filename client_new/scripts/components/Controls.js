@@ -46,6 +46,7 @@ define([
         componentDidMount: function() {
             ControlsStore.addChangeListener(this._onChange);
             Engine.on({
+                joined: this._onChange,
                 game_started: this._onChange,
                 game_crash: this._onChange,
                 game_starting: this._onChange,
@@ -62,6 +63,7 @@ define([
         componentWillUnmount: function() {
             ControlsStore.removeChangeListener(this._onChange);
             Engine.off({
+                joined: this._onChange,
                 game_started: this._onChange,
                 game_crash: this._onChange,
                 game_starting: this._onChange,
@@ -110,6 +112,14 @@ define([
             var self = this;
 
             var isPlayingOrBetting =  StateLib.isBetting(Engine) || (Engine.gameState === 'IN_PROGRESS' && StateLib.currentlyPlaying(Engine));
+
+            //If the game is not connected
+            if(Engine.connectionState !== 'JOINED')
+                return D.div({ id: 'controls-inner-container' },
+                    D.div({ className: 'login-button-container' },
+                        D.button({ className: 'login-button bet-button' }, '...')
+                    )
+                );
 
             // If they're not logged in, let just show a login to play
             if (!Engine.username)

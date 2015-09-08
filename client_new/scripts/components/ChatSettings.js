@@ -6,7 +6,7 @@ define([
 ], function(
     React,
     GameSettingsStore,
-    Chat,
+    ChatEngineStore,
     ChatSettingsActions
 ) {
     var D = React.DOM;
@@ -14,21 +14,17 @@ define([
     return React.createClass({
         displayName: 'ChatSettings',
 
-        getInitialState: function() {
-            return getState();
-        },
-
         componentDidMount: function() {
-            Chat.on('all', this._onChange);
+            ChatEngineStore.on('all', this._onChange);
         },
 
         componentWillUnmount: function() {
-            Chat.off('all', this._onChange);
+            ChatEngineStore.off('all', this._onChange);
         },
 
         _onChange: function() {
             if(this.isMounted())
-                this.setState({ chat: Chat });
+                this.setState({ chat: ChatEngineStore });
         },
 
         _setBotsDisplayMode: function(e) {
@@ -40,7 +36,7 @@ define([
 
                 D.div({ className: 'option-row' },
                     D.span({ className: 'option-text' }, 'Bots Display Mode'),
-                    D.select({ value: Chat.botsDisplayMode, onChange: this._setBotsDisplayMode },
+                    D.select({ value: ChatEngineStore.botsDisplayMode, onChange: this._setBotsDisplayMode },
                         D.option({ value: 'normal' }, 'Normal'),
                         D.option({ value: 'greyed' }, 'Greyed Out'),
                         D.option({ value: 'none' }, "Don't display"))

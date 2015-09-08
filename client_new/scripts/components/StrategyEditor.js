@@ -32,10 +32,18 @@ define([
         },
 
         componentDidMount: function() {
+            Engine.on({
+                joined: this._onChange,
+                disconnected: this._onChange
+            });
             StrategyEditorStore.addChangeListener(this._onChange);
         },
 
         componentWillUnmount: function() {
+            Engine.off({
+                joined: this._onChange,
+                disconnected: this._onChange
+            });
             StrategyEditorStore.removeChangeListener(this._onChange);
         },
 
@@ -87,7 +95,7 @@ define([
                 D.div({ className: 'control-buttons' },
                     D.span({ className: 'strategy-invalid-data' }, this.state.invalidData || !this.state.engine.username),
                     D.div({ className: 'buttons-container' },
-                        D.button({ className: 'strategy-start', onClick: self._runStrategy, disabled: this.state.active || this.state.invalidData || !this.state.engine.username }, 'RUN!'),
+                        D.button({ className: 'strategy-start', onClick: self._runStrategy, disabled: this.state.active || this.state.invalidData || !this.state.engine.username || this.state.engine.connectionState ==! 'JOINED' }, 'RUN!'),
                         D.button({ className: 'strategy-stop', onClick: self._stopStrategy, disabled: !this.state.active }, 'STOP'),
                         D.select({ className: 'strategy-select', value: this.state.selectedStrategy,  onChange: self._selectStrategy, ref: 'strategies', disabled: this.state.active }, strategiesOptions)
                     )

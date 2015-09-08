@@ -112,19 +112,19 @@ body {
    chat.css
    ========================================================================== */
 
-.msg-chat-message {
+#chat .msg-chat-message {
     color: white;
 }
 
-.msg-chat-message a {
+#chat .msg-chat-message a {
     color: white;
 }
 
-.time-stamp {
+#chat .time-stamp {
     opacity: 0.6;
 }
 
-.messages-container .loading-container, .messages-container .spinner-pre-loader {
+#chat .messages-container .loading-container, #chat .messages-container .spinner-pre-loader {
     background-image: url('../img/loading-black.gif');
 }
 

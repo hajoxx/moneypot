@@ -40,7 +40,7 @@ define([
         },
 
         getSavedChannels: function() {
-            return this.OPENED_CHANNELS;
+            return JSON.parse(Clib.localOrDef('openedChannels', '[]'));
         },
 
         getCurrentChannelHistory: function() {

@@ -47,6 +47,8 @@ define([
 
         componentDidMount: function() {
             Engine.on({
+                joined: this._onChange,
+                disconnected: this._onChange,
                 game_started: this._onChange,
                 game_crash: this._onChange,
                 game_starting: this._onChange,
@@ -61,6 +63,8 @@ define([
 
         componentWillUnmount: function() {
             Engine.off({
+                joined: this._onChange,
+                disconnected: this._onChange,
                 game_started: this._onChange,
                 game_crash: this._onChange,
                 game_starting: this._onChange,
@@ -105,6 +109,19 @@ define([
                 TextDisplay() :
                 null;
 
+            //Connection message
+            var connectionMessage;
+            switch(Engine.connectionState) {
+                case 'CONNECTING':
+                    connectionMessage = 'Connecting...';
+                    break;
+                case 'DISCONNECTED':
+                    connectionMessage = 'Connection Lost ...';
+                    break;
+                default:
+                    connectionMessage = null;
+            }
+
             return D.div({ id: 'chart-inner-container', className: this.props.controlsSize, ref: 'container' },
                 D.div({ className: 'anim-cont' },
                     D.div({ className: 'nyan' + (this.state.nyan? ' show' : '') },
@@ -113,6 +130,9 @@ define([
                 ),
                 D.div({ className: 'max-profit' },
                     'Max profit: ', (Engine.maxWin/1e8).toFixed(4), ' BTC'
+                ),
+                D.div({ className: 'connection-state' },
+                    connectionMessage
                 ),
                 D.canvas({ ref: 'canvas', className: ((this.state.graphMode === 'text')? 'hide': '') }),
                 textDisplay

@@ -33,6 +33,8 @@ define([
 
         componentDidMount: function() {
             Engine.on({
+                joined: this._onChange,
+                disconnected: this._onChange,
                 game_started: this._onChange,
                 game_crash: this._onChange,
                 game_starting: this._onChange,
@@ -43,6 +45,8 @@ define([
 
         componentWillUnmount: function() {
             Engine.off({
+                joined: this._onChange,
+                disconnected: this._onChange,
                 game_started: this._onChange,
                 game_crash: this._onChange,
                 game_starting: this._onChange,
@@ -69,10 +73,14 @@ define([
 
             var game = self.state.engine;
 
+
+            if(game.connectionState ==! 'JOINED')
+                return renderWrapper(null);
+
             /** Separate and sort the users depending on the game state **/
             if (game.gameState === 'STARTING') {
-                //The list is already ordered by engine given an index
 
+                //The list is already ordered by engine given an index
                 usersLostPlaying = self.state.engine.joined.map(function(player) {
                     var bet; // can be undefined
 
@@ -81,6 +89,8 @@ define([
 
                     return { username: player, bet: bet };
                 });
+
+            //IN_PROGRESS || ENDED
             } else {
                 _.forEach(game.playerInfo, function (player, username) {
 
@@ -236,23 +246,29 @@ define([
                 );
             }
 
-            return D.div({ id: 'players-container' },
-                D.div({ className: 'header-bg' }),
-                D.div({ className: 'table-inner' },
-                D.table({ className: 'users-playing' },
-                    D.thead(null,
-                        D.tr(null,
-                            D.th(null, D.div({ className: 'th-inner' }, 'User')),
-                            D.th(null, D.div({ className: 'th-inner' }, '@')),
-                            D.th(null, D.div({ className: 'th-inner' }, 'Bet')),
-                            D.th(null, D.div({ className: 'th-inner' }, 'Bonus')),
-                            D.th(null, D.div({ className: 'th-inner' }, 'Profit'))
+            return renderWrapper(tBody);
+
+
+            function renderWrapper(body) {
+                return D.div({ id: 'players-container' },
+                    D.div({ className: 'header-bg' }),
+                    D.div({ className: 'table-inner' },
+                        D.table({ className: 'users-playing' },
+                            D.thead(null,
+                                D.tr(null,
+                                    D.th(null, D.div({ className: 'th-inner' }, 'User')),
+                                    D.th(null, D.div({ className: 'th-inner' }, '@')),
+                                    D.th(null, D.div({ className: 'th-inner' }, 'Bet')),
+                                    D.th(null, D.div({ className: 'th-inner' }, 'Bonus')),
+                                    D.th(null, D.div({ className: 'th-inner' }, 'Profit'))
+                                )
+                            ),
+                            tBody
                         )
-                    ),
-                    tBody
-                )
-            )
-            );
+                    )
+                );
+            }
+
         }
 
     });

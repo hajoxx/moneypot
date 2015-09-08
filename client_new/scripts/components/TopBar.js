@@ -31,13 +31,13 @@ define([
 
         getInitialState: function() {
             var state = getState();
-            state.username = Engine.username;
             state.fullScreen = false;
             return state;
         },
 
         componentDidMount: function() {
             Engine.on({
+                joined: this._onChange,
                 game_started: this._onChange,
                 game_crash: this._onChange,
                 cashed_out: this._onChange
@@ -47,6 +47,7 @@ define([
 
         componentWillUnmount: function() {
             Engine.off({
+                joined: this._onChange,
                 game_started: this._onChange,
                 game_crash: this._onChange,
                 cashed_out: this._onChange
@@ -70,14 +71,14 @@ define([
         render: function() {
 
             var userLogin;
-            if(this.state.username) {
+            if(Engine.username) {
                 userLogin = D.div({ className: 'user-login' },
                     D.div({ className: 'balance-bits' },
                         D.span(null, 'Bits: '),
                         D.span({ className: 'balance' }, this.state.balanceBitsFormatted )
                     ),
                     D.div({ className: 'username' },
-                        D.a({ href: '/account'}, this.state.username
+                        D.a({ href: '/account'}, Engine.username
                     ))
                 );
             } else {

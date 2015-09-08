@@ -29,11 +29,13 @@ define([
 
         componentDidMount: function() {
             Engine.on({
-            game_started: this._onChange,
-            game_crash: this._onChange,
-            game_starting: this._onChange,
-            player_bet: this._onChange,
-            cashed_out: this._onChange
+                joined: this.onChange,
+                disconnected: this.onChange,
+                game_started: this._onChange,
+                game_crash: this._onChange,
+                game_starting: this._onChange,
+                player_bet: this._onChange,
+                cashed_out: this._onChange
             });
         },
 
@@ -55,7 +57,9 @@ define([
         },
 
         render: function() {
-            if(this.state.engine.gameState === 'STARTING')
+
+            //If the Engine is not connected or the game is starting
+            if(this.state.engine.connectionState !== 'JOINED' || this.state.engine.gameState === 'STARTING')
              return D.div({ className: 'bet-bar-starting' });
 
             var betPercentages = calculatePlayingPercentages(this.state.engine);

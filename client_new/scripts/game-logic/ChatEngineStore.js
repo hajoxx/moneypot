@@ -39,7 +39,7 @@ define([
          *  CONNECTED: The socket connection is established and we are connecting to a channel
          *  JOINED: Currently connected to a channel
          */
-        self.state = 'CONNECTING'; //DISCONNECTED || CONNECTED || JOINED
+        self.connectionState = 'CONNECTING'; //CONNECTING || JOINING || JOINED || DISCONNECTED
 
         /** Username, if it is false the user is a guest **/
         self.username = null;
@@ -90,13 +90,13 @@ define([
 
         /** Socket io is connected to the server **/
         self.ws.on('connect', function() {
-            self.state = 'CONNECTED';
+            self.connectionState = 'JOINING';
             self.ws.emit('join', self.channelManager.getSavedChannels(), self.onJoin.bind(self));
-            self.trigger('connected');
+            self.trigger('joining');
         });
 
         self.ws.on('disconnect', function(data) {
-            self.state = 'DISCONNECTED';
+            self.connectionState = 'DISCONNECTED';
             self.trigger('disconnected');
         });
     }
@@ -131,7 +131,7 @@ define([
 
             self.channelManager.setChannels(data.channels);
 
-            self.state = 'JOINED';
+            self.connectionState = 'JOINED';
             self.trigger('joined');
         },
 
@@ -142,8 +142,13 @@ define([
             if(this.channelManager.selectChannel(channelName))
                 return this.trigger('channel-changed');
 
+            //Do not attempt to join a channel is we are not connected already
+            if(this.connectionState !== 'JOINED')
+                return;
+
             //If not connect to it
             this.ws.emit('join', channelName, this.onJoin.bind(this));
+            this.connectionState = 'JOINING';
             this.trigger('joining');
         },
 
@@ -151,14 +156,23 @@ define([
         closeCurrentChannel: function() {
             var self = this;
 
-            self.ws.emit('leave', this.channelManager.currentChannel, function(err) {
-                if(err) {
-                   return console.error('[leave] ', err);
-                }
+            //If we are connected leave the channel
+            if(this.connectionState === 'JOINED') {
+                self.ws.emit('leave', this.channelManager.currentChannel, function(err) {
+                    if(err) {
+                        return console.error('[leave] ', err);
+                    }
 
+                    self.channelManager.closeCurrentChannel();
+                    self.trigger('channel-closed');
+                });
+
+            //If we are not connected just erase the channel from the channel manager
+            } else {
                 self.channelManager.closeCurrentChannel();
                 self.trigger('channel-closed');
-            });
+            }
+
         },
 
         /**
@@ -247,7 +261,7 @@ define([
 
         /** Set the visibility mode of the bots **/
         setBotsDisplayMode: function(displayMode) {
-            _botsDisplayMode = displayMode;
+            this.botsDisplayMode = displayMode;
             localStorage['botsDisplayMode'] = displayMode;
             this.trigger('bots_visibility_change');
         }

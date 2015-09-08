@@ -82,7 +82,7 @@
     width: 0;
 }
 
-.messages {
+#chat .messages {
     overflow-wrap: break-word;
     overflow-y: scroll;
     font-size: 1rem;
@@ -94,14 +94,14 @@
     bottom: 1.8rem;
 }
 
-.chat-input-container {
+#chat .chat-input-container {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
 }
 
-.chat-input {
+#chat .chat-input {
     width: calc(100% - 55px);
     border: 4px solid #ADADAD;
     background: rgba(255,255,255,0.7);
@@ -113,19 +113,32 @@
     right: 0;
 }
 
-.time-stamp {
+#chat .chat-input.disconnected::-webkit-input-placeholder {
+    color: red;
+}
+#chat .chat-input.disconnected:-moz-placeholder { /* Firefox 18- */
+    color: red;
+}
+#chat .chat-input.disconnected::-moz-placeholder {  /* Firefox 19+ */
+    color: red;
+}
+#chat .chat-input.disconnected:-ms-input-placeholder {
+    color: red;
+}
+
+#chat .time-stamp {
     margin-right: 0.1rem;
     font-size: 0.6rem;
 }
 
-.msg-chat-message {
+#chat .msg-chat-message {
     color: black;
     line-height: 17px;
     font-size: 14px;
     z-index: 1006;
 }
 
-.msg-chat-message a {
+#chat .msg-chat-message a {
     color: black;
     font-size: 13px;
     font-weight: 600;
@@ -201,48 +214,48 @@
 }
 
 /* Links within the message */
-.msg-chat-message .msg-body a {
+#chat .msg-chat-message .msg-body a {
     color: #008cba; /* Blue */
     font-family: Helvetica, Arial, sans-serif;
 }
-.msg-chat-message .msg-body a:hover {
+#chat .msg-chat-message .msg-body a:hover {
     text-decoration: underline;
 }
 
-.msg-chat-message.msg-admin-message a {
+#chat .msg-chat-message.msg-admin-message a {
     color: #ce1e1e;
 }
 
-.msg-info-message {
+#chat .msg-info-message {
     line-height: 17px;
 }
 
-.msg-info-message span {
+#chat .msg-info-message span {
     color: #1e5e1e;
     font-size: 14px;
 }
 
-.msg-highlight-message {
+#chat .msg-highlight-message {
     background-color: rgba(0, 61, 255, 0.2);
 }
 
-.msg-mute-message {
+#chat .msg-mute-message {
     line-height: 17px;
 }
 
-.msg-mute-message a{
+#chat .msg-mute-message a{
     color: #1e3e1e;
     font-size: 13px;
     font-weight: 600;
 }
 
-.msg-mute-message span {
+#chat .msg-mute-message span {
     color: #1e3e1e;
     font-size: 14px;
     font-weight: bold;
 }
 
 /* Bots messages */
-.msg-chat-message.bot-greyed, .msg-chat-message.bot-greyed a {
+#chat .msg-chat-message.bot-greyed, #chat .msg-chat-message.bot-greyed a {
     color: grey;
 }

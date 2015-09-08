@@ -15,20 +15,6 @@ define([
             });
         },
 
-        //updateInputText: function(text) {
-        //    AppDispatcher.handleViewAction({
-        //        actionType: AppConstants.ActionTypes.SET_CHAT_INPUT_TEXT,
-        //        text: text
-        //    });
-        //},
-
-        setHeight: function(newHeight) {
-            AppDispatcher.handleViewAction({
-                actionType: AppConstants.ActionTypes.SET_CHAT_HEIGHT,
-                newHeight: newHeight
-            });
-        },
-
         ignoreUser: function(username) {
             AppDispatcher.handleViewAction({
                 actionType: AppConstants.ActionTypes.IGNORE_USER,
