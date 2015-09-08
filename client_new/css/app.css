@@ -137,6 +137,12 @@ body {
     margin-top: 2rem;
 }
 
+.index .licence {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 1rem;
+}
+
 .index .play-btn-cont {
     width: 40%;
     padding-top: 2rem;
