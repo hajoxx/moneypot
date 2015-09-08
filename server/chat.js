@@ -150,7 +150,7 @@ function Chat(io) {
         });
 
         ++self.clientCount;
-        console.log('Client joined: ', self.clientCount, ' - ', socket.user ? socket.user.username : '~guest~', ' IP: ', socket.request.connection.remoteAddress);
+        console.log('Client joined: ', self.clientCount, ' - ', socket.user ? socket.user.username : '~guest~');
     }
 
     events.EventEmitter.call(self); //Call event emitter 'constructor' function
