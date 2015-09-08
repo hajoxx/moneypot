@@ -10,5 +10,5 @@
     {{??}}
         <link rel="stylesheet" href="{{? it.buildConfig }} /old/css/{{=it.buildConfig['app-old.css']}} {{??}} /client_old/css/app.css {{?}}" />
     {{?}}
-    <script src="/client_old/lib/zepto/zepto.min.js"></script>
+    <script src="{{? it.buildConfig }}/old/lib/zepto/zepto.min.js{{??}}/client_old/lib/zepto/zepto.min.js{{?}}"></script>
 </head>
