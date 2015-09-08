@@ -124,7 +124,7 @@ body {
     opacity: 0.6;
 }
 
-#chat .messages-container .loading-container, #chat .messages-container .spinner-pre-loader {
+#chat .loading-container, #chat .spinner-pre-loader {
     background-image: url('../img/loading-black.gif');
 }
 

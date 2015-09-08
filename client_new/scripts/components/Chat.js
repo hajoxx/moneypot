@@ -331,7 +331,7 @@ define([
                         moderator: ChatEngineStore.moderator
                     })
                 ),
-                D.div({ className: 'spinner-pre-loader' })
+                D.div({ className: 'spinner-pre-loader' }) //Pre load the image
             );
         },
 

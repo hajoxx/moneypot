@@ -167,7 +167,8 @@ define([
 
             this.updateStorage();
         },
-
+        
+        //Save the current channel and the opened channels on local storage
         updateStorage: function() {
             localStorage['currentChannel'] = this._currentChannel;
             localStorage['openedChannels'] = JSON.stringify(this._channels.keys);

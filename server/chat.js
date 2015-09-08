@@ -165,18 +165,27 @@ Chat.prototype.join = function(socket, channels, callback) {
     if(!_.isFunction(callback))
         return sendError(socket, '[join] no callback');
 
-    //Channels validation
+    //String channel validation
     if(_.isString(channels)) {
         if(isChannelNameInvalid(channels, socket.moderator)) {
             debug('[Join] INVALID_CHANNEL_NAME');
-            return callback('INVALID_CHANNEL_NAME');
+            return callback('INVALID_CHANNEL_NAME', channels);
         }
         channels = [channels];
+
+    //Array of channels validation
     } else if(_.isArray(channels)) {
         for(var i = 0, length = channels.length; i < length; i++)
+
+            //If the channel is not valid send a 'soft' errror and remove the channel from the array
             if(isChannelNameInvalid(channels[i], socket.moderator)) {
                 debug('[Join] INVALID_CHANNEL_NAME');
-                return callback('INVALID_CHANNEL_NAME');
+                sendError(socket, '[Join] INVALID_CHANNEL_NAME');
+
+                //Remove the bad channel
+                channels.splice(i, 1);
+                i--;
+                length--;
             }
     } else {
         debug('[Join] INVALID_PROPERTY');
