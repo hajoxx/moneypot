@@ -3,17 +3,14 @@
 {{##def.content:
 <script src='https://www.google.com/recaptcha/api.js'></script>
 <script>
-	var submitEnabled = false;
-  function enableSubmit() {
-	  submitEnabled = true;
-    var s = document.getElementById('loginSubmit');
-    s.style.display = 'block';
-  }
+    function enableSubmit() {
+        $('#loginSubmit')
+                .removeClass('secondary');
+    }
 </script>
 
-
 <div class="login">
-    <form action="/login" method="post" onsubmit="return submitEnabled;">
+    <form action="/login" method="post">
         <div class="row">
             <div class="large-12 columns">
                 <label>Username
@@ -42,7 +39,7 @@
          <div class="row">
             <div class="large-12 columns">
                 <a class="small" href="/forgot-password">Forgot your password?</a>
-                <input id="loginSubmit" style="display: none" class="border-button right blue" value="Login" type="submit" />
+                <input id="loginSubmit" class="button secondary right" type="submit" value="Login"/>
             </div>
         </div>
 

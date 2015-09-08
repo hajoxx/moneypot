@@ -362,6 +362,13 @@ nav .top-bar-title {
     }
 }
 
+/* Login
+  ========================================================================== */
+
+#loginSubmit {
+    pointer-events: auto !important; /** Allow clicks even if it is disabled **/
+}
+
 @media only screen { } /* Define mobile styles */
 
 @media only screen and (max-width: 40em) { } /* max-width 640px, mobile-only styles, use when QAing mobile issues */

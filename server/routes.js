@@ -84,24 +84,31 @@ function adminRestrict(req, res, next) {
 }
 
 function recaptchaRestrict(req, res, next) {
-  var recaptcha = lib.removeNullsAndTrim(req.body['g-recaptcha-response']);
-  if (!recaptcha) {
-    return res.send('No recaptcha submitted, go back and try again');
-  }
 
-  recaptchaValidator.callback(config.RECAPTCHA_PRIV_KEY, recaptcha, req.ip, function(err) {
-    if (err) {
-      if (typeof err === 'string')
-        res.send('Got recaptcha error: ' + err + ' please go back and try again');
-      else {
-        console.error('[INTERNAL_ERROR] Recaptcha failure: ', err);
-        res.render('error');
-      }
-      return;
+    var recaptcha = lib.removeNullsAndTrim(req.body['g-recaptcha-response']);
+
+    if (!config.PRODUCTION && !recaptcha) {
+        console.log('Skipping recaptcha check, for dev');
+        next();
+        return;
     }
 
-    next();
-  });
+    if (!recaptcha)
+        return res.send('No recaptcha submitted, go back and try again');
+
+    recaptchaValidator.callback(config.RECAPTCHA_PRIV_KEY, recaptcha, req.ip, function (err) {
+        if (err) {
+            if (typeof err === 'string')
+                res.send('Got recaptcha error: ' + err + ' please go back and try again');
+            else {
+                console.error('[INTERNAL_ERROR] Recaptcha failure: ', err);
+                res.render('error');
+            }
+            return;
+        }
+
+        next();
+    });
 }
 
 
