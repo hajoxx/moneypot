@@ -30,6 +30,8 @@ define([
 
         /** Insert the english channel in the first place **/
         self._channels.insert('english', { history: [], unreadCount: 0 });
+
+        self.updateStorage();
     }
 
 
@@ -167,7 +169,7 @@ define([
 
             this.updateStorage();
         },
-        
+
         //Save the current channel and the opened channels on local storage
         updateStorage: function() {
             localStorage['currentChannel'] = this._currentChannel;
