@@ -296,7 +296,6 @@ Chat.prototype.onSay = function(socket, message, channelName, isBot, callback) {
         this.doChatCommand(socket.user, cmdMatch, channelName, socket, callback);
     else //If not broadcast the message
         this.say(socket, socket.user, message, channelName, isBot, callback);
-
 };
 
 Chat.prototype.doChatCommand = function(user, cmdMatch, channelName, socket, callback) {
@@ -438,8 +437,14 @@ Chat.prototype.sendMessageToUser = function(socket, msg) {
 /** Send a message to a channel and to the all channel and store it in the database **/
 Chat.prototype.sendMessageToChannel = function(channelName, msg, userID) {
     console.assert(msg.hasOwnProperty('bot') && msg.date, msg.hasOwnProperty('message') && msg.type);
+
+    //Send message to channel
     this.io.to(channelName).emit('msg', msg);
+
+    //Send message to subscribers of 'all' (SHIBA)
     this.io.to('all').emit('msg', msg);
+
+    //Save message on DB
     this.saveChatMessage(userID, msg.message, channelName, msg.bot, msg.date);
 };
 

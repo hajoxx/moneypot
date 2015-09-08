@@ -58,7 +58,7 @@ define([
                 'turkish', 'ukrainian', 'vietnamese'];
 
             if(this.props.moderator)
-                chans.push('moderators', 'all');
+                chans.push('moderators');
 
             var chansRows = [];
             for(var i = 0, e = 0, length = chans.length; i < length; i += rowLenght, e++ )
