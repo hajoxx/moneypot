@@ -212,7 +212,8 @@ define([
         },
 
         localOrDef: function(name, defaultValue) {
-            return localStorage[name]? localStorage[name] : defaultValue;
+            var val = localStorage[name];
+            return (typeof val === 'undefined')? defaultValue : val;
         },
 
         isInvalidUsername: function(username) {

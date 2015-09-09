@@ -109,6 +109,19 @@ define([
                 TextDisplay() :
                 null;
 
+            //Connection message
+            var connectionMessage;
+            switch(GameEngineStore.connectionState) {
+                case 'CONNECTING':
+                    connectionMessage = 'Connecting...';
+                    break;
+                case 'DISCONNECTED':
+                    connectionMessage = 'Connection Lost ...';
+                    break;
+                default:
+                    connectionMessage = null;
+            }
+
             return D.div({ id: 'chart-inner-container', className: this.props.controlsSize, ref: 'container' },
                 D.div({ className: 'anim-cont' },
                     D.div({ className: 'nyan' + (this.state.nyan? ' show' : '') },
@@ -119,7 +132,10 @@ define([
                     'Max profit: ', (GameEngineStore.maxWin/1e8).toFixed(4), ' BTC'
                 ),
                 D.canvas({ ref: 'canvas', className: ((this.state.graphMode === 'text')? 'hide': '') }),
-                textDisplay
+                textDisplay,
+                D.div({ className: 'connection-state' },
+                    connectionMessage
+                )
             )
         }
     });
