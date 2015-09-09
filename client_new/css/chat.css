@@ -87,6 +87,7 @@
     overflow-y: scroll;
     font-size: 1rem;
     padding-left: 0.2rem;  /* Allow user to resize element */
+    padding-right: 55px;
     position: absolute;
     top: 0;
     right: 0;

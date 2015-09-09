@@ -20,7 +20,7 @@ var lib      =  require('./lib');
  *
  * Moderators:
  *  Are joined to the moderators channel automatically
- *  For every channel joined they are joined to a 'mod:channelName' channel where
+ *  TODO: For every channel joined they are joined to a 'mod:channelName' channel where
  */
 
 /**
@@ -177,7 +177,7 @@ Chat.prototype.join = function(socket, channels, callback) {
     } else if(_.isArray(channels)) {
         for(var i = 0, length = channels.length; i < length; i++)
 
-            //If the channel is not valid send a 'soft' errror and remove the channel from the array
+            //If the channel is not valid send a 'soft' error and remove the channel from the array
             if(isChannelNameInvalid(channels[i], socket.moderator)) {
                 debug('[Join] INVALID_CHANNEL_NAME');
                 sendError(socket, '[Join] INVALID_CHANNEL_NAME');
