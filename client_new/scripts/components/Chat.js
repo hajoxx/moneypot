@@ -358,6 +358,9 @@ define([
                         pri += ' bot-greyed';
                 }
 
+                if (message.role === 'admin')
+                    pri += ' msg-admin-message';
+
                 var username = ChatEngineStore.username;
 
                 var r = new RegExp('@' + username + '(?:$|[^a-z0-9_\-])', 'i');
@@ -375,14 +378,10 @@ define([
                         timeString
                     ),
                     D.a({
-                            className: 'username',
                             href: '/user/' + message.username,
-                            target: '_blank',
-                            style: {
-                                color: Clib.shadeBlend(0.30, Clib.toMD5HexColor(message.username), '#ffffff')
-                            }
+                            target: '_blank'
                         },
-                        (message.role === 'admin')? '\u2605' : null, message.username, ':'
+                        message.username, ':'
                     ),
                     ' ',
                     D.span({
