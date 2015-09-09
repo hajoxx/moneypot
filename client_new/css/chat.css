@@ -144,6 +144,10 @@
     font-weight: 600;
 }
 
+#chat .username {
+    text-shadow: 1px 1px 5px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
 /* Channel selector */
 #chat-channel-selector {
     width: 55px;
@@ -220,10 +224,6 @@
 }
 #chat .msg-chat-message .msg-body a:hover {
     text-decoration: underline;
-}
-
-#chat .msg-chat-message.msg-admin-message a {
-    color: #ce1e1e;
 }
 
 #chat .msg-info-message {

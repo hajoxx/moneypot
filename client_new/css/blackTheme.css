@@ -132,6 +132,10 @@ body {
     background-color: #181a1e;
 }
 
+#chat .username {
+    /* text-shadow: 1px 1px 5px #030C66, -1px -1px 0 #030C66, 1px -1px 0 #030C66, -1px 1px 0 #030C66, 1px 1px 0 #030C66; */
+}
+
 
 /* ==========================================================================
    tabsSelector.css
