@@ -13,7 +13,7 @@ define([
     Clib,
     GraphicDisplayClass,
     TextDisplayClass,
-    Engine,
+    GameEngineStore,
     ChartStore,
     GameSettingsStore
 ){
@@ -46,7 +46,7 @@ define([
         },
 
         componentDidMount: function() {
-            Engine.on({
+            GameEngineStore.on({
                 joined: this._onChange,
                 disconnected: this._onChange,
                 game_started: this._onChange,
@@ -62,7 +62,7 @@ define([
         },
 
         componentWillUnmount: function() {
-            Engine.off({
+            GameEngineStore.off({
                 joined: this._onChange,
                 disconnected: this._onChange,
                 game_started: this._onChange,
@@ -78,7 +78,7 @@ define([
         },
 
         _onChange: function() {
-            if(this.state.nyan === true && Engine.gameState !== 'IN_PROGRESS')
+            if(this.state.nyan === true && GameEngineStore.gameState !== 'IN_PROGRESS')
                 this.setState({ nyan: false });
 
             var state = getState();
@@ -109,19 +109,6 @@ define([
                 TextDisplay() :
                 null;
 
-            //Connection message
-            var connectionMessage;
-            switch(Engine.connectionState) {
-                case 'CONNECTING':
-                    connectionMessage = 'Connecting...';
-                    break;
-                case 'DISCONNECTED':
-                    connectionMessage = 'Connection Lost ...';
-                    break;
-                default:
-                    connectionMessage = null;
-            }
-
             return D.div({ id: 'chart-inner-container', className: this.props.controlsSize, ref: 'container' },
                 D.div({ className: 'anim-cont' },
                     D.div({ className: 'nyan' + (this.state.nyan? ' show' : '') },
@@ -129,10 +116,7 @@ define([
                     )
                 ),
                 D.div({ className: 'max-profit' },
-                    'Max profit: ', (Engine.maxWin/1e8).toFixed(4), ' BTC'
-                ),
-                D.div({ className: 'connection-state' },
-                    connectionMessage
+                    'Max profit: ', (GameEngineStore.maxWin/1e8).toFixed(4), ' BTC'
                 ),
                 D.canvas({ ref: 'canvas', className: ((this.state.graphMode === 'text')? 'hide': '') }),
                 textDisplay

@@ -20,7 +20,7 @@
 
     /** Display Settings **/
     var _controlsSize = Clib.localOrDef('controlsSize', 'big'); //big || small
-    var _graphMode = 'graphics'; //Clib.localOrDef('graphMode', 'graphics'); //graphics || text
+    var _graphMode = Clib.localOrDef('graphMode', 'graphics'); //graphics || text
     var _controlsPosition = Clib.localOrDef('controlsPosition', 'right'); //right || left
     var _leftWidget = Clib.localOrDef('leftWidget', 'players'); //players || history || chat
 

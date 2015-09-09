@@ -39,17 +39,6 @@
     color: rgb(76, 75, 75);
 }
 
-#chart-inner-container .connection-state {
-    position: absolute;
-    top: 45%;
-    left: 0;
-    right: 0;
-    text-align: center;
-    font-size: 2rem;
-    background-color: rgb(232, 128, 128);
-    line-height: 3rem;
-}
-
 #chart-inner-container canvas.hide {
     display: none;
 }

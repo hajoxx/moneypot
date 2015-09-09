@@ -107,6 +107,9 @@ define([
                     );
                     break;
 
+                default: //Connecting
+                    content = D.div({ id: cId, className: 'connecting', style: { fontSize: this.state.size.starting, color: 'grey' } });
+                    break;
             }
           return content;
         }
