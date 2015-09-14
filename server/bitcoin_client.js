@@ -10,7 +10,8 @@ var client = new bitcoin.Client({
     pass: config.BITCOIND_PASS,
     ssl: true,
     sslStrict: true,
-    sslCa: new Buffer(config.BITCOIND_CERT)
+    sslCa: new Buffer(config.BITCOIND_CERT),
+    timeout: 60000
 });
 
 module.exports = client;
