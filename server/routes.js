@@ -8,7 +8,6 @@ var sendEmail = require('./sendEmail');
 var stats = require('./stats');
 var config = require('../config/config');
 var recaptchaValidator = require('recaptcha-validator');
-var public = require('./public');
 
 var production = process.env.NODE_ENV === 'production';
 
@@ -189,6 +188,7 @@ module.exports = function(app) {
     app.get('/play-id/:id', tableDev());
 
     app.get('/leaderboard', games.getLeaderBoard);
+    app.get('/game/:id.json', games.getGameInfoJson);
     app.get('/game/:id', games.show);
     app.get('/user/:name', user.profile);
 
@@ -226,7 +226,8 @@ module.exports = function(app) {
     });
 
     app.get('/stats', stats.index);
-    app.get('/usernames/:prefix', public.getUsernamesByPrefix)
+    app.get('/usernames/:prefix', user.getUsernamesByPrefix);
+
 
     // Admin stuff
     app.get('/admin-giveaway', adminRestrict, admin.giveAway);

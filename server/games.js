@@ -63,3 +63,28 @@ exports.show = function(req, res, next) {
         res.render('leaderboard', { user: user, leaders: leaders, sortBy: byDb, order: order });
      });
  };
+
+
+ /**
+  * GET
+  * Public API
+  * Show a single game info
+  **/
+ exports.getGameInfoJson = function(req, res, next) {
+    var gameId = parseInt(req.params.id);
+
+    if (!gameId || typeof gameId !== 'number')
+        return res.sendStatus(400);
+
+    database.getGameInfo(gameId, function(err, game) {
+        if (err) {
+            if (err === 'GAME_DOES_NOT_EXISTS')
+                return res.json(err);
+
+            console.error('[INTERNAL_ERROR] Unable to get game info. gameId: ', gameId);
+            return res.sendStatus(500);
+        }
+        res.json(game);
+    });
+ };
+

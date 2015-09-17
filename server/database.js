@@ -386,6 +386,75 @@ exports.getGamesPlays = function(gameId, callback) {
     );
 };
 
+exports.getGameInfo = function(gameId, callback) {
+    assert(gameId && callback);
+
+    var gameInfo = { game_id: gameId };
+
+    function getSqlGame(callback) {
+
+        var sqlGame = m(function() {/*
+         SELECT game_crash, created, hash
+         FROM games LEFT JOIN game_hashes ON games.id = game_id
+         WHERE games.ended = true AND games.id = $1
+         */});
+
+        query(sqlGame, [gameId], function(err, result) {
+            if(err)
+                return callback(err);
+
+            if (result.rows.length === 0)
+                return callback('GAME_DOES_NOT_EXISTS');
+
+            console.assert(result.rows.length === 1);
+
+            var game = result.rows[0];
+
+            gameInfo.game_crash = game.game_crash;
+            gameInfo.hash = game.hash;
+            gameInfo.created = game.created;
+
+            callback(null);
+        });
+    }
+
+    function getSqlPlays(callback) {
+        var sqlPlays = m(function() {/*
+         SELECT username, bet, (100 * cash_out / bet)::bigint AS stopped_at, bonus
+         FROM plays JOIN users ON user_id = users.id WHERE game_id = $1
+         */});
+
+        query(sqlPlays, [gameId], function(err, result) {
+            if(err)
+                return callback(err);
+
+            var playsArr = result.rows;
+
+            var player_info = {};
+            playsArr.forEach(function(play) {
+                player_info[play.username] = {
+                    bet: play.bet,
+                    stopped_at: play.stopped_at,
+                    bonus: play.bonus
+                };
+            });
+
+            gameInfo.player_info = player_info;
+
+            callback(null);
+        });
+    }
+
+
+    async.parallel([getSqlGame, getSqlPlays],
+    function(err, results) {
+        if(err)
+            return callback(err);
+
+        callback(null, gameInfo);
+    });
+};
+
 function addSatoshis(client, userId, amount, callback) {
 
     client.query('UPDATE users SET balance_satoshis = balance_satoshis + $1 WHERE id = $2', [amount, userId], function(err, res) {
@@ -693,7 +762,7 @@ exports.getUsernamesByPrefix = function (unamePrefix, callback) {
     query(sql, [unamePrefix], function(err, data) {
         if(err)
             return callback(err);
-        
+
         callback(null, data.rows[0].usernames);
     });
 };
