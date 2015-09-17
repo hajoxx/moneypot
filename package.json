@@ -41,7 +41,6 @@
   },
   "devDependencies": {
     "almond": "^0.3.1",
-    "async": "^1.4.2",
     "autolinker": "^0.17.1",
     "chance": "^0.7.7",
     "classnames": "^2.1.2",

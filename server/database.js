@@ -693,7 +693,7 @@ exports.getUsernamesByPrefix = function (unamePrefix, callback) {
     query(sql, [unamePrefix], function(err, data) {
         if(err)
             return callback(err);
-
+        
         callback(null, data.rows[0].usernames);
     });
 };

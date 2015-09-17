@@ -14,14 +14,14 @@ async.whilst(
 
         db.query("select exists(select 1 from users where username = $1)", [username], function(err, res) {
             if(err)
-                callback(err);
+                return callback(err);
 
 
             //If username does not exist
             if(!res.rows[0].exists) {
                 db.query("insert into users (username, password) VALUES ($1, 'test')", [username], function(err, res) {
                     if(err)
-                        callback(err);
+                        return callback(err);
 
                     console.log(username);
                     callback();
@@ -37,6 +37,6 @@ async.whilst(
     },
     function (err) {
         if(err)
-            console.log(err);
+            return console.log(err);
     }
 );
