@@ -6,7 +6,8 @@
   },
   "scripts": {
     "start-dev": "env $(cat .env | xargs) DEBUG=app* nodemon server/index",
-    "start": "node server/index"
+    "start": "node server/index",
+    "seed-data-users": "env $(cat .env | xargs) node tests/seed-data"
   },
   "dependencies": {
     "CBuffer": "^1.1.0",
@@ -40,7 +41,9 @@
   },
   "devDependencies": {
     "almond": "^0.3.1",
+    "async": "^1.4.2",
     "autolinker": "^0.17.1",
+    "chance": "^0.7.7",
     "classnames": "^2.1.2",
     "curlrequest": "^0.5.2",
     "debug": "^2.2.0",

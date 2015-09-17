@@ -683,6 +683,21 @@ exports.getAllChatTable = function(limit, callback) {
     });
 };
 
+exports.getUsernamesByPrefix = function (unamePrefix, callback) {
+    var sql = m(function() {/*
+     WITH d AS (
+     SELECT username FROM users WHERE lower(username)  LIKE $1 || '%' LIMIT 100
+     ) SELECT array_agg(username) AS usernames FROM d;
+     */});
+
+    query(sql, [unamePrefix], function(err, data) {
+        if(err)
+            return callback(err);
+
+        callback(null, data.rows[0].usernames);
+    });
+};
+
 exports.getSiteStats = function(callback) {
 
     function as(name, callback) {

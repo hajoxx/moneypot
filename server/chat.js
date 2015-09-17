@@ -334,7 +334,7 @@ Chat.prototype.doChatCommand = function(user, cmdMatch, channelName, socket, cal
                 self.mute(shadow, user, username, timespec, channelName,
                     function (err) {
                         if (err) {
-                            if(err === 'USERNAME_DOES_NOT_EXIST')
+                            if(err === 'USER_DOES_NOT_EXIST')
                                 return callback(err);
                             return console.error('[INTERNAL_ERROR] error on mute command: ', err);
                         }
@@ -474,7 +474,7 @@ Chat.prototype.mute = function(shadow, moderatorUser, username, time, channelNam
     db.getUserByName(username, function(err, userInfo) {
 
         if (err) {
-            if(typeof err === 'string') //USERNAME_DOES_NOT_EXIST
+            if(typeof err === 'string') //USER_DOES_NOT_EXIST
                 callback(err);
             else
                 console.error('[INTERNAL_ERROR] got error ', err, ' muting user ', userInfo.username);

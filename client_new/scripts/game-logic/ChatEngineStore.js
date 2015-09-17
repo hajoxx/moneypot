@@ -190,7 +190,7 @@ define([
                             self.channelManager.insertMessageInCurrentChannel(buildChatError('Invalid mute command'));
                             break;
 
-                        case 'USERNAME_DOES_NOT_EXIST':
+                        case 'USER_DOES_NOT_EXIST':
                             self.channelManager.insertMessageInCurrentChannel(buildChatError('Username does not exist'));
                             break;
 

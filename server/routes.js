@@ -8,7 +8,7 @@ var sendEmail = require('./sendEmail');
 var stats = require('./stats');
 var config = require('../config/config');
 var recaptchaValidator = require('recaptcha-validator');
-
+var public = require('./public');
 
 var production = process.env.NODE_ENV === 'production';
 
@@ -224,8 +224,9 @@ module.exports = function(app) {
             res.send(token);
         });
     });
-    app.get('/stats', stats.index);
 
+    app.get('/stats', stats.index);
+    app.get('/usernames/:prefix', public.getUsernamesByPrefix)
 
     // Admin stuff
     app.get('/admin-giveaway', adminRestrict, admin.giveAway);
