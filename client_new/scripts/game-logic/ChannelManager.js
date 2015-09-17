@@ -30,8 +30,6 @@ define([
 
         /** Insert the english channel in the first place **/
         self._channels.insert('english', { history: [], unreadCount: 0 });
-
-        self.updateStorage();
     }
 
 
