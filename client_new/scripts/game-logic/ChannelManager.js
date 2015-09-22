@@ -9,14 +9,27 @@ define([
 ) {
 
     /**
+     * Local helper functions
+     */
+    function getLocalStorageChannels() {
+        return JSON.parse(Clib.localOrDef('openedChannels', '["english"]'));
+    }
+
+    function createChannel(history) {
+        return {
+            history: history || [],
+            unreadCount: 0
+        }
+    }
+
+    /**
      * Manager of the channels for the ChatEngineStore
-     *
      */
     function ChannelManager() {
         var self = this;
 
         /** Get the list from localStorage */
-        self.OPENED_CHANNELS = JSON.parse(Clib.localOrDef('openedChannels', '[]'));
+        self.OPENED_CHANNELS = getLocalStorageChannels();
 
         /** Current opened tab on the chat **/
         self._currentChannel = Clib.localOrDef('currentChannel', 'english');
@@ -40,7 +53,7 @@ define([
         },
 
         getSavedChannels: function() {
-            return JSON.parse(Clib.localOrDef('openedChannels', '[]'));
+            return getLocalStorageChannels();
         },
 
         getCurrentChannelHistory: function() {
@@ -177,10 +190,3 @@ define([
 
     return ChannelManager;
 });
-
-function createChannel(history) {
-    return {
-        history: history || [],
-        unreadCount: 0
-    }
-}
