@@ -1,7 +1,9 @@
 var assert = require('better-assert');
 var bitcoinjs = require('bitcoinjs-lib');
 var crypto = require('crypto');
-var encKey = process.env.ENC_KEY || 'devkey';
+var config = require('../config/config');
+
+var encKey = config.ENC_KEY;
 
 exports.encrypt = function (text) {
     var cipher = crypto.createCipher('aes-256-cbc', encKey);
@@ -72,7 +74,7 @@ exports.isEligibleForGiveAway = function(lastGiveAway) {
     return Math.round(60 - timeElapsed);
 };
 
-var derivedPubKey = process.env.BIP32_DERIVED_KEY;
+var derivedPubKey = config.BIP32_DERIVED;
 if (!derivedPubKey)
     throw new Error('Must set env var BIP32_DERIVED_KEY');
 
@@ -90,39 +92,8 @@ exports.formatSatoshis = function(n, decimals) {
     return (n/100).toFixed(decimals).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 };
 
-function gamma (alpha, beta) {
-    if (alpha >= 1)
-        throw new Error('Gamma requires low alpha');
-
-    var x;
-    while (true) {
-        var u = Math.random();
-        var b = (Math.E + alpha) / Math.E;
-        var p = b * u;
-        if (p <= 1.0) {
-            x = Math.pow(p, 1.0 / alpha);
-        } else {
-            x = - Math.log((b - p) / alpha);
-        }
-        var u1 = Math.random();
-        if (p > 1.0) {
-            if (u1 <= Math.pow(x, (alpha - 1.0))) {
-                break;
-            }
-        } else if (u1 <= Math.exp(-x)) {
-            break;
-        }
-    }
-    return x * beta;
-}
-
-exports.gRand = function(avg) {
-    var beta = avg * 5;
-    return Math.round(gamma(avg / beta, beta));
-};
-
-exports.isInt = function (n) {
-    return (typeof n === 'number') && (n === (n | 0));
+exports.isInt = function isInteger (nVal) {
+    return typeof nVal === "number" && isFinite(nVal) && nVal > -9007199254740992 && nVal < 9007199254740992 && Math.floor(nVal) === nVal;
 };
 
 exports.hasOwnProperty = function(obj, propName) {
@@ -131,4 +102,57 @@ exports.hasOwnProperty = function(obj, propName) {
 
 exports.getOwnProperty = function(obj, propName) {
     return Object.prototype.hasOwnProperty.call(obj, propName) ? obj[propName] : undefined;
+};
+
+exports.parseTimeString = function(str) {
+    var reg   = /^\s*([1-9]\d*)([dhms])\s*$/;
+    var match = str.match(reg);
+
+    if (!match)
+        return null;
+
+    var num = parseInt(match[1]);
+    switch (match[2]) {
+    case 'd': num *= 24;
+    case 'h': num *= 60;
+    case 'm': num *= 60;
+    case 's': num *= 1000;
+    }
+
+    assert(num > 0);
+    return num;
+};
+
+exports.printTimeString = function(ms) {
+    var days = Math.ceil(ms / (24*60*60*1000));
+    if (days >= 3) return '' + days + 'd';
+
+    var hours = Math.ceil(ms / (60*60*1000));
+    if (hours >= 3) return '' + hours + 'h';
+
+    var minutes = Math.ceil(ms / (60*1000));
+    if (minutes >= 3) return '' + minutes + 'm';
+
+    var seconds = Math.ceil(ms / 1000);
+    return '' + seconds + 's';
+};
+
+var secret = config.SIGNING_SECRET;
+
+exports.sign = function(str){
+    return crypto
+        .createHmac('sha256', secret)
+        .update(str)
+        .digest('base64');
+};
+
+exports.validateSignature = function(str, sig){
+    return exports.sign(str) == sig;
+};
+
+exports.removeNullsAndTrim = function(str) {
+    if(typeof str === 'string')
+        return str.replace(/\0/g, '').trim();
+    else
+        return str;
 };

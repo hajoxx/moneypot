@@ -1,28 +1,33 @@
-
 var assert = require('assert');
 var nodemailer = require('nodemailer');
+var sesTransport = require('nodemailer-ses-transport');
+var config = require('../config/config');
+
+var SITE_URL = config.SITE_URL;
 
 
 function send(details, callback) {
-    var transport = nodemailer.createTransport("SES", {
-        AWSAccessKeyID: process.env.AWS_SES_KEY,
-        AWSSecretKey: process.env.AWS_SES_SECRET
-    });
+    assert(details, callback);
+
+    var transport = nodemailer.createTransport(sesTransport({
+        AWSAccessKeyID: config.AWS_SES_KEY,
+        AWSSecretKey: config.AWS_SES_SECRET
+    }));
 
     transport.sendMail(details, function(err) {
-        if (err) {
-            console.error('Send mail error: ', err);
-            if (callback) return callback(err);
-        }
-        if (callback) return callback(null);
+        if (err)
+            return callback(err);
+
+        callback(null);
     });
 }
 
 exports.contact = function(from, content, user, callback) {
 
     var details = {
-        to: 'ericwspringer@gmail.com',
+        to: config.CONTACT_EMAIL,
         from: 'contact@moneypot.com',
+        replyTo: from,
         subject: 'Moneypot Contact (' + from + ')',
         html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' +
             '<html xmlns="http://www.w3.org/1999/xhtml">' +
@@ -36,19 +41,33 @@ exports.contact = function(from, content, user, callback) {
     send(details, callback);
 };
 
-exports.passwordReset = function(to, recoveryId, callback) {
+exports.passwordReset = function(to, recoveryList, callback) {
+
+    var htmlRecoveryLinks = '';
+    recoveryList.forEach(function(pair, index){
+        htmlRecoveryLinks += '<a href="' + SITE_URL + '/reset/' + pair[1] +'">Please click here to reset ' + pair[0] + "'s account</a><br>";
+    });
+
+    var html = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' +
+        '<html xmlns="http://www.w3.org/1999/xhtml">' +
+        '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />' +
+        '<title>MoneyPot</title>' +
+        '</head>' +
+        '<body>'+
+        '<h2>Bustabit Password recovery</h2>' +
+        '<br>' +
+         htmlRecoveryLinks +
+        '<br>' +
+        '<br>' +
+        "<span>We only send password resets to registered email accounts." +
+        '</body></html>';
+
     var details =  {
         to: to,
         from: 'noreply@moneypot.com',
-        subject: 'MoneyPot.com - Reset Password Request',
-        html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' +
-            '<html xmlns="http://www.w3.org/1999/xhtml">' +
-            '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />' +
-            '<title>MoneyPot</title>' +
-            '</head>' +
-            '<body>'+
-            '<a href="https://www.moneypot.com/reset/' + recoveryId +'">Please click here to reset your password</a>' +
-            '</body></html>'
+        subject: 'Bustabit.com - Reset Password Request',
+        html: html
+
     };
     send(details, callback);
-}
+};

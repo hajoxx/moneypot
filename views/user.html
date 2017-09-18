@@ -58,13 +58,13 @@
         {{?}}
 
 
-        <script src="/amcharts/amcharts.js" type="text/javascript"></script>
-        <script src="/amcharts/serial.js" type="text/javascript"></script>
-        <script src="/amcharts/custom.js" type="text/javascript"></script>
+        <script src="/vendor/amcharts/amcharts.js" type="text/javascript"></script>
+        <script src="/vendor/amcharts/serial.js" type="text/javascript"></script>
+        <script src="/vendor/amcharts/custom.js" type="text/javascript"></script>
         <script>
             CustomChart({{= it.games_from}}, {{= it.net_profit_offset}}, {{=JSON.stringify(it.plays)}});
         </script>
 
     </div>
 #}}
-{{#def.include('./template/main')}}
+{{#def.include('./template/main_old')}}

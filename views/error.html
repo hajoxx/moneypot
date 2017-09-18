@@ -13,12 +13,18 @@
 <div class="panel rounded not-found">
     <div class="row">
         <div class="large-1 columns">
-            <img src="/img/pig.jpg" alt=""/>
+            <img src="/img/logo.png" alt=""/>
         </div>
         <div class="large-11 columns">
-            <h4>Something bad happened, My humans are working to fix this mess, please come back later...</h4>
+            <h4>Something bad happened. My humans are working to fix this mess, please come back later...</h4>
+            <br/>
+            {{?it.error}}
+            <h6>Error: {{=it.error}}</h6>
+            {{?}}
         </div>
     </div>
 </div>
 </body>
 </html>
+
+

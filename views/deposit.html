@@ -1,4 +1,4 @@
-{{##def.page_title = 'Deposit Funds' #}}
+{{##def.page_title = 'Deposit History' #}}
 {{##def.content:
 <script type="text/javascript">
     function logout() {
@@ -16,6 +16,9 @@
                 <ul class="menu">
                     <li>
                         <a href="/account">Account</a>
+                    </li>
+                    <li>
+                        <a href="/security">Security</a>
                     </li>
                     <li class="active">
                         Deposit
@@ -37,6 +40,11 @@
             <div class="small-10 columns setts-content">
                 <h5 class="">Deposit History</h5>
                 <hr>
+                <p class="account">
+                    <b>Deposit Address:</b>
+                    <input type="text" value="{{=it.user.deposit_address}}" readonly>
+                    <a href="bitcoin:{{=it.user.deposit_address}}?message=deposit">Bitcoin link</a>
+                </p>
                 {{?it.user.deposits.length > 0}}
                     <table>
                         <thead>
@@ -50,7 +58,7 @@
                             {{~it.user.deposits :deposit:index}}
                                 <tr>
                                     <td>{{#def.format: {n: deposit.amount, decimals: 2 } }}</td>
-                                    <td><a href="https://www.blocktrail.com/tx/{{=deposit.txid}}" target="_blank">transaction</a></td>
+                                    <td><a href="https://blockchain.info/tx/{{=deposit.txid}}" target="_blank">link</a></td>
                                     <td class="show-for-medium-up">{{=deposit.created}}</td>
                                 </tr>
                             {{~}}
@@ -64,4 +72,4 @@
         </div>
     </div>
 #}}
-{{#def.include('./template/main')}}
+{{#def.include('./template/main_old')}}

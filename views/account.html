@@ -1,24 +1,10 @@
 {{##def.page_title = 'Your account' #}}
 {{##def.content:
 <script type="text/javascript">
-    window.onload = function () {
-        if (document.getElementById('confirmation') !== null) {
-            document.getElementById('confirmation').onchange = validatePassword;
-            document.getElementById('password').onchange = validatePassword;
-        }
-    };
-    function validatePassword() {
-        var password = document.getElementById('password').value;
-        var confirm = document.getElementById('confirmation').value;
-        console.log(password, confirm);
-        if (password != confirm) {
-            console.log('not equals');
-            document.getElementById('confirmation').setCustomValidity("Confirmation and password should be the same");
-        } else document.getElementById("confirmation").setCustomValidity('');
-    }
     function logout() {
         if (document.getElementById('logout') ) {
             if (confirm("Are you sure you want to log out?")) {
+                localStorage.clear();
                 document.getElementById("logout").submit();
             }
         }
@@ -32,6 +18,9 @@
             <ul class="menu">
                 <li class="active">
                    Account
+                </li>
+                <li>
+                    <a href="/security">Security</a>
                 </li>
                 <li>
                     <a href="/deposit">Deposit</a>
@@ -55,15 +44,18 @@
             <hr>
             <p class="account">
                 <b>Deposit Address:</b>
-                <span>{{=it.user.deposit_address}}</span>
+                <input type="text" value="{{=it.user.deposit_address}}" readonly>
+                <a href="bitcoin:{{=it.user.deposit_address}}?message=deposit">Bitcoin link</a>
             </p>
             <div class="row">
                 <div class="large-5 columns">
                     <img class="show-for-medium-up qr" src="https://blockchain.info/qr?data={{=it.user.deposit_address}}&size=150" alt=""/>
                 </div>
                 <div class="large-6 columns">
-                    Transfer bitcoins to this address and we'll add bits to your account, 1 bit for every 100 satoshis you transfer.
-                    <strong><a href="/faq#deposit"> <small>how?</small></a></strong>
+                    Transfer bitcoins to this address to have your account credited. Accounts are only credited after <b>one bitcoin confirmation</b>
+                    which depending on external factors can take a while. You can check
+                     <a href="https://blockchain.info/address/{{=it.user.deposit_address}}">blockchain.info</a> to see if your transactions have confirmed yet.
+                    <strong><a href="/faq#deposit"> <small>more?</small></a></strong>
                 </div>
             </div>
             <br>
@@ -72,11 +64,11 @@
             <div id="statistics" class="row">
                 <div class="columns data large-3">
                     <p><b>Deposits </b></p>
-                    <h5>{{#def.format:{n: it.user.deposits, decimals:1} }} bits</h5>
+                    <h5>{{#def.format:{n: it.user.deposits, decimals:2} }} bits</h5>
                 </div>
                 <div class="columns data large-3">
                     <p><b>Withdrawals </b></p>
-                    <h5>{{#def.format:{n: it.user.withdrawals, decimals:1} }} bits</h5>
+                    <h5>{{#def.format:{n: it.user.withdrawals, decimals:2} }} bits</h5>
                 </div>
                 <div class="columns data large-3">
                     <p><b>Free Bits Collected </b></p>
@@ -91,42 +83,13 @@
             <br>
             {{?typeof it.user.eligible !== 'number' }}
                 {{?it.user.balance_satoshis > 100}}
-                    <div class="success bits">You are eligible for a free 2 bits <a href="/request">CLICK HERE TO REQUEST IT!</a></div>
+                    <div class="success bits">You are eligible for a free 2 bits <a href="/request">CLICK HERE TO REQUEST THEM!</a></div>
                 {{?}}
             {{??}}
                 <div class="success bits">You'll be eligible for 2 free bits in {{=it.user.eligible}} minutes</div>
-            {{?}}
-            <hr>
-            <h5>Update Your Password</h5>
-            <form action="reset-password" method="post" >
-                <label for="old_password">Old Password</label>
-                <input name="old_password" type="password" id="old_password" autocomplete="off" required/>
-                <label for="password">New Password <span class="small">At least 7 characters</span></label>
-                <input name="password" type="password" id="password" pattern=".{7,50}" required/>
-                <label for="confirmation">Confirm Password</label>
-                <input name="confirmation" type="password" id="confirmation" pattern=".{7,50}" required/>
-                <input type="submit" class="border-button blue right" value="Change"/>
-            </form>
-            <br>
-            <br>
-            <hr>
-            {{?it.user.email}}
-                <h5>Recovery Email</h5>
-                <span>{{=it.user.email}}<a class="small" href="/delete-email"> delete this email.</a></span>
-            {{??}}
-                <h5>Add an Email Address</h5>
-                <p class="small">In case you've forgot your password we can send you a link to reset it, otherwise you don't have other way to recover your account.</p>
-
-                <form action="/add-email" method="post">
-                    <label for="email">Recovery Email</label>
-                    <input type="email" id="email" name="email" required="" />
-                    <label for="password">Confirmation Password</label>
-                    <input name="password" type="password" id="check_password" autocomplete="off" pattern=".{7,50}" required/>
-                    <input class="border-button right blue" type="submit" value="save"/>
-                </form>
             {{?}}
         </div>
     </div>
     </div>
 #}}
-{{#def.include('./template/main')}}
+{{#def.include('./template/main_old')}}
